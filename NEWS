@@ -1,0 +1,261 @@
+New in 0.25:
+
+* "configure.ac" modified to reflect changes in GNU autoconf.
+
+* Bugs in test programs fixed.
+
+New in 0.24:
+
+* New script `fake-cfunctions'
+
+This is a fake version of Cfunctions which uses `touch' to update
+header files.  The reason for having this is so that one can
+distribute Cfunctions using programs with `make' rules for header
+files, without generating user complaints.  See the section about
+`fake-cfunctions' in the manual.
+
+* Manual expanded a bit.
+
+* `options.texi' is now part of the distribution.
+
+New in 0.23:
+
+* Cfunctions can be configured using a `rc' file so that options you
+always want can be stored.  The options that you can store are
+described below.  These are basically just the same as the command
+line options.
+
+** advert: ZZZ
+
+Specify the name of the advert file, or "off" if you don't like any
+advert.
+
+** backup: 1
+
+Do backups
+
+** copy_c_ex: 1
+
+Copy the c-extensions.h file into the generated header.
+
+** global_macro: XXX
+
+change the global macro from HEADER to XXX
+
+** include_c_ex: 1
+
+write #include <c-extensions.h> instead of #include "c-extensions.h"
+
+** keep
+
+Keep old files.
+
+** line_numbers
+
+write #line YYY "FFF" statements.
+
+** local_macro: XXX
+
+change the local macro from LOCAL_H to XXX
+
+** proto_macro: PPP
+
+change the prototype macro from PROTO to PPP
+
+** backup_suffix: %
+
+change the backup suffix from ~ to %.
+
+** version_control
+
+Do version control style 
+
+** write_comments
+
+Write comments into the header file
+
+** warn
+
+Specify a list of types of warning that you want to have (`implicit',
+`strict-prototypes', etc.)
+
+See also `example.cfunctionsrc' in the `doc' subdirectory.
+
+* Bug fixes.
+
+* Documentation updates.
+
+New in 0.22:
+
+* Bug fixes
+* Cfunctions makes functions declared as `jub ()' have a prototype
+of `jub PROTO ((void))'.
+
+New in 0.21:
+
+* Comment string bug fix
+
+New in 0.20:
+
+* Build problem bug fixes
+
+New in 0.19:
+
+* Option `-m': write comments.  
+
+This writes any comments which come before function declarations and
+global variables.
+
+* Option `-n': write line numbers, in the form 
+
+         #line NUMBER "FILE".  
+
+This is useful for making the compiler understand that the header file
+is generated from a C file and giving error messages which refer you
+to the original C file.  It can be a nuisance sometimes: be careful.
+
+* Option `-W': issue warnings.  
+
+This will make Cfunctions issue warnings about various `bad'
+practices.  The names of the warning strings are based on those used
+by GNU C, but their behaviour is not the same.
+
+** -Wimplicit-int or -Wimplicit
+
+warns about implicit `int' function declarations and function
+arguments.
+
+** -Wstrict-prototypes
+
+warns about functions without prototypes
+
+* Cfunctions now writes functions with a prototype `(void)' as `(void)'
+and functions with argument declaration `()' as `()'.  You can use the
+new `-Wstrict-prototypes' option to make Cfunctions warn about `()'
+functions.
+
+* Internals rewritten: Cfunctions is now a much easier program
+to hack, as most of the routines have been moved out of the Flex file.
+
+* The command line (`cfunctions -i jub.c' etc.) is `preserved' in 
+the generated header file, for ease of regeneration.
+
+* Option `-I' makes Cfunctions write
+
+        #include <c-extensions.h>
+
+instead of the old form
+
+        #include "c-extensions.h"
+
+The old form was annoying when dealing with a project with lots of
+directories.
+
+New in 0.18:
+
+* Bug fixes.
+* The -x/--extensions option now turns OFF copying of c-extensions.h.
+* New directory structure.
+* Function pointer support improved (it is not finished yet though).
+
+New in 0.17:
+
+* Bug fixes.
+
+New in 0.16:
+
+* Manual page bug fix.
+* Bug fixes.
+* `--static' changes:
+** -s / --static option no longer outputs static variables.
+** -s -t still does tags for static variables.
+** This change makes Cfunctions more useful for making forward declarations.
+
+New in 0.15:
+
+* Portability overhaul.
+** More functions added to `missing' subdirectory.
+** option -C disabled for systems where compilation of `cpp.c' is a problem.
+** GNU C extensions in the code removed or conditionalized.
+
+New in 0.14:
+
+* Man page overhaul.
+
+New in 0.13:
+
+* Bug fixes.
+
+New in 0.12:
+
+* Bug fixes.
+
+New in 0.11:
+
+* Internal fixes to meet GNU coding standards.
+
+New in 0.10:
+
+* Excess #if and #endif bug is really fixed this time (I hope!).
+
+New in 0.9:
+
+* Some minor memory leaks plugged using GNU Checker.
+* Functions with no arguments are now given `(void)' arguments.
+* Implicit `int' functions are given explicit `int' types.
+* Excess #if and #endif bug fixed.
+
+New in 0.8:
+
+* Comparison with `cextract' in COMPARISON.
+* Understands `# nnn "XXX"' where `nnn' is line no. and `XXX' a file name.
+* Run C preprocessor with `-C' (`--cpp') option.
+* Allowed carriage return and formfeed as whitespace. (*EK* egil@kvaleberg.no)
+* Manual page `make install-man' and `make uninstall-man' commands. (*EK*)
+* Several nasty bugs fixed (see files in `tests' subdirectory for details.)
+
+New in 0.7:
+
+* Much less verbose manual.
+* No writing of `c-extensions.h' when writing to stdout.
+* Array arguments to traditional C functions now work properly.
+* `--output ARG' (`-o ARG') option.
+* `#line' directives now processed.
+* GNU style -S and -V options and environment variables for backups.
+* `-D' makes an error message if debugging disabled.
+* Abandoned Linux Software Map entry.
+
+New in 0.6:
+
+* Creates prototypes for traditional C
+* `--proto-macro ARG' (`-pARG') command-line option
+* Multidimensional arrays now work properly.
+* Added a `--with-coverage' option to `configure'.
+
+New in 0.5:
+
+* Put a disclaimer on Egil Kvaleberg's `cfunctions.1' manual page.
+* `NEWS' begun (0.3, 0.4 news are retrospective).
+* `AUTHORS' file added.
+* Many bugs in tags part fixed.  Tests for tags now do something.
+* New tags format.
+
+New in 0.4:
+
+* `configure' updates WWW page and Linux Software Map entry.
+* `flexpp.fl' Lex/Yacc preprocessor in `contrib'.
+* Read `.hin' files through the parser (instead of by `fcopy').
+* Tests for `.hin' files
+* `-D' option produces a warning if debugging was disabled.
+* Explanation of `VERSION' and `options.c' in documentation.
+
+New in 0.3:
+
+* `install' and `uninstall' targets in `Makefile'.
+* Searchs for `c-extensions.h' in both installation and source directories.
+* Added `contrib' subdirectory for non-maintained contributions.
+* Now has Unix manual page `cfunctions.1' in `contrib'.
+
+Local variables:
+mode: outline
+end:

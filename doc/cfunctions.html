@@ -1,0 +1,2426 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on May, 13 2009 by texi2html 1.76 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<head>
+<title>cfunctions: Top</title>
+
+<meta name="description" content="cfunctions: Top">
+<meta name="keywords" content="cfunctions: Top">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.76">
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.sansserif {font-family:sans-serif; font-weight:normal;}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<a name="Top"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="settitle">cfunctions
+</h1>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC1">Copying</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                     Copyright and copying information 
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC2">1. Introduction</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Examples 
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">         Command line options 
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC6">3. Variable and function declarations</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">  
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC17">4. Output files</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC25">5. Input file format</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           What your C file should look like 
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC31">6. Using Cfunctions with other programs</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">              
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC39">Index</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                       
+</td></tr>
+</table>
+
+<hr size="1">
+<a name="Copying"></a>
+<a name="SEC1"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[ &lt;&lt; ]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="unnumbered"> Copying </h1>
+
+
+<p>Cfunctions and
+this manual are copyright &copy; 1998 Ben K.  Bullock.  Some parts
+of the Cfunctions distribution, the files in the subdirectory `missing',
+are copyright &copy; 1997 by the Free Software Foundation (see the
+actual files for details).
+</p>
+<p>Cfunctions, and this manual, are free software under the GNU General
+Public Licence (otherwise known as the <small>GNU GPL</small> or just the
+<small>GPL</small>.  The GNU General Public Licence is in the file <tt>`COPYING'</tt>
+in the Cfunctions distribution directory.  The GNU General Public
+Licence does not apply to the output of Cfunctions.  The file
+<tt>`c-extensions.h'</tt>, which is used with Cfunctions, is licenced
+differently.  Please refer to that file for more information.
+<a name="IDX1"></a>
+<a name="IDX2"></a>
+<a name="IDX3"></a>
+<a name="IDX4"></a>
+</p>
+
+
+<p>You can find the GNU General Public License at
+&lt;a href=http://www.gnu.org&gt;
+The Free Software Foundation
+&lt;/a&gt;.
+</p>
+<hr size="6">
+<a name="Introduction"></a>
+<a name="SEC2"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC1" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC3" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC1" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 1. Introduction </h1>
+
+
+
+<p>This is the manual for Cfunctions version 0.25 .  This manual
+explains Cfunctions, a program for making header files from C files.
+Cfunctions (pronounced &quot;see-functions&quot;) 
+<a name="IDX5"></a>
+<a name="IDX6"></a>
+gets function declarations, prototypes and global (otherwise known as
+external) variable declarations from C files and makes them into header
+files.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC3">1.1 Simple examples</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             Simple examples showing Cfunctions usage
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC4">1.2 Detailed examples</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           Detailed examples with output
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="Simple-examples"></a>
+<a name="SEC3"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC2" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC4" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.1 Simple examples </h2>
+
+
+<p>Here are some simple examples of how to run Cfunctions.  If you have
+already compiled the program, you might like to try it out on some C
+files using the following examples as a template.
+</p>
+<ul>
+<li>
+Cfunctions without any options reads from standard input and writes to
+standard output.  For example,
+<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions a.c b.c c.c
+</pre></td></tr></table>
+<p>writes the function and global variable declarations in the three C
+files to standard output.
+</p>
+</li><li>
+Cfunctions can make an individual header file for each of a set of C
+files.  For example
+<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -i a.c b.c c.c
+</pre></td></tr></table>
+<p>creates three files <tt>`a.h'</tt>, <tt>`b.h'</tt> and <tt>`c.h'</tt> containing the
+function and global variable declarations of the three C
+files.
+</p>
+</li><li>
+Cfunctions can make one header file for several C files.  For example
+<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -g everything  a.c b.c c.c
+</pre></td></tr></table>
+<p>creates a header file called <tt>`everything.h'</tt> which contains all the
+function and global variable declarations of the three C
+files.
+</p>
+</li></ul>
+
+<hr size="6">
+<a name="Detailed-examples"></a>
+<a name="SEC4"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC3" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC5" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC5" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 1.2 Detailed examples </h2>
+
+
+<p>This section gives some examples that you can type in to Cfunctions
+using it as a pipe, reading standard input.
+</p>
+<p>Input some C to Cfunctions, for example
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int func (int y) { return 0; }
+</pre></td></tr></table>
+<p>and Cfunctions outputs
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int func (int y);
+</pre></td></tr></table>
+<p>the function declaration.  Now try
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int <var>z</var>;
+</pre></td></tr></table>
+<p>Cfunctions outputs
+</p><table><tr><td>&nbsp;</td><td><pre class="example">extern int <var>z</var>;
+</pre></td></tr></table>
+<p>This is a declaration of the variable <var>z</var> suitable for use in a
+header file.  Now input
+</p><table><tr><td>&nbsp;</td><td><pre class="example">extern int <var>z</var>;
+</pre></td></tr></table>
+<p>to Cfunctions.  Cfunctions outputs nothing, because <code>extern</code> means
+<var>z</var> was declared elsewhere, so it should not be declared in a header
+file.  Now input
+</p><table><tr><td>&nbsp;</td><td><pre class="example">static int <var>q</var>; 
+static char * <var>tub</var> (int jub) { return array[ jub ]; }
+</pre></td></tr></table>
+<p>Cfunctions outputs nothing.  That is because both <var>q</var> and
+<var>tub</var> are declared with <code>static</code>.  Cfunctions assumes that it
+is writing a header file, so it doesn't output anything declared
+<code>static</code>.
+</p>
+<p>Now, try <code>cfunctions --wrap chap</code>, with input
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int s, t, u;
+char * func() { return &quot;junk&quot;; }
+</pre></td></tr></table>
+<p>Cfunctions outputs
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">#ifndef _CHAP
+#define _CHAP
+extern int s, t, u;
+char * func();
+#endif /* _CHAP */
+</pre></td></tr></table>
+
+<p>because the <code>-w chap</code> option requested a wrapper See section <a href="#SEC22">Wrappers</a>.
+This is already enough to declare the external variables and functions
+in the input file and write them out to a header file.
+</p>
+<hr size="6">
+<a name="Invoking-Cfunctions"></a>
+<a name="SEC5"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC4" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC2" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 2. Invoking Cfunctions </h1>
+
+
+
+<p>Cfunctions can be configured with a file <tt>`.cfunctionsrc'</tt> in
+your home directory.
+The possible command-line and configuration options for Cfunctions are
+</p>
+<dl compact="compact">
+<dd><a name="IDX7"></a>
+<a name="IDX8"></a>
+</dd>
+<dt> <code>-a  <var>argument</var></code></dt>
+<dt> <code>--advert  <var>argument</var></code></dt>
+<dd><p>If <var>argument</var> is `off', don't print an advert.  If <var>argument</var> is a file name, print the file instead.
+See section <a href="#SEC21">Advertisements and banners</a>.
+You can also control this with a line `advert' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX9"></a>
+<a name="IDX10"></a>
+</dd>
+<dt> <code>-b</code> </dt>
+<dt> <code>--backup</code> </dt>
+<dd><p>Back up `.h' files.
+See section <a href="#SEC20">Backups</a>.
+You can also control this with a line `backup' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX11"></a>
+<a name="IDX12"></a>
+</dd>
+<dt> <code>-c</code> </dt>
+<dt> <code>--copy-c-ex</code> </dt>
+<dd><p>Copy the `c-extensions.h' into the header file.
+See section <a href="#SEC26">C extensions</a>.
+You can also control this with a line `copy c ex' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX13"></a>
+<a name="IDX14"></a>
+</dd>
+<dt> <code>-C</code> </dt>
+<dt> <code>--cpp</code> </dt>
+<dd><p>Pass input through the C preprocessor.
+See section <a href="#SEC33">Using Cfunctions with the C preprocessor</a>.
+</p>
+<a name="IDX15"></a>
+<a name="IDX16"></a>
+</dd>
+<dt> <code>-D  <var>argument</var></code></dt>
+<dt> <code>--debug  <var>argument</var></code></dt>
+<dd><p>Set debugging option <var>argument</var>.
+</p>
+<a name="IDX17"></a>
+<a name="IDX18"></a>
+</dd>
+<dt> <code>-e</code> </dt>
+<dt> <code>--etags</code> </dt>
+<dd><p>Create an Emacs tag table.
+</p>
+<a name="IDX19"></a>
+<a name="IDX20"></a>
+</dd>
+<dt> <code>-g  <var>argument</var></code></dt>
+<dt> <code>--global  <var>argument</var></code></dt>
+<dd><p>Write one global header for all C files.
+See section <a href="#SEC18">Making one header for several C files</a>.
+</p>
+<a name="IDX21"></a>
+<a name="IDX22"></a>
+</dd>
+<dt> <code>-G  <var>argument</var></code></dt>
+<dt> <code>--global-macro  <var>argument</var></code></dt>
+<dd><p>Give global header macro the name <var>argument</var>.
+See section <a href="#SEC27">Extra header information</a>.
+You can also control this with a line `global macro' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX23"></a>
+<a name="IDX24"></a>
+</dd>
+<dt> <code>-h</code> </dt>
+<dt> <code>--help</code> </dt>
+<dd><p>Print a help message and exit.
+</p>
+<a name="IDX25"></a>
+<a name="IDX26"></a>
+</dd>
+<dt> <code>-I</code> </dt>
+<dt> <code>--include-c-ex</code> </dt>
+<dd><p>Write #include &lt;c-extensions.h&gt;.
+See section <a href="#SEC26">C extensions</a>.
+You can also control this with a line `include c ex' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX27"></a>
+<a name="IDX28"></a>
+</dd>
+<dt> <code>-i</code> </dt>
+<dt> <code>--individual</code> </dt>
+<dd><p>Write an individual header for each C file.
+See section <a href="#SEC19">Making a separate header for each C file</a>.
+</p>
+<a name="IDX29"></a>
+<a name="IDX30"></a>
+</dd>
+<dt> <code>-k</code> </dt>
+<dt> <code>--keep</code> </dt>
+<dd><p>Don't delete generated .h files which are empty.
+</p>
+<a name="IDX31"></a>
+<a name="IDX32"></a>
+</dd>
+<dt> <code>-l  <var>argument</var></code></dt>
+<dt> <code>--local  <var>argument</var></code></dt>
+<dd><p>Write one local header file for all C files.
+See section <a href="#SEC29">Extra local information</a>.
+</p>
+<a name="IDX33"></a>
+<a name="IDX34"></a>
+</dd>
+<dt> <code>-L  <var>argument</var></code></dt>
+<dt> <code>--local-macro  <var>argument</var></code></dt>
+<dd><p>Give local header macro the name <var>argument</var>.
+See section <a href="#SEC29">Extra local information</a>.
+You can also control this with a line `local macro' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX35"></a>
+<a name="IDX36"></a>
+</dd>
+<dt> <code>-m</code> </dt>
+<dt> <code>--write-comments</code> </dt>
+<dd><p>Write comments to header file.
+See section <a href="#SEC15">Comments</a>.
+You can also control this with a line `write comments' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX37"></a>
+<a name="IDX38"></a>
+</dd>
+<dt> <code>-n</code> </dt>
+<dt> <code>--line-numbers</code> </dt>
+<dd><p>Write #line information in the .h files.
+See section <a href="#SEC37">C compiler</a>.
+You can also control this with a line `line numbers' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX39"></a>
+<a name="IDX40"></a>
+</dd>
+<dt> <code>-o  <var>argument</var></code></dt>
+<dt> <code>--output  <var>argument</var></code></dt>
+<dd><p>Redirect standard output to <var>argument</var>.
+See section <a href="#SEC17">Output files</a>.
+</p>
+<a name="IDX41"></a>
+<a name="IDX42"></a>
+</dd>
+<dt> <code>-P  <var>argument</var></code></dt>
+<dt> <code>--cpp-arg  <var>argument</var></code></dt>
+<dd><p>Pass <var>argument</var> to the C preprocessor.
+See section <a href="#SEC33">Using Cfunctions with the C preprocessor</a>.
+</p>
+<a name="IDX43"></a>
+<a name="IDX44"></a>
+</dd>
+<dt> <code>-p  <var>argument</var></code></dt>
+<dt> <code>--proto-macro  <var>argument</var></code></dt>
+<dd><p>Give prototype macro the name <var>argument</var>.
+See section <a href="#SEC14">Traditional C</a>.
+You can also control this with a line `proto macro' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX45"></a>
+<a name="IDX46"></a>
+</dd>
+<dt> <code>-s</code> </dt>
+<dt> <code>--static</code> </dt>
+<dd><p>Don't ignore things declared `static'.
+See section <a href="#SEC13"><code>static</code></a>.
+</p>
+<a name="IDX47"></a>
+<a name="IDX48"></a>
+</dd>
+<dt> <code>-S  <var>argument</var></code></dt>
+<dt> <code>--suffix  <var>argument</var></code></dt>
+<dd><p>Use suffix `<var>argument</var>' for simple backups.
+See section <a href="#SEC20">Backups</a>.
+You can also control this with a line `backup suffix' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX49"></a>
+<a name="IDX50"></a>
+</dd>
+<dt> <code>-t</code> </dt>
+<dt> <code>--tags</code> </dt>
+<dd><p>Create a tag table.
+See section <a href="#SEC23">Making tag tables</a>.
+</p>
+<a name="IDX51"></a>
+<a name="IDX52"></a>
+</dd>
+<dt> <code>-v</code> </dt>
+<dt> <code>--version</code> </dt>
+<dd><p>Write version information and exit.
+</p>
+<a name="IDX53"></a>
+<a name="IDX54"></a>
+</dd>
+<dt> <code>-V  <var>argument</var></code></dt>
+<dt> <code>--version-control  <var>argument</var></code></dt>
+<dd><p>Use version control style <var>argument</var>.
+See section <a href="#SEC20">Backups</a>.
+You can also control this with a line `version control' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX55"></a>
+<a name="IDX56"></a>
+</dd>
+<dt> <code>-W  <var>argument</var></code></dt>
+<dt> <code>--warn  <var>argument</var></code></dt>
+<dd><p>Warn about malpractices.
+See section <a href="#SEC16">Warnings</a>.
+You can also control this with a line `warn' in <tt>`.cfunctionsrc'</tt>
+</p>
+<a name="IDX57"></a>
+<a name="IDX58"></a>
+</dd>
+<dt> <code>-w  <var>argument</var></code></dt>
+<dt> <code>--wrap  <var>argument</var></code></dt>
+<dd><p>Write a wrapper when writing to stdout.
+See section <a href="#SEC22">Wrappers</a>.
+</p>
+<a name="IDX59"></a>
+<a name="IDX60"></a>
+</dd>
+<dt> <code>-x</code> </dt>
+<dt> <code>--extensions</code> </dt>
+<dd><p>Don't copy the `c-extensions.h' file.
+See section <a href="#SEC25">Input file format</a>.
+</p>
+</dd>
+</dl>
+
+
+<hr size="6">
+<a name="Variable-and-function-declarations"></a>
+<a name="SEC6"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC5" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC7" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC5" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 3. Variable and function declarations </h1>
+
+
+<p>This chapter explains how to make Cfunctions generate correct variable
+and function declarations.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC7">3.1 Global variables</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC8">3.2 Using <code>struct</code>, <code>union</code>, and <code>enum</code></a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC11">3.3 <code>typedef</code></a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                     
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC12">3.4 Arrays</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                      
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC13">3.5 <code>static</code></a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC14">3.6 Traditional C</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC15">3.7 Comments</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC16">3.8 Warnings</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="Global-variables"></a>
+<a name="SEC7"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC6" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC8" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.1 Global variables </h2>
+
+
+<p>Cfunctions gets global variables from C files and writes them with an
+<code>extern</code> prefix.  For example,
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">int x;
+</pre></td></tr></table>
+<p>becomes
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">extern int x;
+</pre></td></tr></table>
+<p>It does not prefix functions with <code>extern</code>, because there is no
+point in doing so.
+</p>
+<a name="IDX61"></a>
+<a name="IDX62"></a>
+<a name="IDX63"></a>
+<a name="IDX64"></a>
+<hr size="6">
+<a name="Using-struct-etc_002e"></a>
+<a name="SEC8"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC7" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC9" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.2 Using <code>struct</code>, <code>union</code>, and <code>enum</code> </h2>
+
+
+<p>Cfunctions writes out <code>struct</code>, <code>union</code> and <code>enum</code>
+declarations by copying the declaration.  For example
+</p><table><tr><td>&nbsp;</td><td><pre class="example">struct bee gee;
+</pre></td></tr></table>
+<p>becomes
+</p><table><tr><td>&nbsp;</td><td><pre class="example">extern struct bee gee;
+</pre></td></tr></table>
+<p>in Cfunctions's output.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC9">3.2.1 <code>struct</code>, <code>union</code>, <code>enum</code> body</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC10">3.2.2 Untagged <code>struct</code>s</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="struct-body"></a>
+<a name="SEC9"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC8" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC10" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC8" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 3.2.1 <code>struct</code>, <code>union</code>, <code>enum</code> body </h3>
+
+
+<p>Cfunctions does not write the
+<a name="IDX65"></a>
+<a name="IDX66"></a>
+body (part between { and }) of <code>union</code>s, <code>struct</code>s and
+<code>enum</code>s.
+<a name="IDX67"></a>
+Even if the declaration of a variable contains a definition of a data
+structure, Cfunctions does not write the data structure's definition.
+For example,
+</p>
+<a name="IDX68"></a>
+<table><tr><td>&nbsp;</td><td><pre class="example">struct heeby { int x, y; unsigned z; } geeby;
+</pre></td></tr></table>
+
+<p>becomes
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">extern struct heeby geeby;
+</pre></td></tr></table>
+<p>which will not be understandable to compilers, because <code>struct
+heeby</code> was not declared: you will get an error message about the
+`incomplete type'.  To avoid this problem, declare structure instances
+such as <code>geeby</code> in the above with <code>static</code> so that Cfunctions
+ignores them.  When you want a global instance of a structure like
+<code>geeby</code>, ask Cfunctions to copy the body as well.
+See section <a href="#SEC27">Extra header information</a>.
+</p>
+<hr size="6">
+<a name="untagged-structs"></a>
+<a name="SEC10"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC9" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC11" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC8" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 3.2.2 Untagged <code>struct</code>s </h3>
+
+
+<p>Cfunctions ignores untagged structures such as 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">struct {int a} d; 
+</pre></td></tr></table>
+<p>except when copying verbatim.    See section <a href="#SEC27">Extra header information</a>.
+</p>
+<hr size="6">
+<a name="typedef"></a>
+<a name="SEC11"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC10" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC12" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.3 <code>typedef</code> </h2>
+
+
+<p>Cfunctions ignores <code>typedef</code> statements except when copying
+verbatim.  See section <a href="#SEC27">Extra header information</a>.
+</p>
+<hr size="6">
+<a name="Arrays"></a>
+<a name="SEC12"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC11" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC13" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.4 Arrays </h2>
+
+
+<p>Cfunctions outputs one dimensional array declarations with the array's
+size removed.  For example, 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int mung[N_MUNG];
+</pre></td></tr></table>
+<p>becomes
+</p><table><tr><td>&nbsp;</td><td><pre class="example">extern int mung[];
+</pre></td></tr></table>
+<a name="IDX69"></a>
+<a name="IDX70"></a>
+<p>However C does not allow multidimensional arrays with any but the first
+dimension removed.  Therefore for example Cfunctions writes
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int mung_sq[N_MUNG][N_MUNG];
+</pre></td></tr></table>
+<p>as 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">extern int mung_sq[][N_MUNG];
+</pre></td></tr></table>
+<p><code>N_MUNG</code> might be a macro defined only in the C file Cfunctions
+read the declaration from, and the C compiler would choke on this
+declaration.  Cfunctions does not check that an array's dimensions are
+valid, it merely copies them, so users must use array dimensions which
+remain valid in the header file.
+</p>
+<hr size="6">
+<a name="Ignoring-static"></a>
+<a name="SEC13"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC12" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC14" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.5 <code>static</code> </h2>
+
+
+<p>Cfunctions usually ignores <code>static</code> functions and variables
+.  To make forward declarations for <code>static</code> C functions, or to
+make a tag table which includes them, use the <code>--static</code>
+(<code>-s</code>) option.
+</p>
+<hr size="6">
+<a name="Traditional-C"></a>
+<a name="SEC14"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC13" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC15" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.6 Traditional C </h2>
+
+
+<p>Cfunctions can also make prototype declarations for traditional C files.
+<a name="IDX71"></a>
+(<em>Traditional C</em> is the language described in edition 1 of Kernighan
+and Ritchie's book `The C programming language'.)
+<a name="IDX72"></a>
+For traditional C files, Cfunctions writes a macro around the prototype
+function arguments.  You then have to define this macro to give either
+prototype arguments (for an ANSI C compiler) or nothing (for a
+traditional C compiler).  For example
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int func (x, y, v)
+    unsigned long y;
+    char * v;
+{
+  ...
+</pre></td></tr></table>
+<p>becomes
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int func PROTO((/* default */ int x, unsigned long y, char * v));
+</pre></td></tr></table>
+<p>Then for the traditional case <code>PROTO</code> is defined as
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#define PROTO(x) ()
+</pre></td></tr></table>
+<p>and for the <small>ANSI</small> C case <code>PROTO</code> is defined
+as 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#define PROTO(x) x
+</pre></td></tr></table>
+<p>which in the above example gives you either
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int func (); /* traditional */
+</pre></td></tr></table>
+<p>or 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">int func (/* default */ int x, unsigned long y, char * v); /* ANSI */
+</pre></td></tr></table>
+<p>By default the macro is called <code>PROTO</code>, but you can change the
+macro name to <var>xxx</var> with the <code>--proto-macro <var>xxx</var></code>
+(<code>-p<var>xxx</var></code>) option.  
+</p>
+<p>The macro <code>PROTO</code> is defined in <tt>`c-extensions.h'</tt> (see section <a href="#SEC25">Input file format</a>).  If you change the macro name, you also need to ensure
+that your new macro name is defined.
+</p>
+<p>If you always want to use a different prototype name such as <var>xxx</var>,
+add a line containing the name, such as
+</p><table><tr><td>&nbsp;</td><td><pre class="example">proto macro: <var>xxx</var>
+</pre></td></tr></table>
+<p>to a file called <tt>`.cfunctionsrc'</tt> in your top level or home directory.
+</p>
+<hr size="6">
+<a name="Comments"></a>
+<a name="SEC15"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC14" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC16" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.7 Comments </h2>
+
+
+<p>To copy the comments in the C file into the header file, use the
+<code>--write-comments</code> (<code>-m</code>) option.  This makes Cfunctions copy
+the most recently read comment verbatim into the output whenever it
+writes a declaration.
+</p>
+<p>Cfunctions understands C++ style <code>//</code> comments.
+GNU C allows C++ style comments
+<a name="IDX73"></a>
+<a name="IDX74"></a>
+<a name="IDX75"></a>
+and they are quite commonly used in C files, so Cfunctions is able to
+understand them.
+</p>
+<hr size="6">
+<a name="Warnings"></a>
+<a name="SEC16"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC15" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 3.8 Warnings </h2>
+
+
+<p>Cfunctions can warn about some kinds of problems in the input files.
+These warnings are optional.  To get the warnings, use the
+<code>--warning</code> (<code>-W</code>) option together with one of the following:
+</p><dl compact="compact">
+<dt> <code>implicit</code></dt>
+<dd><p>Warn about implicit <code>int</code> functions and function arguments.
+</p>
+</dd>
+<dt> <code>implicit-int</code></dt>
+<dd><p>The same as <code>implicit</code>
+</p>
+</dd>
+<dt> <code>reserved</code></dt>
+<dd><p>Warn about the use of any reserved words.
+</p>
+</dd>
+<dt> <code>strict-prototypes</code></dt>
+<dd><p>Warn about any functions which don't have prototypes.
+</p>
+</dd>
+</dl>
+<p>Some of the warning names are based on those of GNU C, but the things
+that Cfunctions warns about are not the same things as the warnings of
+GNU C.
+</p>
+<p>If you always want to be warned about any of the above practices, put
+a line such as 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">warn: implicit strict-prototypes
+</pre></td></tr></table>
+<p>to a file called <tt>`.cfunctionsrc'</tt> in your top level or home
+directory.
+</p>
+<hr size="6">
+<a name="Output-files"></a>
+<a name="SEC17"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC16" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC18" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC6" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 4. Output files </h1>
+
+
+<p>You can invoke Cfunctions with a list of C files as arguments.  Without
+arguments, Cfunctions reads from standard input and writes to standard
+output.  You can redirect this with the <code>--output <em>argument</em></code>
+(<code>-o<em>argument</em></code>) command line option, where <em>argument</em> is
+the name of the output file.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC18">4.1 Making one header for several C files</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  Cfunctions writes one header from all files
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC19">4.2 Making a separate header for each C file</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">          Cfunctions writes a header for each file
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC20">4.3 Backups</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                     Make sure old files are not deleted
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC21">4.4 Advertisements and banners</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">               The banner at the top of the output file
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC22">4.5 Wrappers</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                    
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC23">4.6 Making tag tables</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">           
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC24">4.7 Spacing</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                     
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="One-header"></a>
+<a name="SEC18"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC17" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC19" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.1 Making one header for several C files </h2>
+
+
+<p>To write information from several C files into one header file, use the
+command line option <code>--global <em>argument</em></code>
+(<code>-g<em>argument</em></code>).  The <em>argument</em> is the base name of the
+header file.  For example,
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions --global x a.c b.c c.c
+</pre></td></tr></table>
+
+<p>will generate a header file called <tt>`x.h'</tt> containing information
+from <tt>`a.c'</tt>, <tt>`b.c'</tt> and <tt>`c.c'</tt>.
+</p>
+<p>To include extra information in the global header which is not in any of
+the C files, create a file called <tt>`<em>name</em>.hin'</tt> where
+<em>name</em> is the argument to <code>--global</code>.  Cfunctions copies
+verbatim the contents of this file after the beginning wrapper
+(see section <a href="#SEC22">Wrappers</a>).
+<a name="IDX76"></a>
+<a name="IDX77"></a>
+<a name="IDX78"></a>
+</p>
+<hr size="6">
+<a name="Individual-headers"></a>
+<a name="SEC19"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC18" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC20" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.2 Making a separate header for each C file </h2>
+
+
+<p>The option <code>--individual</code> (<code>-i</code>) makes Cfunctions write a
+separate header file for each C file argument.  The name of the header
+file is the C file name with an <tt>`.h'</tt> suffix instead of <tt>`.c'</tt>.
+For example,
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -i jub.c hub.c
+</pre></td></tr></table>
+<p>creates <tt>`jub.h'</tt> and <tt>`hub.h'</tt>.
+</p>
+<p>To generate both `local' headers for each C file and a global header,
+use the <code>--individual</code> and <code>--global</code> options together in
+conjunction with <code>LOCAL</code> and <code>LOCAL_H</code> directives in your C
+files.  See section <a href="#SEC28">Making `local' headers</a>.
+</p>
+<hr size="6">
+<a name="Backups"></a>
+<a name="SEC20"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC19" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC21" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.3 Backups </h2>
+
+
+<p>Cfunctions does not change C files, but it may overwrite files with a
+<tt>`.h'</tt> suffix.  The option <code>--backup</code> makes Cfunctions rename
+old files rather than overwrite them.
+</p>
+<a name="IDX79"></a>
+<a name="IDX80"></a>
+<p>If one uses this option, Cfunctions usually renames old files with a
+<code>~</code> suffix.  You can change the suffix with the command line option
+<code>--suffix <em>argument</em></code> (<code>-S<em>argument</em></code>) where
+<em>argument</em> is the suffix to use, or by the environment variable
+<code>SIMPLE_BACKUP_SUFFIX</code>.  Numbered backups are also possible.  The
+command line option <code>--version-control <em>argument</em></code> (<code>-V
+<em>argument</em></code>) switches this on.  The possible values of
+<em>argument</em> are
+</p>
+<dl compact="compact">
+<dt> <code>t, numbered</code>     </dt>
+<dd><p>make numbered backups
+</p></dd>
+<dt> <code>nil, existing</code>   </dt>
+<dd><p>numbered if numbered backups exist, simple otherwise
+</p></dd>
+<dt> <code>never, simple</code>   </dt>
+<dd><p>always make simple backups
+</p></dd>
+</dl>
+
+<p>Putting the same strings into the environment variable
+<code>VERSION_CONTROL</code> has the same effect, and also causes the same
+behaviour in GNU programs such as Emacs, Indent, Patch, and the GNU
+fileutils.
+</p>
+<hr size="6">
+<a name="Advertisement"></a>
+<a name="SEC21"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC20" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC22" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.4 Advertisements and banners </h2>
+
+
+<p>Cfunctions usually advertises itself at the top of generated files.  To
+turn this advertisement off, use the option <code>--advert off</code>
+(<code>-aoff</code>).  To substitute another banner, use <code>--advert</code>
+<em>file-name</em> where <em>file-name</em> is the name of the file
+containing your information.  Cfunctions will copy it verbatim, so don't
+forget to put text inside C comments.
+</p>
+<p>If you always want to put the same text at the top of each generated
+header file, add a line containing the file you wish to have copied,
+such as
+</p><table><tr><td>&nbsp;</td><td><pre class="example">advert: /home/me/mydirectory/mycopyright
+</pre></td></tr></table>
+<p>to a file called <tt>`.cfunctionsrc'</tt> in your top level or home directory.
+</p>
+<hr size="6">
+<a name="Wrappers"></a>
+<a name="SEC22"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC21" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC23" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.5 Wrappers </h2>
+
+
+<p>Cfunctions usually writes a `wrapper' around header files so that they
+will not be read twice.
+<a name="IDX81"></a>
+For example, <code>cfunctions -i jub.c</code> will generate
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#ifndef CFH_JUB_H
+#define CFH_JUB_H
+...
+#endif /* CFH_JUB_H */
+</pre></td></tr></table>
+<p>Cfunctions does not write wrappers when writing to standard output.  To
+force wrappers, use the option <code>--wrap <em>argument</em></code> (<code>-w
+<em>argument</em></code>).  Cfunctions converts <em>argument</em> to upper case
+and removes bad characters, and then uses it as the macro, <code>CFH_JUB_H</code>
+in the above example.
+<a name="IDX82"></a>
+</p>
+<hr size="6">
+<a name="Making-tag-tables"></a>
+<a name="SEC23"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC22" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC24" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.6 Making tag tables </h2>
+
+
+<p>A tag table is an index of functions and external variables.  The reason
+that Cfunctions also makes this file is that a tag table for a C file
+consists of a list of global variables and function definitions,
+although in a different format to a header file.  The tag table also
+includes type definitions, data structures, C unions and enumeration
+constants.
+<a name="IDX83"></a>
+Cfunctions understands <code>#line</code> instructions and it will adjust the
+tag table output accordingly.
+</p>
+<hr size="6">
+<a name="Spacing"></a>
+<a name="SEC24"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC23" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 4.7 Spacing </h2>
+
+<p>Cfunctions does not preserve decorative spacing.  Cfunctions uses only a
+single space for all spacing within a particular prototype.  In fact,
+Cfunctions has no facilities for formatting its output to a particular
+taste.  To reformat the generated header files according to your tastes,
+use an indenting program such as GNU indent.  
+</p>
+<hr size="6">
+<a name="Input-file-format"></a>
+<a name="SEC25"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC24" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC26" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC17" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 5. Input file format </h1>
+
+
+
+<p>Cfunctions does not require any particular C file format.  However some
+extra facilities of Cfunctions require formatted input files.  The
+formats do not affect compilation.  The formats are designed so that
+Cfunctions never needs to alter C files.
+</p>
+<a name="IDX84"></a>
+<p>If you use Cfunctions's special features, Cfunctions automatically
+writes 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#include &quot;c-extensions.h&quot; 
+</pre></td></tr></table>
+<p>into your generated header file.  The file <tt>`c-extensions.h'</tt>
+contains definitions of macros which make the special features such as C
+extensions work both with compilers with the C extensions, and without
+them.  
+</p>
+<p>Cfunctions also usually copies the file itself into the current
+directory.  You can prevent this with the <code>--extension</code> (<code>-x</code>)
+option.
+</p>
+<p>If you prefer the following type of statement,
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#include &lt;c-extensions.h&gt;
+</pre></td></tr></table>
+<p>use the <code>--include-c-ex</code> (<code>-I</code>) command line option.  In this
+case Cfunctions will never copy the file into the current directory,
+since that would be useless: you should instruct the C compiler where to
+find the file (this may be with the <code>-I</code> option, hence the short
+option name in Cfunctions is mnemonic).
+</p>
+<a name="IDX85"></a>
+<a name="IDX86"></a>
+<p>Note that the file <tt>`c-extensions.h'</tt> is not under the GNU General
+Public Licence.  It does not have any restrictions on its use.  Whatever
+licencing terms your program is under, you can incorporate
+<tt>`c-extensions.h'</tt> into it.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC26">5.1 C extensions</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                Using C extensions with Cfunctions
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC27">5.2 Extra header information</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">    Putting more information in headers
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC28">5.3 Making `local' headers</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">        Making two headers from one file
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC29">5.4 Extra local information</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">  Putting more information in local headers
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC30">5.5 Inlining functions</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">            
+</td></tr>
+</table>
+
+
+<hr size="6">
+<a name="C-extensions"></a>
+<a name="SEC26"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC25" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC27" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.1 C extensions </h2>
+
+
+<p>Cfunctions understands several GNU C extensions.  See <a href="gcc.html#C-extensions">GNU C extensions: (gcc.info)C extensions</a>, to find out about the GNU C extensions.
+The following prefixes to functions get GNU C extensions in the
+generated header file:
+</p>
+<dl compact="compact">
+<dt> <code>NO_RETURN</code></dt>
+<dd><p>Cfunctions writes a GNU C 
+<code>__attribute__((noreturn))</code> suffix in the prototype.
+It is a macro defined to <code>void</code>.
+<a name="IDX87"></a>
+<a name="IDX88"></a>
+</p>
+</dd>
+<dt> <code>NO_SIDE_FX</code> </dt>
+<dd><p>Cfunctions writes a GNU C <code>__attribute__((const))</code> suffix to the
+prototype.  It is an empty macro.
+<a name="IDX89"></a>
+<a name="IDX90"></a>
+</p>
+</dd>
+<dt> <code>INLINE</code></dt>
+<dd><p>See section <a href="#SEC30">Inlining functions</a>.
+</p>
+</dd>
+<dt> <code>PRINT_FORMAT(a,b)</code></dt>
+<dd><p>Cfunctions writes a GNU C <code>__attribute__((format(printf,a,b)))</code>
+suffix in the prototype.  It is an empty macro.
+<a name="IDX91"></a>
+<a name="IDX92"></a>
+</p>
+</dd>
+</dl>
+
+<hr size="6">
+<a name="Extra-header-information"></a>
+<a name="SEC27"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC26" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC28" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.2 Extra header information </h2>
+
+
+<p>To include material directly into the header file, surround it with
+<code>#ifdef HEADER ... #endif</code>.  For example,
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">#ifdef HEADER
+typedef struct dictionary Dictionary;
+#endif
+</pre></td></tr></table>
+<a name="IDX93"></a>
+<a name="IDX94"></a>
+
+
+<p>Cfunctions just copies everything between the <code>#ifdef</code> and the
+<code>#endif</code> into the header file.  Because a macro <code>HEADER</code> is
+not usually defined, the C compiler ignores this material in the C file.
+(If by chance a macro <code>HEADER</code> <em>is</em> already defined, change
+the macro name Cfunctions recognizes with the <code>--global-macro
+<em>argument</em></code> (<code>-G<em>argument</em></code>) option, where
+<em>argument</em> is a macro name to use instead of <code>HEADER</code>.)
+</p>
+<hr size="6">
+<a name="Making-local-headers"></a>
+<a name="SEC28"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC27" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC29" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.3 Making `local' headers </h2>
+
+
+<p>When using the <code>--global</code> option, you may want to share some
+function declarations only with a few specific files. For example,
+suppose that a library <code>lib</code> is created from <code>jub.c</code> and
+<code>hub.c</code> but that only <code>hub.c</code> should use the function
+<code>private</code> from <code>jub.c</code>, not <code>lib</code> library users.  To hide
+the <code>private</code> function by not putting its prototype into the
+library header <code>lib.h</code>, make a local header for <code>jub.c</code> by
+</p><table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -g lib -i jub.c hub.c
+</pre></td></tr></table>
+<p>This creates <code>jub.h</code> and <code>hub.h</code> as well as <code>lib.h</code>.  To
+make the prototype of <code>private</code> appear in <code>jub.h</code> and not in
+<code>lib.h</code>, prefix <code>private</code> with <code>LOCAL</code>, and the prototype
+for <code>private</code> will appear in <tt>`jub.h'</tt>.  <code>LOCAL</code> is a C
+macro defined to nothing by the <tt>`c-extensions.h'</tt> header file
+(see section <a href="#SEC26">C extensions</a>).
+</p>
+<p>To make just one `local' header file to share between <tt>`jub.c'</tt> and
+<tt>`hub.c'</tt> use
+</p><table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -g lib -l private jub.c hub.c
+</pre></td></tr></table>
+<p>This will create files <tt>`lib.h'</tt> and <tt>`private.h'</tt>.  The
+declaration of <code>private</code> will go into <tt>`private.h'</tt> and not into
+<tt>`lib.h'</tt>.
+</p>
+<hr size="6">
+<a name="Extra-local-header-information"></a>
+<a name="SEC29"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC28" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC30" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.4 Extra local information </h2>
+
+
+<p>To include information verbatim into a local header file use
+<code>LOCAL_H</code> preprocessor wrapper in the same way as <code>#ifdef
+HEADER</code> (see section <a href="#SEC27">Extra header information</a>)
+<a name="IDX95"></a>
+<a name="IDX96"></a>
+If by chance a macro <code>LOCAL_H</code> is already defined, change the name
+<code>LOCAL_H</code> used for the wrapper with the option <code>--local-macro
+<em>argument</em></code>, where <em>argument</em> is the name of the new macro.
+</p>
+<p>The option <code>--local <em>argument</em></code> (<code>-l<em>argument</em></code>)
+sends all the `local' header output from each C file to one header file
+instead of several.  Contrast this with <code>--individual</code> (<code>-i</code>)
+which generates several header files, one for each input C file.  The
+argument is the base name of the local header file.
+</p>
+<hr size="6">
+<a name="Inline-functions"></a>
+<a name="SEC30"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC29" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 5.5 Inlining functions </h2>
+
+
+<p>In GNU C, a function can be declared <code>inline</code>.  
+However, GNU C cannot `inline' a function in a separate translation unit
+from the function body.  To work around this restriction, Cfunctions can
+copy the entire function to a header file so that it can be used over
+several translation units.  It uses the special GNU C prefix
+<a name="IDX97"></a>
+<code>extern inline</code> and a wrapper so as not to confuse other compilers.
+</p>
+<p>To get Cfunctions to do this, prefix the function with Cfunctions's
+keyword <code>INLINE</code> and run Cfunctions.  For example,
+</p><table><tr><td>&nbsp;</td><td><pre class="example">INLINE int square (int i) 
+{
+  return i*i;
+} 
+</pre></td></tr></table>
+<p>generates
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#ifdef X_INLINE
+extern inline int square (int i)
+{
+  return i*i;
+}
+#else /* not X_INLINE */
+int square (int i);
+#endif /* X_INLINE */
+</pre></td></tr></table>
+<p>in the output header file.  Cfunctions's special header file
+<tt>`c-extensions.h'</tt> defines the macro <code>X_INLINE</code> for GNU C, but
+not for other C compilers and it defines the macro <code>INLINE</code> to
+nothing, so as not to cause portability problems.
+</p>
+<hr size="6">
+<a name="Other-programs"></a>
+<a name="SEC31"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC30" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC32" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC25" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="chapter"> 6. Using Cfunctions with other programs </h1>
+
+
+<p>This chapter explains some subtleties of using Cfunctions with
+other programs.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC32">6.1 Using Cfunctions with <code>make</code></a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                        Using Cfunctions with `make'
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC33">6.2 Using Cfunctions with the C preprocessor</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top"></td></tr>
+<tr><td align="left" valign="top"><a href="#SEC37">6.3 C compiler</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                  
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC38">6.4 The <tt>`fake-cfunctions'</tt> script</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">             
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="make"></a>
+<a name="SEC32"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC31" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC33" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 6.1 Using Cfunctions with <code>make</code> </h2>
+
+
+<p>It is possible to use Cfunctions to generate header files with <code>make</code>.
+There are two ways to do this.  One way is to write explicit rules for
+generating header files in a `Makefile'.  For example,
+<a name="IDX98"></a>
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">jubs.h:         jubs.c
+        cfunctions --individual jubs.c
+</pre></td></tr></table>
+<p>Another way is to teach <code>make</code> a rule for making header files from C
+files.
+<a name="IDX99"></a>
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">.c.h:   
+        cfunctions --individual $&lt;
+</pre></td></tr></table>
+<a name="IDX100"></a>
+<p>The disadvantage of the rule method is that it might fool <code>make</code>
+into making a header file when not required, or even overwriting a
+non-Cfunctions header file.  You definitely should not use this unless
+all your header files are generated by Cfunctions, and if you do use it,
+I recommend you to use <code>--backup</code> as well.
+</p>
+<p>When using this kind of rule, a harmless but odd thing will occur.  If
+Cfunctions sees that it has generated a new header file identical to an
+old one, it keeps the old one and discards the new one.  When this
+happens, <code>make</code> runs Cfunctions again the next time.  This might
+seem like an error, but it is a feature.  If Cfunctions did update a
+header file even when it was identical to an old one, <code>make</code> would
+then recompile every dependency of that header file (in other words it
+would recompile all the C files which <code>#include</code>d the header file).
+This would be inconvenient: Cfunctions runs much faster than a C
+compiler, so it is less inconvenient to run Cfunctions uselessly than to
+force useless recompilation.
+</p>
+<hr size="6">
+<a name="CPP"></a>
+<a name="SEC33"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC32" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC34" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 6.2 Using Cfunctions with the C preprocessor </h2>
+
+
+<p>There are some coding practices with the C preprocessor which Cfunctions
+cannot cope with.  Either avoid these coding practices or send
+Cfunctions the output of the C preprocessor by using the <code>--cpp</code>
+(<code>-C</code>) option.  With this option, you can pass arguments to the
+preprocessor with the <code>--cpp-arg</code> (<code>-P</code>) argument.  For
+example
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -C -P -DGUBBINS
+</pre></td></tr></table>
+<p>will send the C preprocessor the argument <code>-DGUBBINS</code>.
+</p>
+
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top"><a href="#SEC34">6.2.1 Redefined C</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">                 
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC35">6.2.2 Mixed ANSI and traditional C declarations</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">  
+</td></tr>
+<tr><td align="left" valign="top"><a href="#SEC36">6.2.3 Declaring functions via the preprocessor</a></td><td>&nbsp;&nbsp;</td><td align="left" valign="top">  
+</td></tr>
+</table>
+
+<hr size="6">
+<a name="Redefined-C"></a>
+<a name="SEC34"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC33" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC35" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC33" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 6.2.1 Redefined C </h3>
+
+
+<p>Cfunctions cannot possibly process C code which uses macros like
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#define begin {
+</pre></td></tr></table><a name="IDX101"></a>
+
+<p>or anything else of the sort.
+</p>
+<hr size="6">
+<a name="Mixed-ANSI-and-traditional"></a>
+<a name="SEC35"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC34" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC36" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC33" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 6.2.2 Mixed ANSI and traditional C declarations </h3>
+
+
+<p>Some people write function declarations as follows:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#if ANSI
+int options (int argc, char ** argv)
+#else
+int options (argc, argv)
+    int argc;
+    char ** argv;
+#endif
+</pre></td></tr></table>
+<p>This is not necessary, unless your program needs to be compilable by C++
+as well as traditional C compilers.  ANSI C allows you to write function
+declarations in either way.  Cfunctions cannot currently understand the
+above syntax, so if you need backwards compatibility just use the
+old-style function declaration on its own.
+</p>
+<hr size="6">
+<a name="Declaring-functions-via-the-preprocessor"></a>
+<a name="SEC36"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC35" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC37" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC33" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h3 class="subsection"> 6.2.3 Declaring functions via the preprocessor </h3>
+
+
+<p>Some people declare functions via the preprocessor for the sake of
+convenience.  Unfortunately Cfunctions can't parse these functions
+unless you use the <code>-C</code> option.
+</p>
+<hr size="6">
+<a name="C-compiler"></a>
+<a name="SEC37"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC36" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC38" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 6.3 C compiler </h2>
+
+
+<p>If there is an error in a header file generated by Cfunctions, the
+compiler usually writes a message which refers to the line number and
+file name of the header file.  Because the error is actually in the
+original C file, this is inconvenient.
+</p>
+<p>To make compiler messages refer to lines in a C file and not in a
+Cfunctions generated header file, use the <code>--write-line-numbers</code>
+(<code>-n</code>) option.  Cfunctions will generate compiler directives of the
+form 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#line <var>number</var> &quot;<var>file</var>.c&quot;
+</pre></td></tr></table>
+<p>just before it writes each declaration.  Here <var>number</var> is the line
+number of the C file <tt>`<var>file</var>.c'</tt> that the function or variable
+came from.  The line numbers may be slightly off, because Cfunctions
+does not preserve the decorative spacing (see section <a href="#SEC24">Spacing</a>).  However,
+along, with the compiler message they should be enough to indicate where
+problems lie.
+</p>
+<p>Particularly this is useful with the GNU Emacs `compile-mode' to go to
+the lines in the original C file which contain the errors.
+</p>
+<p>Unfortunately this will force Cfunctions to update your header file
+every time that it is slightly changed, causing possible unnecessary
+recompilations of associated files.
+</p>
+<p>If you always want to write line numbers in generated header
+files, add the line 
+</p><table><tr><td>&nbsp;</td><td><pre class="example">line numbers: 1
+</pre></td></tr></table>
+<p>to a file <tt>`.cfunctionsrc'</tt> in your top level directory.
+</p>
+<hr size="6">
+<a name="fake_002dcfunctions"></a>
+<a name="SEC38"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC37" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next section in reading order"> &gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h2 class="section"> 6.4 The <tt>`fake-cfunctions'</tt> script </h2>
+
+
+<p><tt>`fake-cfunctions'</tt> is a fake version of Cfunctions which uses
+<tt>`touch'</tt> to update header files.  The reason for having this is so
+that one can distribute programs using Cfunctions with `make' rules for
+generating header files, without getting user complaints.  For example
+in Cfunctions's <tt>`configure.in'</tt> script for GNU Autoconf there is a
+test for Cfunctions as follows:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">CWD=`pwd`
+AC_CHECK_PROG(CFUNCTIONS, cfunctions, cfunctions,
+              &quot;$CWD/fake-cfunctions&quot;)
+</pre></td></tr></table>
+<p>then in each <tt>`Makefile.in'</tt> there is a variable <code>CFUNCTIONS</code>
+which the <tt>`configure'</tt> script fills in:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">CFUNCTIONS = @CFUNCTIONS@
+</pre></td></tr></table>
+<p>In the case that the user doesn't have Cfunctions installed,
+<tt>`configure'</tt> writes something like (assuming the current working
+directory is <tt>`/tmp/cfunctions-0.24'</tt>)
+</p><table><tr><td>&nbsp;</td><td><pre class="example">CFUNCTIONS = /tmp/cfunctions-0.24/fake-cfunctions
+</pre></td></tr></table>
+<p>whereas if the user does have Cfunctions, <tt>`configure'</tt> writes
+</p><table><tr><td>&nbsp;</td><td><pre class="example">CFUNCTIONS = cfunctions
+</pre></td></tr></table>
+<p><tt>`fake-cfunctions'</tt> just updates the file's modification time with
+<tt>`touch'</tt> in order to fool <tt>`make'</tt>, so it won't work if the user
+makes major modifications to the C files, but in that case the user
+should get Cfunctions.
+</p>
+<a name="IDX102"></a>
+<p>Please note that the <tt>`fake-cfunctions'</tt> script is not under the GNU
+GPL and you may use it whatever your licence terms are.
+</p>
+<hr size="6">
+<a name="index"></a>
+<a name="SEC39"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC38" title="Previous section in reading order"> &lt; </a>]</td>
+<td valign="middle" align="left">[ &gt; ]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#SEC31" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="#Top" title="Up section"> Up </a>]</td>
+<td valign="middle" align="left">[ &gt;&gt; ]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1 class="unnumbered"> Index </h1>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a href="#SEC39_0" class="summary-letter"><b>#</b></a>
+ &nbsp; 
+<a href="#SEC39_1" class="summary-letter"><b>-</b></a>
+ &nbsp; 
+<a href="#SEC39_2" class="summary-letter"><b>.</b></a>
+ &nbsp; 
+<a href="#SEC39_3" class="summary-letter"><b>/</b></a>
+ &nbsp; 
+<a href="#SEC39_4" class="summary-letter"><b>_</b></a>
+ &nbsp; 
+<br>
+<a href="#SEC39_5" class="summary-letter"><b>A</b></a>
+ &nbsp; 
+<a href="#SEC39_6" class="summary-letter"><b>B</b></a>
+ &nbsp; 
+<a href="#SEC39_7" class="summary-letter"><b>C</b></a>
+ &nbsp; 
+<a href="#SEC39_8" class="summary-letter"><b>D</b></a>
+ &nbsp; 
+<a href="#SEC39_9" class="summary-letter"><b>E</b></a>
+ &nbsp; 
+<a href="#SEC39_10" class="summary-letter"><b>F</b></a>
+ &nbsp; 
+<a href="#SEC39_11" class="summary-letter"><b>G</b></a>
+ &nbsp; 
+<a href="#SEC39_12" class="summary-letter"><b>H</b></a>
+ &nbsp; 
+<a href="#SEC39_13" class="summary-letter"><b>I</b></a>
+ &nbsp; 
+<a href="#SEC39_14" class="summary-letter"><b>K</b></a>
+ &nbsp; 
+<a href="#SEC39_15" class="summary-letter"><b>L</b></a>
+ &nbsp; 
+<a href="#SEC39_16" class="summary-letter"><b>M</b></a>
+ &nbsp; 
+<a href="#SEC39_17" class="summary-letter"><b>N</b></a>
+ &nbsp; 
+<a href="#SEC39_18" class="summary-letter"><b>O</b></a>
+ &nbsp; 
+<a href="#SEC39_19" class="summary-letter"><b>P</b></a>
+ &nbsp; 
+<a href="#SEC39_20" class="summary-letter"><b>R</b></a>
+ &nbsp; 
+<a href="#SEC39_21" class="summary-letter"><b>S</b></a>
+ &nbsp; 
+<a href="#SEC39_22" class="summary-letter"><b>T</b></a>
+ &nbsp; 
+<a href="#SEC39_23" class="summary-letter"><b>U</b></a>
+ &nbsp; 
+<a href="#SEC39_24" class="summary-letter"><b>V</b></a>
+ &nbsp; 
+<a href="#SEC39_25" class="summary-letter"><b>W</b></a>
+ &nbsp; 
+</td></tr></table>
+<table border="0" class="index-cp">
+<tr><td></td><th align="left">Index Entry</th><th align="left"> Section</th></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_0">#</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX93"><code>#ifdef HEADER</code></a></td><td valign="top"><a href="#SEC27">5.2 Extra header information</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX96"><code>#ifdef LOCAL_H</code></a></td><td valign="top"><a href="#SEC29">5.4 Extra local information</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX83"><code>#line</code> instructions</a></td><td valign="top"><a href="#SEC23">4.6 Making tag tables</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_1">-</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX8"><code>--advert</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX10"><code>--backup</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX12"><code>--copy-c-ex</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX14"><code>--cpp</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX42"><code>--cpp-arg</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX16"><code>--debug</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX18"><code>--etags</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX60"><code>--extensions</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX20"><code>--global</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX22"><code>--global-macro</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX24"><code>--help</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX26"><code>--include-c-ex</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX28"><code>--individual</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX30"><code>--keep</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX38"><code>--line-numbers</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX32"><code>--local</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX34"><code>--local-macro</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX40"><code>--output</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX44"><code>--proto-macro</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX46"><code>--static</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX48"><code>--suffix</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX50"><code>--tags</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX52"><code>--version</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX54"><code>--version-control</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX56"><code>--warn</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX58"><code>--wrap</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX36"><code>--write-comments</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX7"><code>-a</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX9"><code>-b</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX13"><code>-C</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX11"><code>-c</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX15"><code>-D</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX17"><code>-e</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX21"><code>-G</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX19"><code>-g</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX23"><code>-h</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX25"><code>-I</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX27"><code>-i</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX29"><code>-k</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX33"><code>-L</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX31"><code>-l</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX35"><code>-m</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX37"><code>-n</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX39"><code>-o</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX43"><code>-p</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX41"><code>-P</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX45"><code>-s</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX47"><code>-S</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX49"><code>-t</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX53"><code>-V</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX51"><code>-v</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX57"><code>-w</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX55"><code>-W</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX59"><code>-x</code></a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_2">.</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX77">.hin suffix</a></td><td valign="top"><a href="#SEC18">4.1 Making one header for several C files</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_3">/</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX75"><code>//</code></a></td><td valign="top"><a href="#SEC15">3.7 Comments</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_4">_</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX90"><code>__attribute__((const))</code></a></td><td valign="top"><a href="#SEC26">5.1 C extensions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX92"><code>__attribute__((format(printf,a,b)))</code></a></td><td valign="top"><a href="#SEC26">5.1 C extensions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX88"><code>__attribute__((noreturn))</code></a></td><td valign="top"><a href="#SEC26">5.1 C extensions</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_5">A</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC21">advert, changing</a></td><td valign="top"><a href="#SEC21">4.4 Advertisements and banners</a></td></tr>
+<tr><td></td><td valign="top"><a href="#Arrays">arrays</a></td><td valign="top"><a href="#SEC12">3.4 Arrays</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX70">arrays, multidimensional</a></td><td valign="top"><a href="#SEC12">3.4 Arrays</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_6">B</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC21">banner, adding your own</a></td><td valign="top"><a href="#SEC21">4.4 Advertisements and banners</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX101"><code>begin</code> macro</a></td><td valign="top"><a href="#SEC34">6.2.1 Redefined C</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX65">body, of <code>struct</code>, <code>union</code></a></td><td valign="top"><a href="#SEC9">3.2.1 <code>struct</code>, <code>union</code>, <code>enum</code> body</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_7">C</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#C-extensions">C extensions</a></td><td valign="top"><a href="#SEC26">5.1 C extensions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC33">C preprocessor</a></td><td valign="top"><a href="#SEC33">6.2 Using Cfunctions with the C preprocessor</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX74">C++ style comments</a></td><td valign="top"><a href="#SEC15">3.7 Comments</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC34">C, redefined</a></td><td valign="top"><a href="#SEC34">6.2.1 Redefined C</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX84"><tt>`c-extensions.h'</tt></a></td><td valign="top"><a href="#SEC25">5. Input file format</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX4"><tt>`c-extensions.h'</tt>, licence for</a></td><td valign="top"><a href="#SEC1">Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX86"><tt>`c-extensions.h'</tt>, licence for</a></td><td valign="top"><a href="#SEC25">5. Input file format</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC1">copying Cfunctions</a></td><td valign="top"><a href="#SEC1">Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC1">copyright</a></td><td valign="top"><a href="#SEC1">Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC33"><code>cpp</code></a></td><td valign="top"><a href="#SEC33">6.2 Using Cfunctions with the C preprocessor</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_8">D</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC24">decorative spacing, not preserved</a></td><td valign="top"><a href="#SEC24">4.7 Spacing</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_9">E</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX63"><code>enum</code></a></td><td valign="top"><a href="#SEC7">3.1 Global variables</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX97"><code>extern inline</code></a></td><td valign="top"><a href="#SEC30">5.5 Inlining functions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC7"><code>extern</code> prefix for global variables.</a></td><td valign="top"><a href="#SEC7">3.1 Global variables</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX6">external variables</a></td><td valign="top"><a href="#SEC2">1. Introduction</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC7">external variables</a></td><td valign="top"><a href="#SEC7">3.1 Global variables</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_10">F</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC38"><tt>`fake-cfunctions'</tt></a></td><td valign="top"><a href="#SEC38">6.4 The <tt>`fake-cfunctions'</tt> script</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC24">format of output</a></td><td valign="top"><a href="#SEC24">4.7 Spacing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC25">format, for input</a></td><td valign="top"><a href="#SEC25">5. Input file format</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_11">G</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX76">global header, extra information into</a></td><td valign="top"><a href="#SEC18">4.1 Making one header for several C files</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC7">global variables</a></td><td valign="top"><a href="#SEC7">3.1 Global variables</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX73">GNU C, C++ style comments allowed</a></td><td valign="top"><a href="#SEC15">3.7 Comments</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX1">GNU General Public Licence</a></td><td valign="top"><a href="#SEC1">Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX2">GNU GPL</a></td><td valign="top"><a href="#SEC1">Copying</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX85">GNU GPL, and <tt>`c-extensions.h'</tt></a></td><td valign="top"><a href="#SEC25">5. Input file format</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX102">GNU GPL, and <tt>`fake-cfunctions'</tt></a></td><td valign="top"><a href="#SEC38">6.4 The <tt>`fake-cfunctions'</tt> script</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC24">GNU Indent</a></td><td valign="top"><a href="#SEC24">4.7 Spacing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX3">GPL</a></td><td valign="top"><a href="#SEC1">Copying</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_12">H</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX94"><code>HEADER</code></a></td><td valign="top"><a href="#SEC27">5.2 Extra header information</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX68">heebygeeby</a></td><td valign="top"><a href="#SEC9">3.2.1 <code>struct</code>, <code>union</code>, <code>enum</code> body</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX78">hin suffix</a></td><td valign="top"><a href="#SEC18">4.1 Making one header for several C files</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_13">I</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC30"><code>INLINE</code></a></td><td valign="top"><a href="#SEC30">5.5 Inlining functions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC30"><code>inline</code> in GNU C</a></td><td valign="top"><a href="#SEC30">5.5 Inlining functions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC25">input format</a></td><td valign="top"><a href="#SEC25">5. Input file format</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC2">introduction</a></td><td valign="top"><a href="#SEC2">1. Introduction</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC5">invocation</a></td><td valign="top"><a href="#SEC5">2. Invoking Cfunctions</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_14">K</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC14">Kernighan and Ritchie's book, edition 1</a></td><td valign="top"><a href="#SEC14">3.6 Traditional C</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_15">L</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC28"><code>LOCAL</code> prefix</a></td><td valign="top"><a href="#SEC28">5.3 Making `local' headers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX95"><code>LOCAL_H</code> macro</a></td><td valign="top"><a href="#SEC29">5.4 Extra local information</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_16">M</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX98">make, explicit rules</a></td><td valign="top"><a href="#SEC32">6.1 Using Cfunctions with <code>make</code></a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX100">make, fooling</a></td><td valign="top"><a href="#SEC32">6.1 Using Cfunctions with <code>make</code></a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX99">make, teaching patterns</a></td><td valign="top"><a href="#SEC32">6.1 Using Cfunctions with <code>make</code></a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX69">multidimensional arrays</a></td><td valign="top"><a href="#SEC12">3.4 Arrays</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_17">N</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX87"><code>NO_RETURN</code></a></td><td valign="top"><a href="#SEC26">5.1 C extensions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX89"><code>NO_SIDE_FX</code></a></td><td valign="top"><a href="#SEC26">5.1 C extensions</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_18">O</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC18">one header</a></td><td valign="top"><a href="#SEC18">4.1 Making one header for several C files</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_19">P</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX91"><code>PRINT_FORMAT</code></a></td><td valign="top"><a href="#SEC26">5.1 C extensions</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX5">pronunciation</a></td><td valign="top"><a href="#SEC2">1. Introduction</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX72"><code>PROTO</code></a></td><td valign="top"><a href="#SEC14">3.6 Traditional C</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_20">R</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC34">redefined C</a></td><td valign="top"><a href="#SEC34">6.2.1 Redefined C</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_21">S</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX79"><code>SIMPLE_BACKUP_SUFFIX</code> environment variable</a></td><td valign="top"><a href="#SEC20">4.3 Backups</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC13"><code>static</code>, ignored</a></td><td valign="top"><a href="#SEC13">3.5 <code>static</code></a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX61"><code>struct</code></a></td><td valign="top"><a href="#SEC7">3.1 Global variables</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX66"><code>struct</code> body</a></td><td valign="top"><a href="#SEC9">3.2.1 <code>struct</code>, <code>union</code>, <code>enum</code> body</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX67"><code>struct</code>, parts copied into header</a></td><td valign="top"><a href="#SEC9">3.2.1 <code>struct</code>, <code>union</code>, <code>enum</code> body</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC10"><code>struct</code>, untagged</a></td><td valign="top"><a href="#SEC10">3.2.2 Untagged <code>struct</code>s</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_22">T</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX71">traditional C</a></td><td valign="top"><a href="#SEC14">3.6 Traditional C</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX64"><code>typedef</code></a></td><td valign="top"><a href="#SEC7">3.1 Global variables</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_23">U</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX62"><code>union</code></a></td><td valign="top"><a href="#SEC7">3.1 Global variables</a></td></tr>
+<tr><td></td><td valign="top"><a href="#SEC10">untagged <code>struct</code></a></td><td valign="top"><a href="#SEC10">3.2.2 Untagged <code>struct</code>s</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_24">V</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX80"><code>VERSION_CONTROL</code> environment variable</a></td><td valign="top"><a href="#SEC20">4.3 Backups</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+<tr><th><a name="SEC39_25">W</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX81">wrapper</a></td><td valign="top"><a href="#SEC22">4.5 Wrappers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#IDX82">wrapper, for stdout output</a></td><td valign="top"><a href="#SEC22">4.5 Wrappers</a></td></tr>
+<tr><td colspan="3"> <hr></td></tr>
+</table>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a href="#SEC39_0" class="summary-letter"><b>#</b></a>
+ &nbsp; 
+<a href="#SEC39_1" class="summary-letter"><b>-</b></a>
+ &nbsp; 
+<a href="#SEC39_2" class="summary-letter"><b>.</b></a>
+ &nbsp; 
+<a href="#SEC39_3" class="summary-letter"><b>/</b></a>
+ &nbsp; 
+<a href="#SEC39_4" class="summary-letter"><b>_</b></a>
+ &nbsp; 
+<br>
+<a href="#SEC39_5" class="summary-letter"><b>A</b></a>
+ &nbsp; 
+<a href="#SEC39_6" class="summary-letter"><b>B</b></a>
+ &nbsp; 
+<a href="#SEC39_7" class="summary-letter"><b>C</b></a>
+ &nbsp; 
+<a href="#SEC39_8" class="summary-letter"><b>D</b></a>
+ &nbsp; 
+<a href="#SEC39_9" class="summary-letter"><b>E</b></a>
+ &nbsp; 
+<a href="#SEC39_10" class="summary-letter"><b>F</b></a>
+ &nbsp; 
+<a href="#SEC39_11" class="summary-letter"><b>G</b></a>
+ &nbsp; 
+<a href="#SEC39_12" class="summary-letter"><b>H</b></a>
+ &nbsp; 
+<a href="#SEC39_13" class="summary-letter"><b>I</b></a>
+ &nbsp; 
+<a href="#SEC39_14" class="summary-letter"><b>K</b></a>
+ &nbsp; 
+<a href="#SEC39_15" class="summary-letter"><b>L</b></a>
+ &nbsp; 
+<a href="#SEC39_16" class="summary-letter"><b>M</b></a>
+ &nbsp; 
+<a href="#SEC39_17" class="summary-letter"><b>N</b></a>
+ &nbsp; 
+<a href="#SEC39_18" class="summary-letter"><b>O</b></a>
+ &nbsp; 
+<a href="#SEC39_19" class="summary-letter"><b>P</b></a>
+ &nbsp; 
+<a href="#SEC39_20" class="summary-letter"><b>R</b></a>
+ &nbsp; 
+<a href="#SEC39_21" class="summary-letter"><b>S</b></a>
+ &nbsp; 
+<a href="#SEC39_22" class="summary-letter"><b>T</b></a>
+ &nbsp; 
+<a href="#SEC39_23" class="summary-letter"><b>U</b></a>
+ &nbsp; 
+<a href="#SEC39_24" class="summary-letter"><b>V</b></a>
+ &nbsp; 
+<a href="#SEC39_25" class="summary-letter"><b>W</b></a>
+ &nbsp; 
+</td></tr></table>
+<hr size="6">
+<a name="SEC_Contents"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1>Table of Contents</h1>
+<div class="contents">
+
+<ul class="toc">
+  <li><a name="TOC1" href="#SEC1">Copying</a></li>
+  <li><a name="TOC2" href="#SEC2">1. Introduction</a>
+  <ul class="toc">
+    <li><a name="TOC3" href="#SEC3">1.1 Simple examples</a></li>
+    <li><a name="TOC4" href="#SEC4">1.2 Detailed examples</a></li>
+  </ul></li>
+  <li><a name="TOC5" href="#SEC5">2. Invoking Cfunctions</a></li>
+  <li><a name="TOC6" href="#SEC6">3. Variable and function declarations</a>
+  <ul class="toc">
+    <li><a name="TOC7" href="#SEC7">3.1 Global variables</a></li>
+    <li><a name="TOC8" href="#SEC8">3.2 Using <code>struct</code>, <code>union</code>, and <code>enum</code></a>
+    <ul class="toc">
+      <li><a name="TOC9" href="#SEC9">3.2.1 <code>struct</code>, <code>union</code>, <code>enum</code> body</a></li>
+      <li><a name="TOC10" href="#SEC10">3.2.2 Untagged <code>struct</code>s</a></li>
+    </ul></li>
+    <li><a name="TOC11" href="#SEC11">3.3 <code>typedef</code></a></li>
+    <li><a name="TOC12" href="#SEC12">3.4 Arrays</a></li>
+    <li><a name="TOC13" href="#SEC13">3.5 <code>static</code></a></li>
+    <li><a name="TOC14" href="#SEC14">3.6 Traditional C</a></li>
+    <li><a name="TOC15" href="#SEC15">3.7 Comments</a></li>
+    <li><a name="TOC16" href="#SEC16">3.8 Warnings</a></li>
+  </ul></li>
+  <li><a name="TOC17" href="#SEC17">4. Output files</a>
+  <ul class="toc">
+    <li><a name="TOC18" href="#SEC18">4.1 Making one header for several C files</a></li>
+    <li><a name="TOC19" href="#SEC19">4.2 Making a separate header for each C file</a></li>
+    <li><a name="TOC20" href="#SEC20">4.3 Backups</a></li>
+    <li><a name="TOC21" href="#SEC21">4.4 Advertisements and banners</a></li>
+    <li><a name="TOC22" href="#SEC22">4.5 Wrappers</a></li>
+    <li><a name="TOC23" href="#SEC23">4.6 Making tag tables</a></li>
+    <li><a name="TOC24" href="#SEC24">4.7 Spacing</a></li>
+  </ul></li>
+  <li><a name="TOC25" href="#SEC25">5. Input file format</a>
+  <ul class="toc">
+    <li><a name="TOC26" href="#SEC26">5.1 C extensions</a></li>
+    <li><a name="TOC27" href="#SEC27">5.2 Extra header information</a></li>
+    <li><a name="TOC28" href="#SEC28">5.3 Making `local' headers</a></li>
+    <li><a name="TOC29" href="#SEC29">5.4 Extra local information</a></li>
+    <li><a name="TOC30" href="#SEC30">5.5 Inlining functions</a></li>
+  </ul></li>
+  <li><a name="TOC31" href="#SEC31">6. Using Cfunctions with other programs</a>
+  <ul class="toc">
+    <li><a name="TOC32" href="#SEC32">6.1 Using Cfunctions with <code>make</code></a></li>
+    <li><a name="TOC33" href="#SEC33">6.2 Using Cfunctions with the C preprocessor</a>
+    <ul class="toc">
+      <li><a name="TOC34" href="#SEC34">6.2.1 Redefined C</a></li>
+      <li><a name="TOC35" href="#SEC35">6.2.2 Mixed ANSI and traditional C declarations</a></li>
+      <li><a name="TOC36" href="#SEC36">6.2.3 Declaring functions via the preprocessor</a></li>
+    </ul></li>
+    <li><a name="TOC37" href="#SEC37">6.3 C compiler</a></li>
+    <li><a name="TOC38" href="#SEC38">6.4 The <tt>`fake-cfunctions'</tt> script</a></li>
+  </ul></li>
+  <li><a name="TOC39" href="#SEC39">Index</a></li>
+</ul>
+</div>
+<hr size="1">
+<a name="SEC_About"></a>
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC39" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<h1>About This Document</h1>
+<p>
+  This document was generated by <em>Ben Bullock</em> on <em>May, 13 2009</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.76</em></a>.
+</p>
+<p>
+  The buttons in the navigation panels have the following meaning:
+</p>
+<table border="1">
+  <tr>
+    <th> Button </th>
+    <th> Name </th>
+    <th> Go to </th>
+    <th> From 1.2.3 go to</th>
+  </tr>
+  <tr>
+    <td align="center"> [ &lt; ] </td>
+    <td align="center">Back</td>
+    <td>previous section in reading order</td>
+    <td>1.2.2</td>
+  </tr>
+  <tr>
+    <td align="center"> [ &gt; ] </td>
+    <td align="center">Forward</td>
+    <td>next section in reading order</td>
+    <td>1.2.4</td>
+  </tr>
+  <tr>
+    <td align="center"> [ &lt;&lt; ] </td>
+    <td align="center">FastBack</td>
+    <td>beginning of this chapter or previous chapter</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td align="center"> [ Up ] </td>
+    <td align="center">Up</td>
+    <td>up section</td>
+    <td>1.2</td>
+  </tr>
+  <tr>
+    <td align="center"> [ &gt;&gt; ] </td>
+    <td align="center">FastForward</td>
+    <td>next chapter</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td align="center"> [Top] </td>
+    <td align="center">Top</td>
+    <td>cover (top) of document</td>
+    <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td align="center"> [Contents] </td>
+    <td align="center">Contents</td>
+    <td>table of contents</td>
+    <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td align="center"> [Index] </td>
+    <td align="center">Index</td>
+    <td>index</td>
+    <td> &nbsp; </td>
+  </tr>
+  <tr>
+    <td align="center"> [ ? ] </td>
+    <td align="center">About</td>
+    <td>about (help)</td>
+    <td> &nbsp; </td>
+  </tr>
+</table>
+
+<p>
+  where the <strong> Example </strong> assumes that the current position is at <strong> Subsubsection One-Two-Three </strong> of a document of the following structure:
+</p>
+
+<ul>
+  <li> 1. Section One
+    <ul>
+      <li>1.1 Subsection One-One
+        <ul>
+          <li>...</li>
+        </ul>
+      </li>
+      <li>1.2 Subsection One-Two
+        <ul>
+          <li>1.2.1 Subsubsection One-Two-One</li>
+          <li>1.2.2 Subsubsection One-Two-Two</li>
+          <li>1.2.3 Subsubsection One-Two-Three &nbsp; &nbsp;
+            <strong>&lt;== Current Position </strong></li>
+          <li>1.2.4 Subsubsection One-Two-Four</li>
+        </ul>
+      </li>
+      <li>1.3 Subsection One-Three
+        <ul>
+          <li>...</li>
+        </ul>
+      </li>
+      <li>1.4 Subsection One-Four</li>
+    </ul>
+  </li>
+</ul>
+
+<hr size="1">
+<p>
+ <font size="-1">
+  This document was generated by <em>Ben Bullock</em> on <em>May, 13 2009</em> using <a href="http://texi2html.cvshome.org/"><em>texi2html 1.76</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

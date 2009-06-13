@@ -1,0 +1,205 @@
+@c This texinfo file is generated from `options.c'.
+@noindent
+Cfunctions can be configured with a file @file{.cfunctionsrc} in
+your home directory.
+The possible command-line and configuration options for Cfunctions are
+
+@table @code
+@cindex @code{-a}
+@cindex @code{--advert}
+@item -a  @var{argument}
+@itemx --advert  @var{argument}
+If @var{argument} is `off', don't print an advert.  If @var{argument} is a file name, print the file instead.
+@xref{Advertisement}.
+You can also control this with a line `advert' in @file{.cfunctionsrc}
+
+@cindex @code{-b}
+@cindex @code{--backup}
+@item -b 
+@itemx --backup 
+Back up `.h' files.
+@xref{Backups}.
+You can also control this with a line `backup' in @file{.cfunctionsrc}
+
+@cindex @code{-c}
+@cindex @code{--copy-c-ex}
+@item -c 
+@itemx --copy-c-ex 
+Copy the `c-extensions.h' into the header file.
+@xref{C extensions}.
+You can also control this with a line `copy c ex' in @file{.cfunctionsrc}
+
+@cindex @code{-C}
+@cindex @code{--cpp}
+@item -C 
+@itemx --cpp 
+Pass input through the C preprocessor.
+@xref{CPP}.
+
+@cindex @code{-D}
+@cindex @code{--debug}
+@item -D  @var{argument}
+@itemx --debug  @var{argument}
+Set debugging option @var{argument}.
+
+@cindex @code{-e}
+@cindex @code{--etags}
+@item -e 
+@itemx --etags 
+Create an Emacs tag table.
+
+@cindex @code{-g}
+@cindex @code{--global}
+@item -g  @var{argument}
+@itemx --global  @var{argument}
+Write one global header for all C files.
+@xref{One header}.
+
+@cindex @code{-G}
+@cindex @code{--global-macro}
+@item -G  @var{argument}
+@itemx --global-macro  @var{argument}
+Give global header macro the name @var{argument}.
+@xref{Extra header information}.
+You can also control this with a line `global macro' in @file{.cfunctionsrc}
+
+@cindex @code{-h}
+@cindex @code{--help}
+@item -h 
+@itemx --help 
+Print a help message and exit.
+
+@cindex @code{-I}
+@cindex @code{--include-c-ex}
+@item -I 
+@itemx --include-c-ex 
+Write #include <c-extensions.h>.
+@xref{C extensions}.
+You can also control this with a line `include c ex' in @file{.cfunctionsrc}
+
+@cindex @code{-i}
+@cindex @code{--individual}
+@item -i 
+@itemx --individual 
+Write an individual header for each C file.
+@xref{Individual headers}.
+
+@cindex @code{-k}
+@cindex @code{--keep}
+@item -k 
+@itemx --keep 
+Don't delete generated .h files which are empty.
+
+@cindex @code{-l}
+@cindex @code{--local}
+@item -l  @var{argument}
+@itemx --local  @var{argument}
+Write one local header file for all C files.
+@xref{Extra local header information}.
+
+@cindex @code{-L}
+@cindex @code{--local-macro}
+@item -L  @var{argument}
+@itemx --local-macro  @var{argument}
+Give local header macro the name @var{argument}.
+@xref{Extra local header information}.
+You can also control this with a line `local macro' in @file{.cfunctionsrc}
+
+@cindex @code{-m}
+@cindex @code{--write-comments}
+@item -m 
+@itemx --write-comments 
+Write comments to header file.
+@xref{Comments}.
+You can also control this with a line `write comments' in @file{.cfunctionsrc}
+
+@cindex @code{-n}
+@cindex @code{--line-numbers}
+@item -n 
+@itemx --line-numbers 
+Write #line information in the .h files.
+@xref{C compiler}.
+You can also control this with a line `line numbers' in @file{.cfunctionsrc}
+
+@cindex @code{-o}
+@cindex @code{--output}
+@item -o  @var{argument}
+@itemx --output  @var{argument}
+Redirect standard output to @var{argument}.
+@xref{Output files}.
+
+@cindex @code{-P}
+@cindex @code{--cpp-arg}
+@item -P  @var{argument}
+@itemx --cpp-arg  @var{argument}
+Pass @var{argument} to the C preprocessor.
+@xref{CPP}.
+
+@cindex @code{-p}
+@cindex @code{--proto-macro}
+@item -p  @var{argument}
+@itemx --proto-macro  @var{argument}
+Give prototype macro the name @var{argument}.
+@xref{Traditional C}.
+You can also control this with a line `proto macro' in @file{.cfunctionsrc}
+
+@cindex @code{-s}
+@cindex @code{--static}
+@item -s 
+@itemx --static 
+Don't ignore things declared `static'.
+@xref{Ignoring static}.
+
+@cindex @code{-S}
+@cindex @code{--suffix}
+@item -S  @var{argument}
+@itemx --suffix  @var{argument}
+Use suffix `@var{argument}' for simple backups.
+@xref{Backups}.
+You can also control this with a line `backup suffix' in @file{.cfunctionsrc}
+
+@cindex @code{-t}
+@cindex @code{--tags}
+@item -t 
+@itemx --tags 
+Create a tag table.
+@xref{Making tag tables}.
+
+@cindex @code{-v}
+@cindex @code{--version}
+@item -v 
+@itemx --version 
+Write version information and exit.
+
+@cindex @code{-V}
+@cindex @code{--version-control}
+@item -V  @var{argument}
+@itemx --version-control  @var{argument}
+Use version control style @var{argument}.
+@xref{Backups}.
+You can also control this with a line `version control' in @file{.cfunctionsrc}
+
+@cindex @code{-W}
+@cindex @code{--warn}
+@item -W  @var{argument}
+@itemx --warn  @var{argument}
+Warn about malpractices.
+@xref{Warnings}.
+You can also control this with a line `warn' in @file{.cfunctionsrc}
+
+@cindex @code{-w}
+@cindex @code{--wrap}
+@item -w  @var{argument}
+@itemx --wrap  @var{argument}
+Write a wrapper when writing to stdout.
+@xref{Wrappers}.
+
+@cindex @code{-x}
+@cindex @code{--extensions}
+@item -x 
+@itemx --extensions 
+Don't copy the `c-extensions.h' file.
+@xref{Input file format}.
+
+@end table
+

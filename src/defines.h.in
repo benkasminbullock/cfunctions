@@ -1,0 +1,5 @@
+#define HAVE_SYS_WAIT_H 0
+#define HAVE_UNISTD_H 0
+#define HAVE_GETOPT_LONG 0
+#define HAVE_STRDUP 0
+#define HAVE_STRERROR 0

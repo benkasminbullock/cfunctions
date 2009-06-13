@@ -1,0 +1,643 @@
+/* Cfunctions: extract C function prototypes and global variables. */
+
+/* 
+   Copyright (C) 1998, 2004  Ben K. Bullock
+
+   Cfunctions is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   Cfunctions is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Cfunctions; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+*/
+
+/* 
+   This (cfunctions.fl) is a Flex input file.  The file `cfunctions.c'
+   included in the Cfunctions distribution is generated from the Flex
+   input file.  You do not need to regenerate `cfunctions.c' unless
+   you alter this file (cfunctions.fl).
+*/
+
+%{
+
+#include "error_msg.h"
+#include "tags.h"
+#include "argument.h"
+#include "wt.h"
+#include "traditional.h"
+
+/* Sometimes people doing debugging need to know what rule the flex
+   scanner matched without turning on the verbose Flex debugging.
+   That is what the following macro RULE_LINE is for. */
+
+#ifdef CFUNCTIONS_DEBUG
+#define RULE_LINE rule_line = __LINE__
+#else
+#define RULE_LINE
+#endif
+
+const char * state_message (void);
+
+%}
+
+/* See the Flex manual */
+
+%option noyywrap 
+
+/* Cfunctions needs to know the line number of the file it is
+   reading. */
+
+%option yylineno
+
+/* The following options save us from getting some warning messages
+   from compiling with `gcc -Wall'.  However it still warns about the
+   unused `find_rule' label. */
+
+%option nounput noyy_top_state
+
+/* Cfunctions uses a stack for various things - see the instances of
+   `yy_push_state' and `yy_pop_state' below. */
+
+%option stack
+
+/* Set debugging by default. */
+
+%option debug
+
+/* state "in a C comment" */
+
+%x comment   
+
+/* state "in a C function".  Because the only thing the function state
+   does is counts { and } and then exits when there have been enough
+   }'s, this state can also be used for such things as "inside a
+   struct definition" and "inside an initialiser". */
+
+%x function  
+
+/* State "in a C function's argument list". */
+
+%x arguments 
+
+/* State "parsing a pointer to a function". */
+
+%x func_ptr
+
+/* State "parsing arguments to a pointer to a function". */
+
+%x func_ptr_arg
+
+/* state "parsing a print format instruction" */
+
+%x print_format
+
+/* State "in a C string".  Although Cfunctions is not interested in
+   strings, this state is necessary in order to jump over any curly
+   braces in strings that might confuse the curly braces depth
+   counter, and to prevent clashes with comment-like objects in
+   strings. */
+
+%x c_string
+
+/* State "in a C preprocessor statement".  This includes multiline
+   statements which are matched with an appropriate regular
+   expression. */
+
+%x in_cpp
+
+/* State "in a struct definition".  For example `a' in 
+   `struct a { int x, int y };'. */
+
+%x in_struct
+
+/* State "in an initialiser".  For example `10' in `int x = 10;'. */
+
+%x initialiser
+
+/* State "in an enum definition".  For example `b' in 
+   `enum b { y, z };'. */
+
+%x in_enum
+
+/* State "is an enum",  For example `c' in `enum x { c };'. */
+
+%x is_enum
+
+/* State in "traditional C variable declarations".  For example 
+   `int x' in `char * func (x) int x {'. */
+
+%x traditional
+
+/* Tentatively in state `traditional'. */
+
+%x maybe_traditional
+
+/* Macros for C preprocessor. */
+
+/* The `\\\n' is to deal with multiline cpp statements.
+   *EK* included CR and FF as whitespace. */
+
+cpp_space     ([ \t\f\r]|\\\n)+
+cpp_opt_space ([ \t\f\r]|\\\n)*
+
+cpp_any       (.|\\\n)
+cpp           ^{cpp_opt_space}#{cpp_opt_space}
+
+/* C macros */
+
+/* The macro c_space has been set to match only a single `\n' in order
+   to prevent collisions with {cpp}.  I don't know if there is
+   anywhere in the rules that expects {c_space} to match more than one
+   `\n' - this might be a problem. *EK* included CR and FF as whitespace. */
+
+c_space       ([ \t\f\r]+|\n)
+c_opt_space   [ \t\f\r\n]*
+c_word        [A-Za-z_][A-Za-z_0-9]*
+c_array       \[[^\][]*\]
+c_var         (\*{c_opt_space})*{c_word}({c_opt_space}{c_array})*
+c_var_no_pointer         {c_word}({c_opt_space}{c_array})*
+c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
+
+%%
+
+  /* C preprocessor conditional statements. */
+
+<*>{cpp}if{cpp_any}*$              cpp_add (yytext, CPP_IF);
+
+<*>{cpp}else{cpp_any}*$            cpp_add (yytext, CPP_ELSE);
+
+<*>{cpp}elif{cpp_any}*$            cpp_add (yytext, CPP_ELIF);
+
+<*>{cpp}endif{cpp_any}*$           cpp_add (yytext, CPP_ENDIF);
+
+  /* Other C preprocessor statements. */
+
+<*>{cpp}define{cpp_space}{c_word} { RULE_LINE; do_define (yytext); }
+
+<*>{cpp}(line)?{cpp_opt_space}[0-9]+{cpp_opt_space}\"([^\"]|\\\")+\" {
+                  line_change (yytext);
+                  }
+
+{cpp}             do_start_cpp (yytext);
+
+<in_cpp>{cpp_any} inline_print (yytext);
+
+<in_cpp>\n        { inline_print (yytext); yy_pop_state (); }
+
+  /* Comments. */
+
+<*>"/*"           {
+                  /* One important exception: "/ *" in strings is a
+                     part of a string, not a comment.  This only
+                     occurs for the case that the string is exactly
+                     "/ *". */
+
+                  if (YY_START != c_string)
+                    {
+                      do_comment_start ();
+                      yy_push_state (comment);
+                    }
+                  else /* Don't need a warning. */
+                    inline_print (yytext);
+                  }
+
+<comment>\*+\/    { do_comment_end (); yy_pop_state(); }
+
+<comment>(([^\*]|\n)*|\*+([^/\*]|\n))  do_comment_print (yytext, yyleng);
+
+<INITIAL,function>"//".*  { 
+                    
+                      /* This could foul up on some cases.  For example,
+                       "a // * comment * /b" (a space was added between
+                       * and / here for obvious reasons).  */;
+                  }
+
+  /* Type definitions. */
+
+typedef           { RULE_LINE; do_typedef (yytext, yyleng); }
+
+  /* Enumerations. */
+
+enum              { RULE_LINE;
+                  yy_push_state (in_enum);
+                  function_save (yytext, yyleng);
+                  }
+
+<in_enum>{c_word} { RULE_LINE; do_word (yytext, yyleng); }
+
+<in_enum>\{       {
+                  external_clear ();
+                  BEGIN (is_enum);
+                  }
+
+<in_enum>{c_space} ;
+
+<is_enum>{c_word}[^\},;]* { RULE_LINE;
+                  inline_print (yytext);
+                  tag_make ((unsigned char *)yytext, TAG_ENUM_VAL, yylineno);
+                  }
+
+<is_enum>(,|{c_space}) inline_print (yytext);
+
+<is_enum>\}       {
+                  inline_print (yytext);
+                  yy_pop_state ();
+                  }
+
+<is_enum>;        line_error("`;' in enum list");
+                  
+  /* Structures and unions. */
+
+(struct|union)    { RULE_LINE; /* Fortunately a `struct' is just the same 
+                                  syntactically as a `union'. */
+                  function_save (yytext, yyleng);
+                  yy_push_state (in_struct);
+                  }
+
+<in_struct>{c_word}  { RULE_LINE; do_word (yytext, yyleng); }
+
+<in_struct>\*     {
+                  function_save (yytext, yyleng);
+                  yy_pop_state ();
+                  }
+
+<in_struct>;      {
+                  /* This rare state occurs in incomplete forward
+                     declaration of a struct. */
+                  forward_print (";\n");
+                  BEGIN (INITIAL);
+                  }
+
+<in_struct>{c_space} ;
+
+<in_struct>\{      { 
+                   brace_open ();
+                   external_clear ();
+                   BEGIN (function);
+                   }
+
+  /* Initialisers (these begin with `=').  Cfunctions just skips over
+     initialisers. */
+
+<initialiser>;    {
+                    external_print (";\n");
+                    yy_pop_state ();
+                  }
+
+<initialiser>,    {
+                    current_arg = arg_share (current_arg);
+                    yy_pop_state ();
+                  }
+
+<initialiser>\{   {
+                  brace_open ();
+                  yy_push_state (function);
+                  }
+
+<initialiser>\([^\)]*\) {
+
+  /* This is to jump comma operators.  In practice it is very unlikely
+     that we ever see comma operators.  Comma operators are for using
+     side effects.  There can be no side effects in constant
+     expressions, which are the only expressions allowed outside
+     functions.  But that is the only place Cfunctions will ever
+     encounter them.  */
+                  }
+
+<initialiser>([^\"]|\n)   inline_print (yytext);
+
+\({c_opt_space}{c_opt_space}\)        do_arguments ();
+\({c_opt_space}void{c_opt_space}\)    do_void_arguments ();
+
+  /* Function pointers.  At the moment this works for inline versions
+     of them but not for several other cases. */
+
+\({c_opt_space}\*{c_opt_space}     {
+                  external_print ("");
+                  inline_print (yytext);
+                  yy_push_state (func_ptr);
+                  }
+
+<func_ptr>\){c_opt_space}\(        {
+                  inline_print (yytext);
+                  BEGIN (func_ptr_arg);
+                  }
+
+<func_ptr>\)      {
+                  inline_print (yytext);
+                  yy_pop_state ();
+                  }
+
+<func_ptr_arg>\)  {
+                  inline_print (yytext);
+                  inline_print (";\n");
+                  yy_pop_state ();
+                  }
+
+<func_ptr>{c_word}                 do_function_pointer (yytext);
+
+<func_ptr,func_ptr_arg>[^\)]       inline_print (yytext);
+
+  /* Beginning of a C argument. */
+
+\(                {
+                  do_start_arguments ();
+                  /* Deficiency: switching into argument mode immediately
+                     on seeing a bracket can miss things like macros with
+                     arguments which come immediately in front of a 
+                     function definition.  Fortunately macros with arguments
+                     in front of a function definition are quite rare. */
+
+                  BEGIN(arguments);
+                  arg_br_depth++;
+                  }
+
+<arguments>\)     do_arguments_close_bracket (yytext, yyleng);
+
+<arguments>\(     do_arguments_open_bracket (yytext, yyleng);
+
+<arguments>({c_var}|\*+) {
+                  argument_save (yytext, yyleng);
+                  }
+
+<arguments>,      argument_next();
+
+<arguments>{c_space}      ;
+
+<arguments>"..."  argument_save (yytext, yyleng);
+
+<arguments>([0-9]*|\"([^\"]|\\\")*\")  {
+                  line_error ("nasty macro: use -C option");
+                  }
+
+  /* Looking for `traditional' C function declarations. */
+
+<maybe_traditional>{c_word} { RULE_LINE;
+                  inline_print (yytext); 
+                  BEGIN (traditional); 
+                  check_extensions ();
+                  traditional_save (yytext, yyleng);
+                  }
+
+<maybe_traditional>;   {
+                  external_print (";\n");
+                  BEGIN (INITIAL);
+                  }
+
+<maybe_traditional>,   {
+                  external_print (",\n");
+                  BEGIN (INITIAL);
+                  }
+
+<maybe_traditional>\{  { RULE_LINE;
+
+                       /* This state occurs rather rarely, in traditional
+                          functions where all the arguments are implicit
+                          integer ones. */
+
+                  function_print ();
+                  BEGIN (INITIAL);
+                  yy_push_state (function);
+                  brace_open ();
+                  }
+
+<maybe_traditional>{c_space} ;
+
+<traditional>{c_var_no_pointer}  { RULE_LINE;
+                  traditional_save (yytext, yyleng);
+                  }
+
+<traditional>,    traditional_comma ();
+
+<traditional>\*+  traditional_save (yytext, yyleng);
+
+<traditional>;    traditional_next ();
+
+<traditional>{c_space} ;
+
+<traditional>\{   { RULE_LINE;
+                  function_print ();
+                  BEGIN (INITIAL);
+                  yy_push_state (function);
+                  brace_open ();
+                  }
+
+  /* At the moment `traditional' does not handle function pointers. */
+
+<INITIAL,maybe_traditional>\{  {
+                  /* All functions must start like this. */
+                  function_print();
+                  yy_push_state (function);
+                  brace_open ();
+                  }
+
+\}                {
+                    /* A `}' outside function mode can only happen when 
+                       there was no matching `{'. */
+                    line_warning ("isolated }");
+                  }
+
+<function>\{      {
+                  inline_print(yytext);
+                  brace_open ();
+                  }
+
+<function>\}      do_brace_close ();
+
+<*>\"             {
+                  inline_print (yytext);
+                  if ( YY_START != c_string )
+                    yy_push_state (c_string);
+                  else
+                    yy_pop_state ();
+                  }
+
+<c_string>([^\"]|\\\")*                     inline_print (yytext);
+
+<function>([^\}\{\"]|\n|\'\\\"\'|\'\"\')    inline_print (yytext);
+
+<function>(\'\{\'|\'\}\')  do_escaped_brace (yytext);
+
+extern            { RULE_LINE; do_extern (yytext, yyleng); }
+
+\[[^]]*\]         {
+                    arg_put_name (current_arg);
+                    arg_add (current_arg, yytext, yylineno);
+                  }
+
+\;                { RULE_LINE;
+                    if (current_arg)
+                      {                   
+                        arg_put_name (current_arg);
+                        external_print (";\n");
+                      }
+                    else
+                      /* Function pointer trips here. */;
+                  }
+
+=                 { RULE_LINE;
+                    if (current_arg)
+                      arg_put_name (current_arg);
+                    else
+                      /* Function pointer trips here. */;
+                    yy_push_state (initialiser);
+                    if (verbatiming)
+                      external_print ("=");
+                  }
+
+\,                { RULE_LINE;
+                    arg_put_name (current_arg);
+                    current_arg = arg_share (current_arg);
+                  }
+
+main{c_opt_space}\([^\{]+\{ { /*EK*/
+                  /* Never write a prototype for main. */
+                  function_reset();
+                  brace_open ();
+                  yy_push_state(function);
+                  }
+
+LOCAL             do_LOCAL (yytext);
+
+INLINE            do_INLINE (yytext);
+
+static            { RULE_LINE; do_static (yytext, yyleng); }
+
+void              { RULE_LINE; do_void (yytext, yyleng); }
+
+NO_SIDE_FX        do_NO_SIDE_FX (yytext);
+
+NO_RETURN         { RULE_LINE; do_NO_RETURN (yytext); }
+
+  /* Over-complicated method for parsing GNU C extension related thing. */
+
+PRINT_FORMAT      {
+                  check_extensions ();
+                  BEGIN (print_format);
+                  }
+
+<print_format>{c_opt_space} ;
+
+<print_format>\(  pf.index = 0;
+                  
+<print_format>,   pf.index++;
+
+<print_format>\)  do_PRINT_FORMAT ();
+
+<print_format>[1-9][0-9]* {
+                  if (pf.index > 1)
+                    line_error ("bad print format number %d", pf.index);
+                  pf.value[pf.index] = atoi ( yytext );
+                  }
+
+void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (yytext); }
+
+{c_word}          { RULE_LINE; function_save (yytext, yyleng); }
+
+\*                { RULE_LINE;
+                  /* This is for functions which return pointers 
+                     to something.  It should be eliminated by 
+                     making a better rule to match functions. */
+                  function_save (yytext, yyleng);
+                  }
+
+{c_space}         ;
+
+<*>.              { 
+                  #ifdef CFUNCTIONS_DEBUG
+                  line_warning ("unknown char `%c' while looking at %s", 
+                                yytext[0], state_message ());
+                  #endif /* CFUNCTIONS_DEBUG */
+                  }
+
+%%
+
+/* The following functions are fixes to work around not being able to
+   access Flex's state (YY_START) outside this file. */
+
+void
+push_in_cpp (void)
+{
+  yy_push_state (in_cpp);
+}
+
+int
+initial_state (void)
+{
+  return YY_START == INITIAL;
+}
+
+int
+argument_state (void)
+{
+  return YY_START == arguments;
+}
+
+void
+start_initial (void)
+{
+  BEGIN (INITIAL);
+}
+
+void
+start_maybe_traditional (void)
+{
+  BEGIN (maybe_traditional);
+}
+
+void
+pop_state (void)
+{
+  yy_pop_state (); 
+}
+
+/* Return a string corresponding to the state.  Hack around Flex not
+   exporting its macros. */
+
+const char * 
+state_message (void)
+{
+  switch (YY_START)
+    {
+    case comment:
+      return "C comment string";
+    case function:
+      return "C function or variable declaration";
+    case arguments:
+      return "C function's argument list";
+    case func_ptr:
+      return "pointer to a function";
+    case func_ptr_arg:
+      return "arguments to pointer to a function";
+    case print_format:
+      return "PRINT_FORMAT instruction";
+    case c_string:
+      return "C string";
+    case in_cpp:
+      return "C preprocessor statement";
+    case in_struct:
+      return "C struct or union";
+    case initialiser:
+      return "C initialiser";
+    case in_enum:
+      return "enum definition";
+    case is_enum:
+      return "enum declaration";
+    case traditional:
+      return "traditional C function argument declaration";
+    case maybe_traditional:
+      return "tentative traditional C function argument declaration";
+    case INITIAL:
+      return "initial";
+    default:
+      return "unknown state (report this message as a bug please)";
+    }
+}

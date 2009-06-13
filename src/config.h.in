@@ -1,0 +1,23 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define VERSION "@VERSION@"
+#define COPYRIGHT_YEAR "@COPYRIGHT_YEAR@"
+#define CFUNCTIONS_URL "@CFUNCTIONS_URL@"
+#define GETOPT_LONG @GETOPT_LONG@
+#define C_EX_FILE_NAME "c-extensions.h"
+#define C_EXTENSIONS_FILE "@prefix@/share/cfunctions/"C_EX_FILE_NAME
+#define C_EX_LOCAL "@CWD@/src/"C_EX_FILE_NAME
+
+#define CPP "@CPP@"
+
+#ifdef __GNUC__
+#define HAS_WARNING
+#define ALLOCA(x) alloca(x)
+#define FREE_ALLOCA(x)
+#else
+#define ALLOCA(x) malloc_or_exit(x)
+#define FREE_ALLOCA(x) free(x)
+#endif
+
+#endif /* CONFIG_H */
