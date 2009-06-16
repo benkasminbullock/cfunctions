@@ -1,6 +1,6 @@
 # contains code contributed by Egil Kvaleberg.
 
-prefix = /home/ben/software/install
+prefix = /usr/local
 exec_prefix = ${prefix}
 bindir = ${exec_prefix}/bin
 sharedir = ${prefix}/share/cfunctions
@@ -10,7 +10,7 @@ FLEX = flex
 CC = gcc
 CFLAGS = -g3 -Wall
 CPPFLAGS = -I.  -DCFUNCTIONS_DEBUG
-VERSION = 0.25
+VERSION = 0.26
 GCOV = gcov
 INSTALL = /usr/bin/install -c
 LIBOBJS = 

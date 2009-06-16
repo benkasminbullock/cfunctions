@@ -48,7 +48,7 @@ File: cfunctions.info,  Node: Introduction,  Next: Invoking Cfunctions,  Prev: C
 1 Introduction
 **************
 
-This is the manual for Cfunctions version 0.25.  This manual explains
+This is the manual for Cfunctions version 0.26.  This manual explains
 Cfunctions, a program for making header files from C files.  Cfunctions
 (pronounced "see-functions") gets function declarations, prototypes and
 global (otherwise known as external) variable declarations from C files
