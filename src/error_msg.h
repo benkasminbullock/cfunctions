@@ -1,6 +1,6 @@
-/* This is a Cfunctions (version 0.25) generated header file.
+/* This is a Cfunctions (version 0.26) generated header file.
    Cfunctions is a free program for extracting headers from C files.
-   Get Cfunctions from `http://www.kasmin.org/cfunctions/'. */
+   Get Cfunctions from `http://cfunctions.sourceforge.net/'. */
 
 /* This file was generated with:
 `cfunctions -inmb error_msg.c' */

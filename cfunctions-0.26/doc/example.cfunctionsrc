@@ -1,0 +1,20 @@
+# To get a file `mycopyright' as the banner:
+
+advert: /home/me/mydirectory/mycopyright
+
+# To get warnings about traditional C constructs:
+
+warn: implicit strict-prototypes
+
+# To use FUNKY as your wrapper macro instead of HEADER:
+
+global macro: FUNKY
+
+# To use PROTON instead of PROTO for traditional C functions:
+
+proto macro: PROTON
+
+# To always make backups:
+
+backup: 1
+

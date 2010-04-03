@@ -21,7 +21,7 @@
 # contains code contributed by Egil Kvaleberg.
 
 datarootdir = ${prefix}/share
-prefix = /usr/local
+prefix = /home/ben/software/install
 mandir = ${datarootdir}/man
 sharedir = ${prefix}/share/cfunctions
 infodir = ${prefix}/info

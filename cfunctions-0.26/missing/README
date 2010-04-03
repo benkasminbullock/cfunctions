@@ -1,0 +1,8 @@
+These functions are copied from GNU glibc version 2.0.6.  They are for
+people who do not have them on their systems.
+
+The `configure' script should be able to work out whether these
+additional functions are needed and adjust the compilation
+accordingly.  If it fails, please let me know.
+
+Cfunctions maintainer (see `VERSION' for email address).

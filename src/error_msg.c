@@ -147,6 +147,8 @@ bug (const char * file, unsigned line, const char * format, ... )
 
   fprintf ( stderr, "%s:%s:%u: internal error: ", 
             program_name, file, line );
+  fprintf ( stderr, "%s:%s:%u: internal error: ", 
+            program_name, file, line );
 
   DO_PRINT (stderr);
 

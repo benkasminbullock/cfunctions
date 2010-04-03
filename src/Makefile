@@ -1,6 +1,6 @@
 # contains code contributed by Egil Kvaleberg.
 
-prefix = /usr/local
+prefix = /home/ben/software/install
 exec_prefix = ${prefix}
 bindir = ${exec_prefix}/bin
 sharedir = ${prefix}/share/cfunctions
@@ -8,8 +8,8 @@ sharedir = ${prefix}/share/cfunctions
 SHELL=/bin/sh
 FLEX = flex
 CC = gcc
-CFLAGS = -g3 -Wall
 CPPFLAGS = -I.  -DCFUNCTIONS_DEBUG
+CFLAGS = -g3 -Wall  -DCFUNCTIONS_DEBUG
 VERSION = 0.26
 GCOV = gcov
 INSTALL = /usr/bin/install -c

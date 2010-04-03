@@ -1,0 +1,490 @@
+
+argument.c,638
+struct type39,1249
+struct shared_type51,1625
+struct arg59,1723
+  enum {TYPE,TYPE61,1736
+  enum {TYPE, POINTER,61,1736
+  enum {TYPE, POINTER, SUFFIX,61,1736
+  enum {TYPE, POINTER, SUFFIX, CPP_MUDDLE}CPP_MUDDLE61,1736
+static const struct type type_null;73,2193
+static const struct arg  arg_null;74,2229
+arg_start 79,2327
+arg_share 92,2581
+type_list_add 108,2860
+check_cpp_muddle 123,3069
+arg_add 142,3495
+type_list_move 190,4597
+arg_put_name 202,4831
+type_free 239,5707
+arg_free 269,6143
+suffix_fprint 302,6734
+type_fprint 321,7019
+arg_fprint 361,7835
+arg_fprint_all 382,8373
+arg_tag 402,8812
+arg_tagable 415,9130
+
+backup.c,530
+argmatch 44,1463
+enum backup_type79,2284
+  none,82,2331
+  simple,85,2383
+  numbered_existing,89,2508
+  numbered92,2575
+static const enum backup_type backup_types[backup_types97,2611
+static const char *const backup_args 102,2739
+enum backup_type backup_type 109,2900
+const char *simple_backup_suffix simple_backup_suffix114,3045
+get_version 120,3196
+basename 135,3511
+dirname 149,3694
+concat 181,4375
+make_version_name 196,4739
+version_number 210,5136
+max_backup_version 232,5757
+find_backup_file_name 268,6723
+
+c-word.c,154
+unsigned c_word 31,981
+const char * gnu_c_keywords[gnu_c_keywords70,2304
+const unsigned n_gnu_c_keywords 141,3190
+is_keyword 154,3542
+main(183,4085
+
+cpp.c,258
+static int cpp_pid;48,1396
+static char ** cpp_arguments;52,1457
+static unsigned n_cpp_arguments,53,1487
+static unsigned n_cpp_arguments, cpp_arguments_size 53,1487
+cpp_inc_argument 58,1623
+cpp_add_argument 72,1956
+cpp_start 92,2418
+cpp_stop 127,3377
+
+error_msg.c,384
+#define HERE 30,905
+const char * program_name 37,1116
+const char * source_name 38,1170
+int * source_line 39,1222
+#define DO_PRINT(42,1250
+void PRINT_FORMAT(51,1427
+NO_RETURN PRINT_FORMAT(63,1680
+void PRINT_FORMAT(77,1930
+void PRINT_FORMAT(89,2155
+NO_RETURN PRINT_FORMAT(101,2381
+NO_RETURN PRINT_FORMAT(115,2649
+void PRINT_FORMAT(129,2859
+NO_RETURN  PRINT_FORMAT(143,3203
+
+file-name.c,38
+strip_dir 35,1085
+is_c_file 57,1427
+
+file.c,150
+#define USUAL_BLOCKS 29,910
+int fcopy 40,1187
+int fdiff 80,2274
+fexists 144,3511
+fsize 161,3831
+freopen_stdin 178,4178
+freopen_stdout 187,4392
+
+name-convert.c,184
+caps_to_initials 29,993
+uscores_to_spaces 49,1417
+spaces_to_uscores 63,1689
+spaces_to_hyphens 100,2455
+caps_to_uscores 116,2800
+uscores_to_caps 142,3271
+lower_to_upper 164,3687
+
+options.c,412
+struct option long_options 36,1115
+#define N_OPTIONS 71,2755
+int n_options 73,2825
+  #define arg 76,2868
+  #define arg 78,2905
+const char * usage 81,2948
+short_options 124,4376
+other_stuff 168,5546
+static const char * texi_begin 201,6298
+static const char * texi_end 210,6594
+static const char * man_begin 215,6683
+static const char * man_end 220,6791
+compare_letter_options 226,6898
+main(239,7223
+
+print_usage.c,75
+unsigned error_msg_width 14,267
+print_offset 20,389
+print_usage 63,1486
+
+rc-rw.c,283
+static const char * const rc_fields[rc_fields17,405
+static unsigned n_rc_fields 37,691
+get_field 43,872
+get_value 77,1530
+rc_initialize 92,1786
+rc_read 102,1946
+rc_write 193,3811
+get_full_name 239,5888
+read_rc_file 259,6361
+rc_file_exists 285,6939
+write_rc_file 310,7363
+
+sys_or_exit.c,190
+malloc_or_exit 39,1219
+calloc_or_exit 51,1350
+realloc_or_exit 63,1500
+fseek_or_exit 73,1630
+fread_or_exit 80,1796
+fwrite_or_exit 96,2260
+fopen_or_exit 103,2466
+stat_or_exit 123,2917
+
+tags.c,427
+enum tag_type33,993
+  TAG_FUNCTION,35,1009
+  TAG_STRUCT_UNION_ENUM,40,1168
+  TAG_MACRO,41,1193
+  TAG_ENUM_VAL,42,1206
+  TAG_TYPEDEF,43,1222
+  TAG_GLOBAL,44,1237
+  N_TAG_TYPES45,1251
+const char * tag_type_name 50,1290
+static FILE * tag_file;65,1517
+static const char * tag_file_name 66,1541
+static int tags;67,1587
+int tag_debug;70,1645
+tag_new_file 78,1739
+tag_make 97,2096
+tag_init 162,3745
+tag_exit 169,3834
+
+traditional.c,305
+int trad_debug;39,1124
+#define TRAD_INC 43,1204
+static struct arg ** args;47,1271
+static int n_arg 51,1342
+static unsigned max_arg;55,1395
+inc_n_arg 63,1558
+traditional_comma 85,2049
+traditional_next 100,2331
+traditional_save 117,2720
+traditional_print_type 129,2962
+traditional_reset 163,3723
+
+wt.c,4496
+#undef BOOL52,1450
+#define BOOL 53,1462
+enum bool 54,1479
+enum bool { FALSE,54,1479
+enum bool { FALSE, TRUE 54,1479
+static char * command_line;59,1558
+#define MAX_ARG_BR_DEPTH 63,1658
+pf;93,2378
+FILE * outfile;102,2695
+FILE * localfile;103,2711
+FILE * verbatim_file;104,2729
+#define MAX_LINE_NAME 108,2804
+char line_source_name[line_source_name109,2832
+#define CFUNCTIONS_AD 114,2968
+const char * advert 123,3380
+BOOL advert_arg;124,3427
+BOOL backup;125,3468
+BOOL copy_c_ex;126,3509
+BOOL c_preprocess;127,3550
+BOOL individual;128,3591
+BOOL c_ex_std_include;129,3632
+BOOL keep_empty_files;130,3673
+BOOL write_comments;131,3714
+BOOL write_line_numbers;132,3755
+BOOL save_static_funcs;133,3796
+char * wrap;134,3837
+BOOL extensions 135,3878
+const char * local_macro 137,3920
+const char * global_macro 138,3967
+static struct cfunctionsrc rc;140,4015
+struct outfile142,4047
+global,151,4181
+local;152,4230
+const char *prototype_macro prototype_macro154,4280
+const char * inline_macro 158,4377
+unsigned curly_braces_depth;162,4463
+#define MAX_CURLY_DEPTH 170,4800
+#define MAX_CPP_IFS 174,4863
+  CPP_ZAP,181,4980
+  CPP_IF,183,5101
+  CPP_IF, CPP_ELSE,183,5101
+  CPP_IF, CPP_ELSE, CPP_ELIF,183,5101
+  CPP_IF, CPP_ELSE, CPP_ELIF, CPP_ENDIF,183,5101
+  CPP_IF, CPP_ELSE, CPP_ELIF, CPP_ENDIF, N_CPP_IF_TYPES183,5101
+Cpp_If_Type;185,5159
+struct cpp_if188,5193
+cpp_if_stack[cpp_if_stack207,5811
+empty_cpp_if;212,5947
+unsigned cpp_prints;219,6074
+unsigned cpp_if_now;225,6171
+#define cpp_stack_top 227,6194
+struct arg * current_arg;231,6292
+unsigned arg_br_depth;240,6588
+unsigned n_local_writes;246,6786
+#define MAX_STRUCT_CHARS 250,6873
+cfunctions_dbug;266,7117
+BOOL inlining;273,7304
+BOOL verbatiming;278,7409
+BOOL hin_copying;282,7493
+struct cfunctions_parse_state287,7597
+  enum { RETURN,295,7784
+  enum { RETURN, VOID 295,7784
+s,360,9410
+s, z;360,9410
+BOOL reading_from_stdin;364,9460
+BOOL writing_to_stdout;368,9528
+unsigned rule_line;372,9589
+struct warning377,9641
+struct warning warns;385,9784
+process_warning 390,9861
+print_line_number 412,10347
+check_overflow 422,10584
+brace_open 432,10783
+brace_close 447,11165
+static BOOL doing_comment;460,11496
+static char * comment_buffer;461,11523
+static unsigned comment_buf_len;462,11553
+static unsigned comment_len;463,11586
+#define INITIAL_LEN 467,11661
+comment_add 472,11752
+do_comment_start 496,12343
+do_comment_end 511,12615
+do_comment_print 525,12839
+comment_reset 534,12968
+print_comment 544,13124
+do_PRINT_FORMAT 558,13420
+do_void_pointer 565,13503
+do_start_arguments 576,13697
+do_arguments 584,13810
+do_function_pointer 591,13897
+do_word 602,14079
+do_typedef 611,14214
+inline_print 620,14350
+line_change 631,14554
+#define FIX_FOR_FLEX_BUG686,16218
+copy_c_extensions 707,16923
+static unsigned written_c_extensions;766,18447
+check_extensions 776,18848
+static const char * cpp_if_names[cpp_if_names787,19127
+static unsigned cpp_if_len[cpp_if_len794,19269
+cpp_stack_find_if 812,19645
+static unsigned verbatim_limit;857,20697
+show_cpp_if_stack(864,20818
+cpp_fill_holes 876,21106
+cpp_stack_tidy 940,22519
+cpp_add 1056,26339
+cpp_eject 1203,30076
+do_start_cpp 1285,32314
+do_escaped_brace 1294,32447
+do_extern 1305,32660
+do_NO_RETURN 1314,32794
+do_arguments_close_bracket 1324,32942
+do_LOCAL 1345,33335
+do_INLINE 1353,33440
+do_static 1363,33615
+do_void 1370,33719
+do_NO_SIDE_FX 1377,33824
+do_arguments_open_bracket 1385,33920
+do_brace_close 1393,34097
+do_void_arguments 1428,35073
+do_define 1436,35156
+cpp_stack_free 1452,35565
+cpp_external_tidy 1462,35758
+cpp_external_print 1511,37178
+struct arg ** fargs;1540,37794
+unsigned n_fargs;1544,37879
+unsigned max_fargs;1548,37943
+argument_reset(1555,38154
+argument_save 1572,38466
+no_prototype 1586,38865
+argument_next 1603,39239
+argument_print 1627,39771
+external_clear 1685,41065
+external_print 1708,41714
+forward_print 1752,42892
+function_reset 1764,43163
+function_save 1788,43590
+write_gnu_c_x 1812,44174
+function_print 1833,44721
+print_name_stamp 1890,46111
+global_name_stamp 1900,46319
+print_advert 1914,46572
+wrapper_top 1938,47136
+wrapper_bottom(1989,48467
+unbackup(2001,48769
+read_file 2032,49590
+do_backup 2063,50184
+extract 2087,50571
+open_library_output 2181,52834
+close_library_output 2237,54401
+set_debug_flag 2252,54684
+overwrite_check 2280,55522
+preserve_command_line 2292,55879
+const char * const version_info 2328,56797
+main 2336,57134
+
+cfunctions.c,4599
+#define __unused12,326
+#define FLEX_SCANNER15,351
+#define YY_FLEX_MAJOR_VERSION 16,372
+#define YY_FLEX_MINOR_VERSION 17,404
+#define __cplusplus25,559
+#define YY_USE_PROTOS36,703
+#define YY_USE_CONST39,777
+#define YY_USE_PROTOS45,840
+#define YY_USE_CONST46,862
+#define YY_USE_CONST56,1026
+#define YY_USE_PROTOS57,1047
+#define yyconst 61,1097
+#define yyconst63,1125
+#define YY_PROTO(68,1171
+#define YY_PROTO(70,1207
+#define YY_NULL 74,1275
+#define YY_SC_TO_UI(81,1522
+#define BEGIN 87,1753
+#define YY_START 93,1950
+#define YYSTATE 94,1988
+#define YY_STATE_EOF(97,2071
+#define YY_NEW_FILE 100,2191
+#define YY_END_OF_BUFFER_CHAR 102,2230
+#define YY_BUF_SIZE 105,2299
+typedef struct yy_buffer_state *YY_BUFFER_STATE;YY_BUFFER_STATE107,2326
+#define EOB_ACT_CONTINUE_SCAN 112,2423
+#define EOB_ACT_END_OF_FILE 113,2455
+#define EOB_ACT_LAST_MATCH 114,2485
+#define yyless(132,3059
+#define unput(143,3314
+typedef unsigned int yy_size_t;149,3552
+struct yy_buffer_state152,3586
+#define YY_BUFFER_NEW 194,4637
+#define YY_BUFFER_NORMAL 195,4661
+#define YY_BUFFER_EOF_PENDING 206,5159
+static YY_BUFFER_STATE yy_current_buffer 209,5196
+#define YY_CURRENT_BUFFER 215,5392
+static char yy_hold_char;219,5505
+static int yy_n_chars;221,5532
+int yyleng;224,5605
+static char *yy_c_buf_p yy_c_buf_p227,5663
+static int yy_init 228,5701
+static int yy_start 229,5762
+static int yy_did_buffer_switch_on_eof;234,5941
+#define YY_FLUSH_BUFFER 244,6386
+static void *yy_flex_realloc YY_PROTO(251,6715
+#define yy_new_buffer 254,6834
+#define yy_set_interactive(256,6874
+#define yy_set_bol(263,7079
+#define YY_AT_BOL(270,7252
+#define YY_USES_REJECT273,7305
+#define yywrap(275,7329
+#define YY_SKIP_YYWRAP276,7348
+#define FLEX_DEBUG278,7372
+typedef unsigned char YY_CHAR;279,7391
+FILE *yyin yyin280,7422
+typedef int yy_state_type;281,7468
+#define FLEX_DEBUG283,7496
+int yylineno 285,7536
+#define yytext_ptr 287,7575
+#define YY_DO_BEFORE_ACTION 297,7970
+#define YY_NUM_RULES 304,8124
+#define YY_END_OF_BUFFER 305,8148
+static yyconst short int yy_acclist[yy_acclist306,8176
+static yyconst short int yy_accept[yy_accept388,12836
+static yyconst int yy_ec[yy_ec450,16341
+static yyconst int yy_meta[yy_meta482,18054
+static yyconst short int yy_base[yy_base492,18478
+static yyconst short int yy_def[yy_def560,22335
+static yyconst short int yy_nxt[yy_nxt628,26191
+static yyconst short int yy_chk[yy_chk904,42388
+int yy_flex_debug 1181,58611
+static yyconst short int yy_rule_linenum[yy_rule_linenum1183,58635
+static yy_state_type yy_state_buf[yy_state_buf1198,59298
+static yy_state_type yy_state_buf[YY_BUF_SIZE + 2], *yy_state_ptr;yy_state_ptr1198,59298
+static char *yy_full_match;yy_full_match1199,59365
+static int yy_lp;1200,59393
+#define REJECT 1201,59411
+#define yymore(1208,59590
+#define YY_MORE_ADJ 1209,59636
+#define YY_RESTORE_YY_MORE_OFFSET1210,59658
+char *yytext;yytext1211,59692
+static int yy_start_stack_ptr 1368,64579
+static int yy_start_stack_depth 1369,64614
+static int *yy_start_stack yy_start_stack1370,64651
+#define YY_NO_PUSH_STATE 1382,64928
+#define YY_NO_POP_STATE 1383,64955
+#define YY_NO_TOP_STATE 1384,64981
+#define YY_READ_BUF_SIZE 1404,65397
+#define ECHO 1413,65616
+#define YY_INPUT(1420,65808
+#define yyterminate(1443,66578
+#define YY_START_STACK_INCR 1448,66713
+#define YY_FATAL_ERROR(1453,66803
+#define YY_DECL 1460,66978
+#define YY_USER_ACTION1467,67151
+#define YY_BREAK 1472,67244
+#define YY_RULE_SETUP 1475,67276
+static int yy_get_next_buffer(2429,90127
+static yy_state_type yy_get_previous_state(2561,93249
+static yy_state_type yy_try_NUL_trans(2595,94163
+static void yyunput(2621,94865
+static int yyinput(2667,95956
+void yyrestart(2743,97570
+void yy_switch_to_buffer(2758,97859
+void yy_load_buffer_state(2788,98589
+YY_BUFFER_STATE yy_create_buffer(2801,98867
+void yy_delete_buffer(2832,99582
+void yy_init_buffer(2858,100021
+void yy_flush_buffer(2885,100451
+YY_BUFFER_STATE yy_scan_buffer(2916,101048
+YY_BUFFER_STATE yy_scan_string(2954,101933
+YY_BUFFER_STATE yy_scan_bytes(2971,102215
+static void yy_push_state(3010,103009
+static void yy_pop_state(3043,103686
+static int yy_top_state(3054,103885
+#define YY_EXIT_FAILURE 3061,103997
+static void yy_fatal_error(3065,104052
+#undef yyless3079,104291
+#define yyless(3080,104305
+static void yy_flex_strncpy(3097,104613
+static int yy_flex_strlen(3113,104885
+static void *yy_flex_alloc(yy_flex_alloc3129,105086
+static void *yy_flex_realloc(yy_flex_realloc3139,105256
+static void yy_flex_free(3157,105827
+int main(3167,105954
+
+cfunctions.fl,623
+#define INITIAL 1,
+#define RULE_LINE 42,
+#define RULE_LINE44,
+#define YY_NO_UNPUT 55,
+#define YY_NO_TOP_STATE 56,
+#define YY_STACK_USED 59,
+#define comment 62,
+#define function 68,
+#define arguments 71,
+#define func_ptr 74,
+#define func_ptr_arg 77,
+#define print_format 80,
+#define c_string 87,
+#define in_cpp 92,
+#define in_struct 96,
+#define initialiser 99,
+#define in_enum 103,
+#define is_enum 106,
+#define traditional 110,
+#define maybe_traditional 113,
+push_in_cpp 573,
+initial_state 579,
+argument_state 585,
+start_initial 591,
+start_maybe_traditional 597,
+pop_state 603,
+state_message 612,

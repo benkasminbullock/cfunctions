@@ -1,0 +1,11 @@
+/* this is a load of jubs to be included verbatim. */
+
+static inline int jub(int gub, void * more_jub)
+{
+  if ( more_jub)
+    return gub;
+  else
+    return 0;
+}
+
+#define HUBAJUBA

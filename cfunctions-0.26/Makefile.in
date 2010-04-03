@@ -1,0 +1,89 @@
+# This file is part of Cfunctions.
+#
+# Copyright (C) 1998 Ben K. Bullock
+#
+# Cfunctions is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# Cfunctions is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Cfunctions; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# See the file `COPYING' for copying conditions.
+
+SHELL=/bin/sh
+VERSION = @VERSION@
+BZIP2 = @BZIP2@
+
+all: 
+	cd src;make;cd ../doc;make
+
+check: 	all
+	cd tests/;test.perl
+
+
+thisdir_clean:
+	rm -f cfunctions-*.*.tar.gz cfunctions-*.*.tar.bz2 .cfunctions*
+
+clean:	thisdir_clean
+	cd src; make clean
+	cd doc; make clean
+
+thisdir_distclean: thisdir_clean
+	rm -f config.status config.log config.cache
+	rm -rf autom4te.cache
+	cd tests; rm -f test.perl *.o *.h a.out core
+
+distclean: thisdir_distclean
+
+thisdir_realclean: thisdir_distclean
+	rm -f configure
+
+realclean: thisdir_realclean
+	cd src; make realclean; cd ../doc; make realclean
+
+DISTFILES = doc src tests contrib missing \
+	COPYING README NEWS AUTHORS VERSION \
+	configure configure.ac Makefile.in Makefile \
+	fake-cfunctions install-sh
+
+dist:	distfiles
+	rm -rf cfunctions-${VERSION}.tar.bz2 cfunctions-${VERSION}.tar.gz \
+		cfunctions-$(VERSION) cfunctions-$(VERSION).tar
+	rm -f options 
+	mkdir cfunctions-$(VERSION)
+# copy the distributed files into the distribution directory and set
+# the permissions.
+	cp -R $(DISTFILES) cfunctions-$(VERSION)
+	chmod -R -s cfunctions-$(VERSION)
+	chmod -R g=rX cfunctions-$(VERSION)
+	cd cfunctions-${VERSION}
+# remove core and backup files from distribution
+	-find cfunctions-$(VERSION) -name "*~" | xargs rm -f
+	-find cfunctions-$(VERSION) -name "core" | xargs rm -f
+	cd cfunctions-$(VERSION)/doc; make distclean
+	cd cfunctions-$(VERSION)/src; make distclean
+	cd cfunctions-$(VERSION); make distclean
+	tar cf cfunctions-$(VERSION).tar cfunctions-$(VERSION)
+# bzip2 has a --keep option, and gzip doesn't, so the bzip2 file
+# should be made first.
+	$(BZIP2) --keep cfunctions-${VERSION}.tar
+	gzip cfunctions-${VERSION}.tar
+
+distfiles: 
+	cd doc; make index.html cfunctions.1 html info options.texi
+	cd src; make cfunctions.c
+
+install:
+	cd src; make install; cd ../doc; make install
+
+uninstall: 
+	cd src; make uninstall; cd ../doc; make uninstall
+

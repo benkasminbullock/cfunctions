@@ -142,13 +142,15 @@ const char * state_message (void);
 
 /* Macros for C preprocessor. */
 
+endline       \r?\n
+
 /* The `\\\n' is to deal with multiline cpp statements.
    *EK* included CR and FF as whitespace. */
 
-cpp_space     ([ \t\f\r]|\\\n)+
-cpp_opt_space ([ \t\f\r]|\\\n)*
+cpp_space     ([ \t\f\r]|\\{endline})+
+cpp_opt_space ([ \t\f\r]|\\{endline})*
 
-cpp_any       (.|\\\n)
+cpp_any       (.|\\{endline})
 cpp           ^{cpp_opt_space}#{cpp_opt_space}
 
 /* C macros */
@@ -190,7 +192,7 @@ c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
 
 <in_cpp>{cpp_any} inline_print (yytext);
 
-<in_cpp>\n        { inline_print (yytext); yy_pop_state (); }
+<in_cpp>{endline} { inline_print (yytext); yy_pop_state (); }
 
   /* Comments. */
 
@@ -454,13 +456,19 @@ enum              { RULE_LINE;
 
 <*>\"             {
                   inline_print (yytext);
-                  if ( YY_START != c_string )
-                    yy_push_state (c_string);
-                  else
-                    yy_pop_state ();
+                  if (YY_START != comment) {
+                    if ( YY_START != c_string )
+                      yy_push_state (c_string);
+                    else
+                      yy_pop_state ();
+                    }
                   }
 
-<c_string>([^\"]|\\\")*                     inline_print (yytext);
+                  /* Inside a C string, match a sequence of any single
+                     character other than ", or match \", but not
+                     \\". */
+
+<c_string>([^\\]\\\"|[^\"])*                inline_print (yytext);
 
 <function>([^\}\{\"]|\n|\'\\\"\'|\'\"\')    inline_print (yytext);
 
