@@ -46,9 +46,6 @@
 
 const char * state_message (void);
 
-void parser_push_state (int);
-void parser_pop_state ();
-
 %}
 
 /* See the Flex manual */
@@ -67,7 +64,7 @@ void parser_pop_state ();
 %option nounput noyy_top_state
 
 /* Cfunctions uses a stack for various things - see the instances of
-   `parser_push_state' and `parser_pop_state' below. */
+   `yy_push_state' and `yy_pop_state' below. */
 
 %option stack
 
@@ -195,7 +192,7 @@ c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
 
 <in_cpp>{cpp_any} inline_print (yytext);
 
-<in_cpp>{endline} { inline_print (yytext); parser_pop_state (); }
+<in_cpp>{endline} { inline_print (yytext); yy_pop_state (); }
 
   /* Comments. */
 
@@ -208,13 +205,13 @@ c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
                   if (YY_START != c_string)
                     {
                       do_comment_start ();
-                      parser_push_state (comment);
+                      yy_push_state (comment);
                     }
                   else /* Don't need a warning. */
                     inline_print (yytext);
                   }
 
-<comment>\*+\/    { do_comment_end (); parser_pop_state(); }
+<comment>\*+\/    { do_comment_end (); yy_pop_state(); }
 
 <comment>(([^\*]|\n)*|\*+([^/\*]|\n))  do_comment_print (yytext, yyleng);
 
@@ -232,7 +229,7 @@ typedef           { RULE_LINE; do_typedef (yytext, yyleng); }
   /* Enumerations. */
 
 enum              { RULE_LINE;
-                  parser_push_state (in_enum);
+                  yy_push_state (in_enum);
                   function_save (yytext, yyleng);
                   }
 
@@ -254,7 +251,7 @@ enum              { RULE_LINE;
 
 <is_enum>\}       {
                   inline_print (yytext);
-                  parser_pop_state ();
+                  yy_pop_state ();
                   }
 
 <is_enum>;        line_error("`;' in enum list");
@@ -264,14 +261,14 @@ enum              { RULE_LINE;
 (struct|union)    { RULE_LINE; /* Fortunately a `struct' is just the same 
                                   syntactically as a `union'. */
                   function_save (yytext, yyleng);
-                  parser_push_state (in_struct);
+                  yy_push_state (in_struct);
                   }
 
 <in_struct>{c_word}  { RULE_LINE; do_word (yytext, yyleng); }
 
 <in_struct>\*     {
                   function_save (yytext, yyleng);
-                  parser_pop_state ();
+                  yy_pop_state ();
                   }
 
 <in_struct>;      {
@@ -294,17 +291,17 @@ enum              { RULE_LINE;
 
 <initialiser>;    {
                     external_print (";\n");
-                    parser_pop_state ();
+                    yy_pop_state ();
                   }
 
 <initialiser>,    {
                     current_arg = arg_share (current_arg);
-                    parser_pop_state ();
+                    yy_pop_state ();
                   }
 
 <initialiser>\{   {
                   brace_open ();
-                  parser_push_state (function);
+                  yy_push_state (function);
                   }
 
 <initialiser>\([^\)]*\) {
@@ -328,7 +325,7 @@ enum              { RULE_LINE;
 \({c_opt_space}\*{c_opt_space}     {
                   external_print ("");
                   inline_print (yytext);
-                  parser_push_state (func_ptr);
+                  yy_push_state (func_ptr);
                   }
 
 <func_ptr>\){c_opt_space}\(        {
@@ -338,13 +335,13 @@ enum              { RULE_LINE;
 
 <func_ptr>\)      {
                   inline_print (yytext);
-                  parser_pop_state ();
+                  yy_pop_state ();
                   }
 
 <func_ptr_arg>\)  {
                   inline_print (yytext);
                   inline_print (";\n");
-                  parser_pop_state ();
+                  yy_pop_state ();
                   }
 
 <func_ptr>{c_word}                 do_function_pointer (yytext);
@@ -410,7 +407,7 @@ enum              { RULE_LINE;
 
                   function_print ();
                   BEGIN (INITIAL);
-                  parser_push_state (function);
+                  yy_push_state (function);
                   brace_open ();
                   }
 
@@ -431,7 +428,7 @@ enum              { RULE_LINE;
 <traditional>\{   { RULE_LINE;
                   function_print ();
                   BEGIN (INITIAL);
-                  parser_push_state (function);
+                  yy_push_state (function);
                   brace_open ();
                   }
 
@@ -440,7 +437,7 @@ enum              { RULE_LINE;
 <INITIAL,maybe_traditional>\{  {
                   /* All functions must start like this. */
                   function_print();
-                  parser_push_state (function);
+                  yy_push_state (function);
                   brace_open ();
                   }
 
@@ -461,9 +458,9 @@ enum              { RULE_LINE;
                   inline_print (yytext);
                   if (YY_START != comment) {
                     if ( YY_START != c_string )
-                      parser_push_state (c_string);
+                      yy_push_state (c_string);
                     else
-                      parser_pop_state ();
+                      yy_pop_state ();
                     }
                   }
 
@@ -499,7 +496,7 @@ extern            { RULE_LINE; do_extern (yytext, yyleng); }
                       arg_put_name (current_arg);
                     else
                       /* Function pointer trips here. */;
-                    parser_push_state (initialiser);
+                    yy_push_state (initialiser);
                     if (verbatiming)
                       external_print ("=");
                   }
@@ -513,7 +510,7 @@ main{c_opt_space}\([^\{]+\{ { /*EK*/
                   /* Never write a prototype for main. */
                   function_reset();
                   brace_open ();
-                  parser_push_state(function);
+                  yy_push_state(function);
                   }
 
 LOCAL             do_LOCAL (yytext);
@@ -577,7 +574,7 @@ void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (yytext); }
 void
 push_in_cpp (void)
 {
-  parser_push_state (in_cpp);
+  yy_push_state (in_cpp);
 }
 
 int
@@ -607,37 +604,7 @@ start_maybe_traditional (void)
 void
 pop_state (void)
 {
-  parser_pop_state (); 
-}
-
-typedef struct
-{
-    const char * file_name;
-    int line_number;
-    int line_offset;
-} parse_location;
-
-#define MAX_DEPTH 0x100
-
-parse_location state_starts[MAX_DEPTH];
-
-int state_depth = 0;
-
-void parser_push_state (int new_state)
-{
-    yy_push_state (new_state);
-    state_starts[state_depth].line_number = yylineno;
-    state_depth++;
-    if (state_depth > MAX_DEPTH) {
-        fprintf (stderr, "Too many states encountered.");
-        exit (EXIT_FAILURE);
-    }
-}
-
-void parser_pop_state ()
-{
-    yy_pop_state ();
-    state_depth--;
+  yy_pop_state (); 
 }
 
 /* Return a string corresponding to the state.  Hack around Flex not
@@ -646,7 +613,6 @@ void parser_pop_state ()
 const char * 
 state_message (void)
 {
-    printf ("Line number: %d\n", state_starts[state_depth - 1].line_number);
   switch (YY_START)
     {
     case comment:
@@ -683,4 +649,3 @@ state_message (void)
       return "unknown state (report this message as a bug please)";
     }
 }
-

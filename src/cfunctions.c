@@ -1311,16 +1311,16 @@ int yy_flex_debug = 1;
 
 static yyconst flex_int16_t yy_rule_linenum[92] =
     {   0,
-      175,  177,  179,  181,  185,  187,  191,  193,  195,  199,
-      214,  216,  218,  227,  231,  236,  238,  243,  245,  250,
-      252,  257,  261,  267,  269,  274,  281,  283,  292,  297,
-      302,  307,  317,  319,  320,  325,  331,  336,  341,  347,
-      349,  353,  365,  367,  369,  373,  375,  377,  379,  385,
-      392,  397,  402,  414,  416,  420,  422,  424,  426,  428,
-      437,  444,  450,  455,  457,  471,  473,  475,  477,  479,
-      484,  494,  504,  509,  516,  518,  520,  522,  524,  526,
-      530,  535,  537,  539,  541,  543,  549,  551,  553,  560,
-      562
+      178,  180,  182,  184,  188,  190,  194,  196,  198,  202,
+      217,  219,  221,  230,  234,  239,  241,  246,  248,  253,
+      255,  260,  264,  270,  272,  277,  284,  286,  295,  300,
+      305,  310,  320,  322,  323,  328,  334,  339,  344,  350,
+      352,  356,  368,  370,  372,  376,  378,  380,  382,  388,
+      395,  400,  405,  417,  419,  423,  425,  427,  429,  431,
+      440,  447,  453,  458,  460,  474,  476,  478,  480,  482,
+      487,  497,  507,  512,  519,  521,  523,  525,  527,  529,
+      533,  538,  540,  542,  544,  546,  552,  554,  556,  563,
+      565
 
     } ;
 
@@ -1335,7 +1335,7 @@ char *yytext;
 #line 1 "./cfunctions.fl"
 /* Cfunctions: extract C function prototypes and global variables. */
 /* 
-   Copyright (C) 1998, 2004  Ben K. Bullock
+   Copyright (C) 1998-2010  Ben Bullock
 
    Cfunctions is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1378,6 +1378,9 @@ char *yytext;
 
 const char * state_message (void);
 
+void parser_push_state (int);
+void parser_pop_state ();
+
 /* See the Flex manual */
 /* Cfunctions needs to know the line number of the file it is
    reading. */
@@ -1385,7 +1388,7 @@ const char * state_message (void);
    from compiling with `gcc -Wall'.  However it still warns about the
    unused `find_rule' label. */
 /* Cfunctions uses a stack for various things - see the instances of
-   `yy_push_state' and `yy_pop_state' below. */
+   `parser_push_state' and `parser_pop_state' below. */
 /* Set debugging by default. */
 /* state "in a C comment" */
    
@@ -1435,7 +1438,7 @@ const char * state_message (void);
    to prevent collisions with {cpp}.  I don't know if there is
    anywhere in the rules that expects {c_space} to match more than one
    `\n' - this might be a problem. *EK* included CR and FF as whitespace. */
-#line 1439 "./cfunctions.c"
+#line 1442 "./cfunctions.c"
 
 #define INITIAL 0
 #define comment 1
@@ -1700,12 +1703,12 @@ YY_DECL
 	register int yy_act;
     
 /* %% [7.0] user's declarations go here */
-#line 171 "./cfunctions.fl"
+#line 174 "./cfunctions.fl"
 
 
   /* C preprocessor conditional statements. */
 
-#line 1709 "./cfunctions.c"
+#line 1712 "./cfunctions.c"
 
 	if ( !(yy_init) )
 		{
@@ -1836,7 +1839,7 @@ case 1:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 175 "./cfunctions.fl"
+#line 178 "./cfunctions.fl"
 cpp_add (yytext, CPP_IF);
 	YY_BREAK
 case 2:
@@ -1845,7 +1848,7 @@ case 2:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 177 "./cfunctions.fl"
+#line 180 "./cfunctions.fl"
 cpp_add (yytext, CPP_ELSE);
 	YY_BREAK
 case 3:
@@ -1854,7 +1857,7 @@ case 3:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 179 "./cfunctions.fl"
+#line 182 "./cfunctions.fl"
 cpp_add (yytext, CPP_ELIF);
 	YY_BREAK
 case 4:
@@ -1863,20 +1866,20 @@ case 4:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 181 "./cfunctions.fl"
+#line 184 "./cfunctions.fl"
 cpp_add (yytext, CPP_ENDIF);
 	YY_BREAK
 /* Other C preprocessor statements. */
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 185 "./cfunctions.fl"
+#line 188 "./cfunctions.fl"
 { RULE_LINE; do_define (yytext); }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 187 "./cfunctions.fl"
+#line 190 "./cfunctions.fl"
 {
                   line_change (yytext);
                   }
@@ -1884,25 +1887,25 @@ YY_RULE_SETUP
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 191 "./cfunctions.fl"
+#line 194 "./cfunctions.fl"
 do_start_cpp (yytext);
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 193 "./cfunctions.fl"
+#line 196 "./cfunctions.fl"
 inline_print (yytext);
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 195 "./cfunctions.fl"
-{ inline_print (yytext); yy_pop_state (); }
+#line 198 "./cfunctions.fl"
+{ inline_print (yytext); parser_pop_state (); }
 	YY_BREAK
 /* Comments. */
 case 10:
 YY_RULE_SETUP
-#line 199 "./cfunctions.fl"
+#line 202 "./cfunctions.fl"
 {
                   /* One important exception: "/ *" in strings is a
                      part of a string, not a comment.  This only
@@ -1912,7 +1915,7 @@ YY_RULE_SETUP
                   if (YY_START != c_string)
                     {
                       do_comment_start ();
-                      yy_push_state (comment);
+                      parser_push_state (comment);
                     }
                   else /* Don't need a warning. */
                     inline_print (yytext);
@@ -1920,18 +1923,18 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 214 "./cfunctions.fl"
-{ do_comment_end (); yy_pop_state(); }
+#line 217 "./cfunctions.fl"
+{ do_comment_end (); parser_pop_state(); }
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 216 "./cfunctions.fl"
+#line 219 "./cfunctions.fl"
 do_comment_print (yytext, yyleng);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 218 "./cfunctions.fl"
+#line 221 "./cfunctions.fl"
 { 
                     
                       /* This could foul up on some cases.  For example,
@@ -1942,26 +1945,26 @@ YY_RULE_SETUP
 /* Type definitions. */
 case 14:
 YY_RULE_SETUP
-#line 227 "./cfunctions.fl"
+#line 230 "./cfunctions.fl"
 { RULE_LINE; do_typedef (yytext, yyleng); }
 	YY_BREAK
 /* Enumerations. */
 case 15:
 YY_RULE_SETUP
-#line 231 "./cfunctions.fl"
+#line 234 "./cfunctions.fl"
 { RULE_LINE;
-                  yy_push_state (in_enum);
+                  parser_push_state (in_enum);
                   function_save (yytext, yyleng);
                   }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 236 "./cfunctions.fl"
+#line 239 "./cfunctions.fl"
 { RULE_LINE; do_word (yytext, yyleng); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 238 "./cfunctions.fl"
+#line 241 "./cfunctions.fl"
 {
                   external_clear ();
                   BEGIN (is_enum);
@@ -1970,13 +1973,13 @@ YY_RULE_SETUP
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 243 "./cfunctions.fl"
+#line 246 "./cfunctions.fl"
 ;
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 245 "./cfunctions.fl"
+#line 248 "./cfunctions.fl"
 { RULE_LINE;
                   inline_print (yytext);
                   tag_make ((unsigned char *)yytext, TAG_ENUM_VAL, yylineno);
@@ -1985,48 +1988,48 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 250 "./cfunctions.fl"
+#line 253 "./cfunctions.fl"
 inline_print (yytext);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 252 "./cfunctions.fl"
+#line 255 "./cfunctions.fl"
 {
                   inline_print (yytext);
-                  yy_pop_state ();
+                  parser_pop_state ();
                   }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 257 "./cfunctions.fl"
+#line 260 "./cfunctions.fl"
 line_error("`;' in enum list");
 	YY_BREAK
 /* Structures and unions. */
 case 23:
 YY_RULE_SETUP
-#line 261 "./cfunctions.fl"
+#line 264 "./cfunctions.fl"
 { RULE_LINE; /* Fortunately a `struct' is just the same 
                                   syntactically as a `union'. */
                   function_save (yytext, yyleng);
-                  yy_push_state (in_struct);
+                  parser_push_state (in_struct);
                   }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 267 "./cfunctions.fl"
+#line 270 "./cfunctions.fl"
 { RULE_LINE; do_word (yytext, yyleng); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 269 "./cfunctions.fl"
+#line 272 "./cfunctions.fl"
 {
                   function_save (yytext, yyleng);
-                  yy_pop_state ();
+                  parser_pop_state ();
                   }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 274 "./cfunctions.fl"
+#line 277 "./cfunctions.fl"
 {
                   /* This rare state occurs in incomplete forward
                      declaration of a struct. */
@@ -2037,12 +2040,12 @@ YY_RULE_SETUP
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 281 "./cfunctions.fl"
+#line 284 "./cfunctions.fl"
 ;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 283 "./cfunctions.fl"
+#line 286 "./cfunctions.fl"
 { 
                    brace_open ();
                    external_clear ();
@@ -2053,32 +2056,32 @@ YY_RULE_SETUP
      initialisers. */
 case 29:
 YY_RULE_SETUP
-#line 292 "./cfunctions.fl"
+#line 295 "./cfunctions.fl"
 {
                     external_print (";\n");
-                    yy_pop_state ();
+                    parser_pop_state ();
                   }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 297 "./cfunctions.fl"
+#line 300 "./cfunctions.fl"
 {
                     current_arg = arg_share (current_arg);
-                    yy_pop_state ();
+                    parser_pop_state ();
                   }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 302 "./cfunctions.fl"
+#line 305 "./cfunctions.fl"
 {
                   brace_open ();
-                  yy_push_state (function);
+                  parser_push_state (function);
                   }
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 307 "./cfunctions.fl"
+#line 310 "./cfunctions.fl"
 {
 
   /* This is to jump comma operators.  In practice it is very unlikely
@@ -2092,19 +2095,19 @@ YY_RULE_SETUP
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 317 "./cfunctions.fl"
+#line 320 "./cfunctions.fl"
 inline_print (yytext);
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 319 "./cfunctions.fl"
+#line 322 "./cfunctions.fl"
 do_arguments ();
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 320 "./cfunctions.fl"
+#line 323 "./cfunctions.fl"
 do_void_arguments ();
 	YY_BREAK
 /* Function pointers.  At the moment this works for inline versions
@@ -2112,17 +2115,17 @@ do_void_arguments ();
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 325 "./cfunctions.fl"
+#line 328 "./cfunctions.fl"
 {
                   external_print ("");
                   inline_print (yytext);
-                  yy_push_state (func_ptr);
+                  parser_push_state (func_ptr);
                   }
 	YY_BREAK
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 331 "./cfunctions.fl"
+#line 334 "./cfunctions.fl"
 {
                   inline_print (yytext);
                   BEGIN (func_ptr_arg);
@@ -2130,36 +2133,36 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 336 "./cfunctions.fl"
+#line 339 "./cfunctions.fl"
 {
                   inline_print (yytext);
-                  yy_pop_state ();
+                  parser_pop_state ();
                   }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 341 "./cfunctions.fl"
+#line 344 "./cfunctions.fl"
 {
                   inline_print (yytext);
                   inline_print (";\n");
-                  yy_pop_state ();
+                  parser_pop_state ();
                   }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 347 "./cfunctions.fl"
+#line 350 "./cfunctions.fl"
 do_function_pointer (yytext);
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 349 "./cfunctions.fl"
+#line 352 "./cfunctions.fl"
 inline_print (yytext);
 	YY_BREAK
 /* Beginning of a C argument. */
 case 42:
 YY_RULE_SETUP
-#line 353 "./cfunctions.fl"
+#line 356 "./cfunctions.fl"
 {
                   do_start_arguments ();
                   /* Deficiency: switching into argument mode immediately
@@ -2174,42 +2177,42 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 365 "./cfunctions.fl"
+#line 368 "./cfunctions.fl"
 do_arguments_close_bracket (yytext, yyleng);
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 367 "./cfunctions.fl"
+#line 370 "./cfunctions.fl"
 do_arguments_open_bracket (yytext, yyleng);
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 369 "./cfunctions.fl"
+#line 372 "./cfunctions.fl"
 {
                   argument_save (yytext, yyleng);
                   }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 373 "./cfunctions.fl"
+#line 376 "./cfunctions.fl"
 argument_next();
 	YY_BREAK
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 375 "./cfunctions.fl"
+#line 378 "./cfunctions.fl"
 ;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 377 "./cfunctions.fl"
+#line 380 "./cfunctions.fl"
 argument_save (yytext, yyleng);
 	YY_BREAK
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
-#line 379 "./cfunctions.fl"
+#line 382 "./cfunctions.fl"
 {
                   line_error ("nasty macro: use -C option");
                   }
@@ -2217,7 +2220,7 @@ YY_RULE_SETUP
 /* Looking for `traditional' C function declarations. */
 case 50:
 YY_RULE_SETUP
-#line 385 "./cfunctions.fl"
+#line 388 "./cfunctions.fl"
 { RULE_LINE;
                   inline_print (yytext); 
                   BEGIN (traditional); 
@@ -2227,7 +2230,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 392 "./cfunctions.fl"
+#line 395 "./cfunctions.fl"
 {
                   external_print (";\n");
                   BEGIN (INITIAL);
@@ -2235,7 +2238,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 397 "./cfunctions.fl"
+#line 400 "./cfunctions.fl"
 {
                   external_print (",\n");
                   BEGIN (INITIAL);
@@ -2243,7 +2246,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 402 "./cfunctions.fl"
+#line 405 "./cfunctions.fl"
 { RULE_LINE;
 
                        /* This state occurs rather rarely, in traditional
@@ -2252,69 +2255,69 @@ YY_RULE_SETUP
 
                   function_print ();
                   BEGIN (INITIAL);
-                  yy_push_state (function);
+                  parser_push_state (function);
                   brace_open ();
                   }
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 414 "./cfunctions.fl"
+#line 417 "./cfunctions.fl"
 ;
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 416 "./cfunctions.fl"
+#line 419 "./cfunctions.fl"
 { RULE_LINE;
                   traditional_save (yytext, yyleng);
                   }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 420 "./cfunctions.fl"
+#line 423 "./cfunctions.fl"
 traditional_comma ();
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 422 "./cfunctions.fl"
+#line 425 "./cfunctions.fl"
 traditional_save (yytext, yyleng);
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 424 "./cfunctions.fl"
+#line 427 "./cfunctions.fl"
 traditional_next ();
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 426 "./cfunctions.fl"
+#line 429 "./cfunctions.fl"
 ;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 428 "./cfunctions.fl"
+#line 431 "./cfunctions.fl"
 { RULE_LINE;
                   function_print ();
                   BEGIN (INITIAL);
-                  yy_push_state (function);
+                  parser_push_state (function);
                   brace_open ();
                   }
 	YY_BREAK
 /* At the moment `traditional' does not handle function pointers. */
 case 61:
 YY_RULE_SETUP
-#line 437 "./cfunctions.fl"
+#line 440 "./cfunctions.fl"
 {
                   /* All functions must start like this. */
                   function_print();
-                  yy_push_state (function);
+                  parser_push_state (function);
                   brace_open ();
                   }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 444 "./cfunctions.fl"
+#line 447 "./cfunctions.fl"
 {
                     /* A `}' outside function mode can only happen when 
                        there was no matching `{'. */
@@ -2323,7 +2326,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 450 "./cfunctions.fl"
+#line 453 "./cfunctions.fl"
 {
                   inline_print(yytext);
                   brace_open ();
@@ -2331,19 +2334,19 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 455 "./cfunctions.fl"
+#line 458 "./cfunctions.fl"
 do_brace_close ();
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 457 "./cfunctions.fl"
+#line 460 "./cfunctions.fl"
 {
                   inline_print (yytext);
                   if (YY_START != comment) {
                     if ( YY_START != c_string )
-                      yy_push_state (c_string);
+                      parser_push_state (c_string);
                     else
-                      yy_pop_state ();
+                      parser_pop_state ();
                     }
                   }
 	YY_BREAK
@@ -2353,29 +2356,29 @@ YY_RULE_SETUP
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 471 "./cfunctions.fl"
+#line 474 "./cfunctions.fl"
 inline_print (yytext);
 	YY_BREAK
 case 67:
 /* rule 67 can match eol */
 YY_RULE_SETUP
-#line 473 "./cfunctions.fl"
+#line 476 "./cfunctions.fl"
 inline_print (yytext);
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 475 "./cfunctions.fl"
+#line 478 "./cfunctions.fl"
 do_escaped_brace (yytext);
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 477 "./cfunctions.fl"
+#line 480 "./cfunctions.fl"
 { RULE_LINE; do_extern (yytext, yyleng); }
 	YY_BREAK
 case 70:
 /* rule 70 can match eol */
 YY_RULE_SETUP
-#line 479 "./cfunctions.fl"
+#line 482 "./cfunctions.fl"
 {
                     arg_put_name (current_arg);
                     arg_add (current_arg, yytext, yylineno);
@@ -2383,7 +2386,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 484 "./cfunctions.fl"
+#line 487 "./cfunctions.fl"
 { RULE_LINE;
                     if (current_arg)
                       {                   
@@ -2396,20 +2399,20 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 494 "./cfunctions.fl"
+#line 497 "./cfunctions.fl"
 { RULE_LINE;
                     if (current_arg)
                       arg_put_name (current_arg);
                     else
                       /* Function pointer trips here. */;
-                    yy_push_state (initialiser);
+                    parser_push_state (initialiser);
                     if (verbatiming)
                       external_print ("=");
                   }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 504 "./cfunctions.fl"
+#line 507 "./cfunctions.fl"
 { RULE_LINE;
                     arg_put_name (current_arg);
                     current_arg = arg_share (current_arg);
@@ -2418,48 +2421,48 @@ YY_RULE_SETUP
 case 74:
 /* rule 74 can match eol */
 YY_RULE_SETUP
-#line 509 "./cfunctions.fl"
+#line 512 "./cfunctions.fl"
 { /*EK*/
                   /* Never write a prototype for main. */
                   function_reset();
                   brace_open ();
-                  yy_push_state(function);
+                  parser_push_state(function);
                   }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 516 "./cfunctions.fl"
+#line 519 "./cfunctions.fl"
 do_LOCAL (yytext);
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 518 "./cfunctions.fl"
+#line 521 "./cfunctions.fl"
 do_INLINE (yytext);
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 520 "./cfunctions.fl"
+#line 523 "./cfunctions.fl"
 { RULE_LINE; do_static (yytext, yyleng); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 522 "./cfunctions.fl"
+#line 525 "./cfunctions.fl"
 { RULE_LINE; do_void (yytext, yyleng); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 524 "./cfunctions.fl"
+#line 527 "./cfunctions.fl"
 do_NO_SIDE_FX (yytext);
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 526 "./cfunctions.fl"
+#line 529 "./cfunctions.fl"
 { RULE_LINE; do_NO_RETURN (yytext); }
 	YY_BREAK
 /* Over-complicated method for parsing GNU C extension related thing. */
 case 81:
 YY_RULE_SETUP
-#line 530 "./cfunctions.fl"
+#line 533 "./cfunctions.fl"
 {
                   check_extensions ();
                   BEGIN (print_format);
@@ -2468,27 +2471,27 @@ YY_RULE_SETUP
 case 82:
 /* rule 82 can match eol */
 YY_RULE_SETUP
-#line 535 "./cfunctions.fl"
+#line 538 "./cfunctions.fl"
 ;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 537 "./cfunctions.fl"
+#line 540 "./cfunctions.fl"
 pf.index = 0;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 539 "./cfunctions.fl"
+#line 542 "./cfunctions.fl"
 pf.index++;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 541 "./cfunctions.fl"
+#line 544 "./cfunctions.fl"
 do_PRINT_FORMAT ();
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 543 "./cfunctions.fl"
+#line 546 "./cfunctions.fl"
 {
                   if (pf.index > 1)
                     line_error ("bad print format number %d", pf.index);
@@ -2498,17 +2501,17 @@ YY_RULE_SETUP
 case 87:
 /* rule 87 can match eol */
 YY_RULE_SETUP
-#line 549 "./cfunctions.fl"
+#line 552 "./cfunctions.fl"
 { RULE_LINE; do_void_pointer (yytext); }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 551 "./cfunctions.fl"
+#line 554 "./cfunctions.fl"
 { RULE_LINE; function_save (yytext, yyleng); }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 553 "./cfunctions.fl"
+#line 556 "./cfunctions.fl"
 { RULE_LINE;
                   /* This is for functions which return pointers 
                      to something.  It should be eliminated by 
@@ -2519,12 +2522,12 @@ YY_RULE_SETUP
 case 90:
 /* rule 90 can match eol */
 YY_RULE_SETUP
-#line 560 "./cfunctions.fl"
+#line 563 "./cfunctions.fl"
 ;
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 562 "./cfunctions.fl"
+#line 565 "./cfunctions.fl"
 { 
                   #ifdef CFUNCTIONS_DEBUG
                   line_warning ("unknown char `%c' while looking at %s", 
@@ -2534,10 +2537,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 569 "./cfunctions.fl"
+#line 572 "./cfunctions.fl"
 ECHO;
 	YY_BREAK
-#line 2541 "./cfunctions.c"
+#line 2544 "./cfunctions.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(comment):
 case YY_STATE_EOF(function):
@@ -3700,7 +3703,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 569 "./cfunctions.fl"
+#line 572 "./cfunctions.fl"
 
 
 
@@ -3710,7 +3713,7 @@ void yyfree (void * ptr )
 void
 push_in_cpp (void)
 {
-  yy_push_state (in_cpp);
+  parser_push_state (in_cpp);
 }
 
 int
@@ -3740,7 +3743,37 @@ start_maybe_traditional (void)
 void
 pop_state (void)
 {
-  yy_pop_state (); 
+  parser_pop_state (); 
+}
+
+typedef struct
+{
+    const char * file_name;
+    int line_number;
+    int line_offset;
+} parse_location;
+
+#define MAX_DEPTH 0x100
+
+parse_location state_starts[MAX_DEPTH];
+
+int state_depth = 0;
+
+void parser_push_state (int new_state)
+{
+    yy_push_state (new_state);
+    state_starts[state_depth].line_number = yylineno;
+    state_depth++;
+    if (state_depth > MAX_DEPTH) {
+        fprintf (stderr, "Too many states encountered.");
+        exit (EXIT_FAILURE);
+    }
+}
+
+void parser_pop_state ()
+{
+    yy_pop_state ();
+    state_depth--;
 }
 
 /* Return a string corresponding to the state.  Hack around Flex not
@@ -3749,6 +3782,7 @@ pop_state (void)
 const char * 
 state_message (void)
 {
+    printf ("Line number: %d\n", state_starts[state_depth - 1].line_number);
   switch (YY_START)
     {
     case comment:
@@ -3785,4 +3819,5 @@ state_message (void)
       return "unknown state (report this message as a bug please)";
     }
 }
+
 
