@@ -1,6 +1,8 @@
-#!@PERL@ -w
+#!@PERL@
+use warnings;
+use strict;
 
-# Copyright (C) 1998,2003  Ben K. Bullock
+# Copyright (C) 1998-2010  Ben Bullock
  
 # Cfunctions is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,26 +23,26 @@
 
 # The output is a test script for Cfunctions written in Perl.
  
-$cfunctions = "../src/cfunctions";
+my $cfunctions = "../src/cfunctions";
 
 # Make sure that the executable Cfunctions does exist.
 
 if ( ! -e $cfunctions || ! -x $cfunctions )
 {
     print STDERR 
-        "$0: `$cfunctions' cannot be found or is not executable.\n";
+        "$0: '$cfunctions' cannot be found or is not executable.\n";
     exit ( 1 );
 }
 
-$cc         = "@CC@";
-$GNU_c      = "@GCC@"; # are we using GNU C?
+my $cc         = "@CC@";
+my $GNU_c      = "@GCC@"; # are we using GNU C?
 
-$n_test = 0;
-$n_failed = 0;
-$n_succeed = 0;
-$n_bad_tests = 0;
+my $n_test = 0;
+my $n_failed = 0;
+my $n_succeed = 0;
+my $n_bad_tests = 0;
 
-sub err_test ()
+sub err_test
 {
     my $c_file = $_[0];
     my $message_type = $_[1];
@@ -48,16 +50,16 @@ sub err_test ()
     my $options = "";
 
     $n_test++;
-    $test = "FAILED";
+    my $test = "FAILED";
 
 # Get the error message from the C file.  Every `bad-' and `warn-'
 # file should have exactly one error message in it, which is a
 # substring of the error message it is supposed to trigger in
 # Cfunctions.  This is marked by `$message_type'.
 
-    open ( C_FILE, $c_file ) || die;
+    open ( C_FILE, $c_file ) or die;
 
-    $msg = "";
+    my $msg = "";
 
     while ( <C_FILE> )
     {
@@ -79,7 +81,8 @@ sub err_test ()
         }
     }
 
-    print "Test $n_test: cfunctions $options $c_file: "; 
+    my $runcommand = "$cfunctions $options $c_file"; 
+    print "Test $n_test: $runcommand: ";
 
     if ( ! $msg )
     { 
@@ -88,7 +91,7 @@ sub err_test ()
         print "bad test: no `$message_type' statements.\n"; 
     }
 
-    close C_FILE;
+    close C_FILE or die $!;
 
     if ( $failed ) 
     { 
@@ -98,7 +101,7 @@ sub err_test ()
 # Try running Cfunctions on the C file and see if it generates an
 # error message containing the right substrings.
 
-    open ( TEST_OUT, "$cfunctions $options $c_file 2>&1 |" );
+    open ( TEST_OUT, "$runcommand 2>&1 |" );
 
     while ( <TEST_OUT> )
     {
@@ -107,7 +110,11 @@ sub err_test ()
             $test = "PASSED";
         }
     }
+    # Because cfunctions exited with an error status, "close" will
+    # return a non-zero value.
     close TEST_OUT;
+#    close TEST_OUT or die "Died closing: $!";
+
     if ( $test =~ /FAILED/ )
     {
         $n_failed++;
@@ -129,29 +136,30 @@ sub err_test ()
 
 sub rm_h_files()
 {
-    opendir(THISDIR, ".");
+    opendir(THISDIR, ".") or die $!;
+    my @h_files = grep ( /^.*\.h~*$/, readdir THISDIR);
+    closedir THISDIR or die $!;
 
-    @h_files = grep ( /^.*\.h~*$/, readdir THISDIR);
-
-    foreach $h_file (@h_files)
+    foreach my $h_file (@h_files)
     {
         unlink ( $h_file );
     }
-    unlink ( "CFTAGS" );
-    closedir THISDIR;
+    if (-f "CFTAGS") {
+        unlink ( "CFTAGS" ) or die $!;
+    }
 }
 
 # Run Cfunctions on the PASSED files.  If Cfunctions gives an error
 # message, then fail the test.
 
-sub try_ok ()
+sub try_ok 
 {
     my $c_file = $_[0];
     my $failed = 0;
     my $options = "";
     my $error_msg = "";
     $n_test++;
-    $test = "PASSED";
+    my $test = "PASSED";
 
 # Get the options from the C file, if there are any.
 
@@ -206,6 +214,7 @@ sub try_ok ()
     my $link_file = $c_file;
     $link_file =~ s/^ok-/link-/;
     my $cc_op = "";
+    my $gcc_op;
     if ( ! $GNU_c )
     {
         $gcc_op = "";
@@ -272,20 +281,20 @@ sub try_ok ()
 
 # See if Cfunctions is making backups properly.
 
-sub backup_test ()
+sub backup_test
 {
 }
 
 # Test the advertising stuff in Cfunctions
 
-sub advert_test ()
+sub advert_test
 {
     open (C_FILE, "> jub.c");
     print C_FILE "int x;\n";
     close (C_FILE);
 
     $n_test++;
-    $test = "PASSED";
+    my $test = "PASSED";
 
     print ( "test $n_test: cfunctions -aoff: " );
 
@@ -346,19 +355,19 @@ sub advert_test ()
     unlink ( "XXX" );
 }
 
-sub local_global_test()
+sub local_global_test
 {
     my $error_msg = "";
     $n_test++;
-    $test = "PASSED";
+    my $test = "PASSED";
 
     print ( "test $n_test: cfunctions -l mop -g top: " );
 
     opendir(THISDIR, ".");
-    @ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
+    my @ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
     closedir THISDIR;
 
-    open (JUB, "$cfunctions -l mop -g top @ok_files 2>&1 |");
+    open (JUB, "$cfunctions -l mop -g top @ok_files 2>&1 |") or die $!;
     while (<JUB>)
     {
         if ( /error/ || /warning/ )
@@ -384,13 +393,15 @@ sub local_global_test()
 
 # Exercise miscellaneous options.  These tests are not very adequate.
 
-sub options_test()
+sub options_test
 {
-    @options = ( '--help', '-h', '--version', '-V'); 
+    my @options = ( '--help', '-h', '--version', '-V'); 
 
     my $error_msg;
 
-    foreach $option (@options)
+    my $test;
+
+    foreach my $option (@options)
     {
         $n_test++;
         $test = "PASSED";
@@ -452,17 +463,20 @@ sub options_test()
     }
 }
 
-sub tags_test ()
+sub tags_test
 {
     opendir(THISDIR, ".");
 
-    @ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
-    @tags = ();
+    my @ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
+    my @tags = ();
+    my $test;
 
-    foreach $ok_file (@ok_files)
+    foreach my $ok_file (@ok_files)
     {
-        $has_tags = 0;
+        my $has_tags = 0;
         unlink ("TAGS");
+        my $error_msg;
+        my $test;
 
         open ( PASSED_FILE, $ok_file ) || die $!;
 
@@ -508,10 +522,10 @@ sub tags_test ()
             next;
         }
 
-
-        $saw_file = 0;
-        $unrecorded_tags = "";
-        foreach $tag ( @tags )
+        my %saw_tag;
+        my $saw_file = 0;
+        my $unrecorded_tags = "";
+        foreach my $tag ( @tags )
         {
             $saw_tag{$tag} = 1;
         }
@@ -546,9 +560,9 @@ sub tags_test ()
             next;
         }
 
-        $missed_tags = "";
+        my $missed_tags = "";
 
-        foreach $tag ( @tags )
+        foreach my $tag ( @tags )
         {
             if ( $saw_tag{$tag} == 1)
             {
@@ -573,10 +587,10 @@ sub tags_test ()
 
 # Test running Cfunctions from standard input.
 
-sub stdin_test ()
+sub stdin_test
 {
     $n_test++;
-    $test = "FAILED";
+    my $test = "FAILED";
     
     open (X_FILE, "> x-file") || die $!;
     print X_FILE "int x;\nint mulder;\nint scully;\n";
@@ -594,6 +608,7 @@ sub stdin_test ()
 
     open (JUB, "$cfunctions --individual < x-file 2>&1 > /dev/null |") 
         || die $!;
+    my $error_msg = "";
     while (<JUB>)
     {
         if ( /bad option -i/ )
@@ -620,17 +635,17 @@ sub stdin_test ()
 
 # Main program starts here
 
-& rm_h_files();
+rm_h_files();
 
 opendir(THISDIR, ".");
 
-@bad_files = grep ( /^bad-.*\.c$/, readdir THISDIR);
+my @bad_files = grep ( /^bad-.*\.c$/, readdir THISDIR);
 
 closedir THISDIR;
 
-foreach $bad_file (@bad_files)
+foreach my $bad_file (@bad_files)
 {
-    &err_test ( $bad_file, "error" );
+    err_test ( $bad_file, "error" );
 }
 
 # Try running Cfunctions on each `warn-' file and see if it generates
@@ -638,33 +653,33 @@ foreach $bad_file (@bad_files)
 
 opendir(THISDIR, ".");
 
-@warn_files = grep ( /^warn-.*\.c$/, readdir THISDIR);
+my @warn_files = grep ( /^warn-.*\.c$/, readdir THISDIR);
 
-foreach $warn_file (@warn_files)
+foreach my $warn_file (@warn_files)
 {
-    &err_test ( $warn_file, "warning" );
+    err_test ( $warn_file, "warning" );
 }
 
 opendir(THISDIR, ".");
 
-@ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
+my @ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
 
-foreach $ok_file (@ok_files)
+foreach my $ok_file (@ok_files)
 {
-    &try_ok ( $ok_file );
+    try_ok ( $ok_file );
 }
 
-& backup_test();
+backup_test();
 
-& advert_test();
+advert_test();
 
-& local_global_test();
+local_global_test();
 
-& options_test();
+options_test();
 
-& tags_test();
+tags_test();
 
-& stdin_test();
+stdin_test();
 
 # Now print a report on the tests.
 
@@ -699,7 +714,7 @@ else
 
 # The generated `.h' files are deleted.
 
-& rm_h_files();
+rm_h_files();
 
 unlink ( "a.out" ) || die;
 

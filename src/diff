@@ -1,0 +1,159 @@
+4c4
+<    Copyright (C) 1998-2010  Ben Bullock
+---
+>    Copyright (C) 1998, 2004  Ben K. Bullock
+49,51d48
+< void parser_push_state (int);
+< void parser_pop_state ();
+< 
+70c67
+<    `parser_push_state' and `parser_pop_state' below. */
+---
+>    `yy_push_state' and `yy_pop_state' below. */
+148,149d144
+< endline       \r?\n
+< 
+153,154c148,149
+< cpp_space     ([ \t\f\r]|\\{endline})+
+< cpp_opt_space ([ \t\f\r]|\\{endline})*
+---
+> cpp_space     ([ \t\f\r]|\\\n)+
+> cpp_opt_space ([ \t\f\r]|\\\n)*
+156c151
+< cpp_any       (.|\\{endline})
+---
+> cpp_any       (.|\\\n)
+198c193
+< <in_cpp>{endline} { inline_print (yytext); parser_pop_state (); }
+---
+> <in_cpp>\n        { inline_print (yytext); yy_pop_state (); }
+211c206
+<                       parser_push_state (comment);
+---
+>                       yy_push_state (comment);
+217c212
+< <comment>\*+\/    { do_comment_end (); parser_pop_state(); }
+---
+> <comment>\*+\/    { do_comment_end (); yy_pop_state(); }
+235c230
+<                   parser_push_state (in_enum);
+---
+>                   yy_push_state (in_enum);
+257c252
+<                   parser_pop_state ();
+---
+>                   yy_pop_state ();
+267c262
+<                   parser_push_state (in_struct);
+---
+>                   yy_push_state (in_struct);
+274c269
+<                   parser_pop_state ();
+---
+>                   yy_pop_state ();
+297c292
+<                     parser_pop_state ();
+---
+>                     yy_pop_state ();
+302c297
+<                     parser_pop_state ();
+---
+>                     yy_pop_state ();
+307c302
+<                   parser_push_state (function);
+---
+>                   yy_push_state (function);
+331c326
+<                   parser_push_state (func_ptr);
+---
+>                   yy_push_state (func_ptr);
+341c336
+<                   parser_pop_state ();
+---
+>                   yy_pop_state ();
+347c342
+<                   parser_pop_state ();
+---
+>                   yy_pop_state ();
+413c408
+<                   parser_push_state (function);
+---
+>                   yy_push_state (function);
+434c429
+<                   parser_push_state (function);
+---
+>                   yy_push_state (function);
+443c438
+<                   parser_push_state (function);
+---
+>                   yy_push_state (function);
+462,467c457,460
+<                   if (YY_START != comment) {
+<                     if ( YY_START != c_string )
+<                       parser_push_state (c_string);
+<                     else
+<                       parser_pop_state ();
+<                     }
+---
+>                   if ( YY_START != c_string )
+>                     yy_push_state (c_string);
+>                   else
+>                     yy_pop_state ();
+470,474c463
+<                   /* Inside a C string, match a sequence of any single
+<                      character other than ", or match \", but not
+<                      \\". */
+< 
+< <c_string>([^\\]\\\"|[^\"])*                inline_print (yytext);
+---
+> <c_string>([^\"]|\\\")*                     inline_print (yytext);
+502c491
+<                     parser_push_state (initialiser);
+---
+>                     yy_push_state (initialiser);
+516c505
+<                   parser_push_state(function);
+---
+>                   yy_push_state(function);
+580c569
+<   parser_push_state (in_cpp);
+---
+>   yy_push_state (in_cpp);
+610,640c599
+<   parser_pop_state (); 
+< }
+< 
+< typedef struct
+< {
+<     const char * file_name;
+<     int line_number;
+<     int line_offset;
+< } parse_location;
+< 
+< #define MAX_DEPTH 0x100
+< 
+< parse_location state_starts[MAX_DEPTH];
+< 
+< int state_depth = 0;
+< 
+< void parser_push_state (int new_state)
+< {
+<     yy_push_state (new_state);
+<     state_starts[state_depth].line_number = yylineno;
+<     state_depth++;
+<     if (state_depth > MAX_DEPTH) {
+<         fprintf (stderr, "Too many states encountered.");
+<         exit (EXIT_FAILURE);
+<     }
+< }
+< 
+< void parser_pop_state ()
+< {
+<     yy_pop_state ();
+<     state_depth--;
+---
+>   yy_pop_state (); 
+649d607
+<     printf ("Line number: %d\n", state_starts[state_depth - 1].line_number);
+686d643
+< 

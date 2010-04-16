@@ -121,3 +121,5 @@ AC_SUBST(COPYRIGHT_YEAR)
 
 AC_OUTPUT(Makefile doc/version.texi tests/test.perl doc/index.html 
           src/config.h doc/man.head src/Makefile doc/Makefile)
+
+chmod 0555 tests/test.perl

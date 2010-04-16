@@ -48,7 +48,7 @@ PATH: /home/ben/bin
 configure:1797: checking whether make sets $(MAKE)
 configure:1819: result: yes
 configure:1833: checking for flex
-configure:1849: found /usr/bin/flex
+configure:1849: found /home/ben/software/install/bin/flex
 configure:1860: result: flex
 configure:1871: checking for cfunctions
 configure:1887: found /home/ben/software/install/bin/cfunctions
@@ -321,7 +321,7 @@ COPYRIGHT_YEAR='2009'
 CPP='gcc -E'
 CPPFLAGS=' -DCFUNCTIONS_DEBUG'
 CWD='/usr/home/ben/cfunctions/current'
-DATE='FRI NOV  6 13:45:10 JST 2009'
+DATE='FRI APR 16 15:27:31 JST 2010'
 DEFS='-DHAVE_CONFIG_H'
 DOC_TARGETS=' info html'
 ECHO_C=''
@@ -343,7 +343,7 @@ LIBS=''
 LTLIBOBJS=''
 MAINTAINER='benkasminbullock@gmail.com'
 MAKEINFO='makeinfo'
-MAN_DATE='06 Nov 2009'
+MAN_DATE='16 Apr 2010'
 OBJEXT='o'
 PACKAGE_BUGREPORT=''
 PACKAGE_NAME=''

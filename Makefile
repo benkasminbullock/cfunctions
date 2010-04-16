@@ -26,7 +26,7 @@ all:
 	cd src;make;cd ../doc;make
 
 check: 	all
-	cd tests/;test.perl
+	cd tests/;./test.perl
 
 
 thisdir_clean:

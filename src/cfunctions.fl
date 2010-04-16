@@ -199,7 +199,7 @@ c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
 
   /* Comments. */
 
-<*>"/*"           {
+<*>"/"(\\{endline})?"*"  {
                   /* One important exception: "/ *" in strings is a
                      part of a string, not a comment.  This only
                      occurs for the case that the string is exactly
@@ -214,11 +214,14 @@ c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
                     inline_print (yytext);
                   }
 
-<comment>\*+\/    { do_comment_end (); parser_pop_state(); }
+<comment>\*+\/    { 
+                      do_comment_end ();
+                      parser_pop_state();
+                  }
 
 <comment>(([^\*]|\n)*|\*+([^/\*]|\n))  do_comment_print (yytext, yyleng);
 
-<INITIAL,function>"//".*  { 
+<INITIAL,function>"/"(\\{endline})?"/".*  { 
                     
                       /* This could foul up on some cases.  For example,
                        "a // * comment * /b" (a space was added between
@@ -467,11 +470,13 @@ enum              { RULE_LINE;
                     }
                   }
 
-                  /* Inside a C string, match a sequence of any single
-                     character other than ", or match \", but not
-                     \\". */
+                 /* Match escaped non-quote characters in a C string. */
 
-<c_string>([^\\]\\\"|[^\"])*                inline_print (yytext);
+<c_string>(\\][^\"])*             inline_print (yytext);
+
+                 /* Match escaped quotes or non-quote characters in a C string. */
+
+<c_string>(\\\"|[^\"])*           inline_print (yytext);
 
 <function>([^\}\{\"]|\n|\'\\\"\'|\'\"\')    inline_print (yytext);
 
@@ -562,9 +567,9 @@ void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (yytext); }
 
 {c_space}         ;
 
-<*>.              { 
+<*>.              {
                   #ifdef CFUNCTIONS_DEBUG
-                  line_warning ("unknown char `%c' while looking at %s", 
+                  line_warning ("unknown char `%c' while in %s state", 
                                 yytext[0], state_message ());
                   #endif /* CFUNCTIONS_DEBUG */
                   }
