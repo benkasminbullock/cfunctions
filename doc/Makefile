@@ -21,7 +21,7 @@
 # contains code contributed by Egil Kvaleberg.
 
 datarootdir = ${prefix}/share
-prefix = /home/ben/software/install
+prefix = /usr/local
 mandir = ${datarootdir}/man
 sharedir = ${prefix}/share/cfunctions
 infodir = ${prefix}/info
@@ -32,7 +32,7 @@ MAKEINFO = makeinfo
 TEXI2DVI = texi2dvi
 TEXI2HTML = texi2html -menu
 CPPFLAGS = -I.  -DCFUNCTIONS_DEBUG
-VERSION = 0.26
+VERSION = 0.27
 INSTALL = /usr/bin/install -c
 CWD = $(shell pwd)
 
@@ -75,7 +75,7 @@ options.texi:   ../src/options.c
 	cd ../src/; $(MAKE) options
 	${srcdir}/../src/options -t > options.texi
 
-cfunctions.1: 	../src/options.c man.head.in man.tail
+cfunctions.1: 	../src/options.c man.head man.tail
 	cd ../src/; $(MAKE) options
 	${srcdir}/../src/options -m \
 	|sed s/@var{argument}/\\\\fIargument\\\\fP/g> $@

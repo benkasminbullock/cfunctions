@@ -48,7 +48,7 @@ File: cfunctions.info,  Node: Introduction,  Next: Invoking Cfunctions,  Prev: C
 1 Introduction
 **************
 
-This is the manual for Cfunctions version 0.26.  This manual explains
+This is the manual for Cfunctions version 0.27.  This manual explains
 Cfunctions, a program for making header files from C files.  Cfunctions
 (pronounced "see-functions") gets function declarations, prototypes and
 global (otherwise known as external) variable declarations from C files
@@ -112,7 +112,7 @@ file.  Now input
 was declared elsewhere, so it should not be declared in a header file.
 Now input
      static int Q;
-     static char * TUB (int jub) { return array[ jub ]; }
+     static char * TUB (int job) { return array[ job ]; }
    Cfunctions outputs nothing.  That is because both Q and TUB are
 declared with `static'.  Cfunctions assumes that it is writing a header
 file, so it doesn't output anything declared `static'.
@@ -544,8 +544,8 @@ The option `--individual' (`-i') makes Cfunctions write a separate
 header file for each C file argument.  The name of the header file is
 the C file name with an `.h' suffix instead of `.c'.  For example,
 
-     cfunctions -i jub.c hub.c
-   creates `jub.h' and `hub.h'.
+     cfunctions -i job.c hub.c
+   creates `job.h' and `hub.h'.
 
    To generate both `local' headers for each C file and a global header,
 use the `--individual' and `--global' options together in conjunction
@@ -610,16 +610,16 @@ File: cfunctions.info,  Node: Wrappers,  Next: Making tag tables,  Prev: Adverti
 ============
 
 Cfunctions usually writes a `wrapper' around header files so that they
-will not be read twice.  For example, `cfunctions -i jub.c' will
+will not be read twice.  For example, `cfunctions -i job.c' will
 generate
-     #ifndef CFH_JUB_H
-     #define CFH_JUB_H
+     #ifndef CFH_JOB_H
+     #define CFH_JOB_H
      ...
-     #endif /* CFH_JUB_H */
+     #endif /* CFH_JOB_H */
    Cfunctions does not write wrappers when writing to standard output.
 To force wrappers, use the option `--wrap _argument_' (`-w
 _argument_').  Cfunctions converts _argument_ to upper case and removes
-bad characters, and then uses it as the macro, `CFH_JUB_H' in the above
+bad characters, and then uses it as the macro, `CFH_JOB_H' in the above
 example.  
 
 
@@ -747,21 +747,21 @@ File: cfunctions.info,  Node: Making local headers,  Next: Extra local header in
 
 When using the `--global' option, you may want to share some function
 declarations only with a few specific files. For example, suppose that
-a library `lib' is created from `jub.c' and `hub.c' but that only
-`hub.c' should use the function `private' from `jub.c', not `lib'
+a library `lib' is created from `job.c' and `hub.c' but that only
+`hub.c' should use the function `private' from `job.c', not `lib'
 library users.  To hide the `private' function by not putting its
 prototype into the library header `lib.h', make a local header for
-`jub.c' by
-     cfunctions -g lib -i jub.c hub.c
-   This creates `jub.h' and `hub.h' as well as `lib.h'.  To make the
-prototype of `private' appear in `jub.h' and not in `lib.h', prefix
+`job.c' by
+     cfunctions -g lib -i job.c hub.c
+   This creates `job.h' and `hub.h' as well as `lib.h'.  To make the
+prototype of `private' appear in `job.h' and not in `lib.h', prefix
 `private' with `LOCAL', and the prototype for `private' will appear in
-`jub.h'.  `LOCAL' is a C macro defined to nothing by the
+`job.h'.  `LOCAL' is a C macro defined to nothing by the
 `c-extensions.h' header file (*note C extensions::).
 
-   To make just one `local' header file to share between `jub.c' and
+   To make just one `local' header file to share between `job.c' and
 `hub.c' use
-     cfunctions -g lib -l private jub.c hub.c
+     cfunctions -g lib -l private job.c hub.c
    This will create files `lib.h' and `private.h'.  The declaration of
 `private' will go into `private.h' and not into `lib.h'.
 
@@ -844,8 +844,8 @@ It is possible to use Cfunctions to generate header files with `make'.
 There are two ways to do this.  One way is to write explicit rules for
 generating header files in a `Makefile'.  For example, 
 
-     jubs.h:         jubs.c
-             cfunctions --individual jubs.c
+     job.h:         job.c
+             cfunctions --individual job.c
 
    Another way is to teach `make' a rule for making header files from C
 files.  
@@ -1182,12 +1182,12 @@ Node: Extra local header information26240
 Node: Inline functions27100
 Node: Other programs28305
 Node: make28741
-Node: CPP30352
-Node: Redefined C31056
-Node: Mixed ANSI and traditional31315
-Node: Declaring functions via the preprocessor32085
-Node: C compiler32466
-Node: fake-cfunctions33906
-Node: index35338
+Node: CPP30349
+Node: Redefined C31053
+Node: Mixed ANSI and traditional31312
+Node: Declaring functions via the preprocessor32082
+Node: C compiler32463
+Node: fake-cfunctions33903
+Node: index35335
 
 End Tag Table

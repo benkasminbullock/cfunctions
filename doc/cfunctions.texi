@@ -188,7 +188,7 @@ to Cfunctions.  Cfunctions outputs nothing, because @code{extern} means
 file.  Now input
 @example
 static int @var{q}; 
-static char * @var{tub} (int jub) @{ return array[ jub ]; @}
+static char * @var{tub} (int job) @{ return array[ job ]; @}
 @end example
 @noindent
 Cfunctions outputs nothing.  That is because both @var{q} and
@@ -561,10 +561,10 @@ file is the C file name with an @file{.h} suffix instead of @file{.c}.
 For example,
 
 @example
-cfunctions -i jub.c hub.c
+cfunctions -i job.c hub.c
 @end example
 @noindent
-creates @file{jub.h} and @file{hub.h}.
+creates @file{job.h} and @file{hub.h}.
 
 To generate both `local' headers for each C file and a global header,
 use the @code{--individual} and @code{--global} options together in
@@ -640,18 +640,18 @@ to a file called @file{.cfunctionsrc} in your top level or home directory.
 Cfunctions usually writes a `wrapper' around header files so that they
 will not be read twice.
 @cindex wrapper
-For example, @code{cfunctions -i jub.c} will generate
+For example, @code{cfunctions -i job.c} will generate
 @example
-#ifndef CFH_JUB_H
-#define CFH_JUB_H
+#ifndef CFH_JOB_H
+#define CFH_JOB_H
 ...
-#endif /* CFH_JUB_H */
+#endif /* CFH_JOB_H */
 @end example
 @noindent
 Cfunctions does not write wrappers when writing to standard output.  To
 force wrappers, use the option @code{--wrap @emph{argument}} (@code{-w
 @emph{argument}}).  Cfunctions converts @emph{argument} to upper case
-and removes bad characters, and then uses it as the macro, @code{CFH_JUB_H}
+and removes bad characters, and then uses it as the macro, @code{CFH_JOB_H}
 in the above example.
 @cindex wrapper, for stdout output
 
@@ -807,26 +807,26 @@ the macro name Cfunctions recognizes with the @code{--global-macro
 @noindent
 When using the @code{--global} option, you may want to share some
 function declarations only with a few specific files. For example,
-suppose that a library @code{lib} is created from @code{jub.c} and
+suppose that a library @code{lib} is created from @code{job.c} and
 @code{hub.c} but that only @code{hub.c} should use the function
-@code{private} from @code{jub.c}, not @code{lib} library users.  To hide
+@code{private} from @code{job.c}, not @code{lib} library users.  To hide
 the @code{private} function by not putting its prototype into the
-library header @code{lib.h}, make a local header for @code{jub.c} by
+library header @code{lib.h}, make a local header for @code{job.c} by
 @example
-cfunctions -g lib -i jub.c hub.c
+cfunctions -g lib -i job.c hub.c
 @end example
 @noindent
-This creates @code{jub.h} and @code{hub.h} as well as @code{lib.h}.  To
-make the prototype of @code{private} appear in @code{jub.h} and not in
+This creates @code{job.h} and @code{hub.h} as well as @code{lib.h}.  To
+make the prototype of @code{private} appear in @code{job.h} and not in
 @code{lib.h}, prefix @code{private} with @code{LOCAL}, and the prototype
-for @code{private} will appear in @file{jub.h}.  @code{LOCAL} is a C
+for @code{private} will appear in @file{job.h}.  @code{LOCAL} is a C
 macro defined to nothing by the @file{c-extensions.h} header file
 (@pxref{C extensions}).
 
-To make just one `local' header file to share between @file{jub.c} and
+To make just one `local' header file to share between @file{job.c} and
 @file{hub.c} use
 @example
-cfunctions -g lib -l private jub.c hub.c
+cfunctions -g lib -l private job.c hub.c
 @end example
 @noindent
 This will create files @file{lib.h} and @file{private.h}.  The
@@ -922,8 +922,8 @@ generating header files in a `Makefile'.  For example,
 @cindex make, explicit rules
 
 @example
-jubs.h:         jubs.c
-        cfunctions --individual jubs.c
+job.h:         job.c
+        cfunctions --individual job.c
 @end example
 
 Another way is to teach @code{make} a rule for making header files from C

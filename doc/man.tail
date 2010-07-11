@@ -1,4 +1,3 @@
-
 .SH ENVIRONMENT
 .TP
 \fBSIMPLE_BACKUP_SUFFIX\fP
@@ -15,17 +14,13 @@ The default method is \fBexisting\fP.
 
 .SH BUGS
 .PP
-The current version is for testing.  Please report all bugs to the
-maintainer.
+Please report all bugs to the maintainer.
 
 .SH AUTHOR
 Ben K. Bullock
 .br
 Report bugs to 
-.B "cfunctions@hayamasa.demon.co.uk"
-.br
-Man-page maintained by
-.B "egil@kvaleberg.no"
+.B "benkasminbullock@gmail.com"
 
 .SH "SEE ALSO"
 Please see the

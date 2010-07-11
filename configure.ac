@@ -2,7 +2,8 @@ dnl Copyright (C) 2003,2009 Ben K. Bullock
 dnl This file is part of Cfunctions.
 dnl It generates the configure script for Cfunctions with GNU autoconf.
 
-AC_INIT(src/cfunctions.fl)
+AC_INIT
+AC_CONFIG_SRCDIR([src/cfunctions.fl])
 AC_CONFIG_HEADER(src/defines.h)
 
 AC_PROG_MAKE_SET
@@ -119,7 +120,8 @@ AC_SUBST(CFUNCTIONS_URL)
 AC_SUBST(GCC)
 AC_SUBST(COPYRIGHT_YEAR)
 
-AC_OUTPUT(Makefile doc/version.texi tests/test.perl doc/index.html 
-          src/config.h doc/man.head src/Makefile doc/Makefile)
+AC_CONFIG_FILES([Makefile doc/version.texi tests/test.perl doc/index.html 
+          src/config.h doc/man.head doc/man.tail src/Makefile doc/Makefile])
+AC_OUTPUT
 
 chmod 0555 tests/test.perl

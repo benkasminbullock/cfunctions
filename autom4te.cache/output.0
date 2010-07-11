@@ -4506,7 +4506,7 @@ URL=$CFUNCTIONS_URL
 
 
 
-ac_config_files="$ac_config_files Makefile doc/version.texi tests/test.perl doc/index.html src/config.h doc/man.head src/Makefile doc/Makefile"
+ac_config_files="$ac_config_files Makefile doc/version.texi tests/test.perl doc/index.html src/config.h doc/man.head doc/man.tail src/Makefile doc/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5099,6 +5099,7 @@ do
     "doc/index.html") CONFIG_FILES="$CONFIG_FILES doc/index.html" ;;
     "src/config.h") CONFIG_FILES="$CONFIG_FILES src/config.h" ;;
     "doc/man.head") CONFIG_FILES="$CONFIG_FILES doc/man.head" ;;
+    "doc/man.tail") CONFIG_FILES="$CONFIG_FILES doc/man.tail" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on April 16, 2010 by texi2html 1.82
+<!-- Created on June 5, 2010 by texi2html 1.82
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -139,7 +139,7 @@ The Free Software Foundation
 <h1 class="chapter">1. Introduction</h1>
 <a name="index-introduction"></a>
 
-<p>This is the manual for Cfunctions version 0.26 .  This manual
+<p>This is the manual for Cfunctions version 0.27 .  This manual
 explains Cfunctions, a program for making header files from C files.
 Cfunctions (pronounced &quot;see-functions&quot;) 
 <a name="index-pronunciation"></a>
@@ -252,7 +252,7 @@ header file.  Now input
 <var>z</var> was declared elsewhere, so it should not be declared in a header
 file.  Now input
 </p><table><tr><td>&nbsp;</td><td><pre class="example">static int <var>q</var>; 
-static char * <var>tub</var> (int jub) { return array[ jub ]; }
+static char * <var>tub</var> (int job) { return array[ job ]; }
 </pre></td></tr></table>
 <p>Cfunctions outputs nothing.  That is because both <var>q</var> and
 <var>tub</var> are declared with <code>static</code>.  Cfunctions assumes that it
@@ -1095,9 +1095,9 @@ separate header file for each C file argument.  The name of the header
 file is the C file name with an &lsquo;<tt>.h</tt>&rsquo; suffix instead of &lsquo;<tt>.c</tt>&rsquo;.
 For example,
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -i jub.c hub.c
+<table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -i job.c hub.c
 </pre></td></tr></table>
-<p>creates &lsquo;<tt>jub.h</tt>&rsquo; and &lsquo;<tt>hub.h</tt>&rsquo;.
+<p>creates &lsquo;<tt>job.h</tt>&rsquo; and &lsquo;<tt>hub.h</tt>&rsquo;.
 </p>
 <p>To generate both &lsquo;local&rsquo; headers for each C file and a global header,
 use the <code>--individual</code> and <code>--global</code> options together in
@@ -1218,16 +1218,16 @@ such as
 <p>Cfunctions usually writes a &lsquo;wrapper&rsquo; around header files so that they
 will not be read twice.
 <a name="index-wrapper"></a>
-For example, <code>cfunctions -i jub.c</code> will generate
-</p><table><tr><td>&nbsp;</td><td><pre class="example">#ifndef CFH_JUB_H
-#define CFH_JUB_H
+For example, <code>cfunctions -i job.c</code> will generate
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#ifndef CFH_JOB_H
+#define CFH_JOB_H
 ...
-#endif /* CFH_JUB_H */
+#endif /* CFH_JOB_H */
 </pre></td></tr></table>
 <p>Cfunctions does not write wrappers when writing to standard output.  To
 force wrappers, use the option <code>--wrap <em>argument</em></code> (<code>-w
 <em>argument</em></code>).  Cfunctions converts <em>argument</em> to upper case
-and removes bad characters, and then uses it as the macro, <code>CFH_JUB_H</code>
+and removes bad characters, and then uses it as the macro, <code>CFH_JOB_H</code>
 in the above example.
 <a name="index-wrapper_002c-for-stdout-output"></a>
 </p>
@@ -1483,23 +1483,23 @@ the macro name Cfunctions recognizes with the <code>--global-macro
 <a name="index-LOCAL-prefix"></a>
 <p>When using the <code>--global</code> option, you may want to share some
 function declarations only with a few specific files. For example,
-suppose that a library <code>lib</code> is created from <code>jub.c</code> and
+suppose that a library <code>lib</code> is created from <code>job.c</code> and
 <code>hub.c</code> but that only <code>hub.c</code> should use the function
-<code>private</code> from <code>jub.c</code>, not <code>lib</code> library users.  To hide
+<code>private</code> from <code>job.c</code>, not <code>lib</code> library users.  To hide
 the <code>private</code> function by not putting its prototype into the
-library header <code>lib.h</code>, make a local header for <code>jub.c</code> by
-</p><table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -g lib -i jub.c hub.c
+library header <code>lib.h</code>, make a local header for <code>job.c</code> by
+</p><table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -g lib -i job.c hub.c
 </pre></td></tr></table>
-<p>This creates <code>jub.h</code> and <code>hub.h</code> as well as <code>lib.h</code>.  To
-make the prototype of <code>private</code> appear in <code>jub.h</code> and not in
+<p>This creates <code>job.h</code> and <code>hub.h</code> as well as <code>lib.h</code>.  To
+make the prototype of <code>private</code> appear in <code>job.h</code> and not in
 <code>lib.h</code>, prefix <code>private</code> with <code>LOCAL</code>, and the prototype
-for <code>private</code> will appear in &lsquo;<tt>jub.h</tt>&rsquo;.  <code>LOCAL</code> is a C
+for <code>private</code> will appear in &lsquo;<tt>job.h</tt>&rsquo;.  <code>LOCAL</code> is a C
 macro defined to nothing by the &lsquo;<tt>c-extensions.h</tt>&rsquo; header file
 (see section <a href="#C-extensions">C extensions</a>).
 </p>
-<p>To make just one &lsquo;local&rsquo; header file to share between &lsquo;<tt>jub.c</tt>&rsquo; and
+<p>To make just one &lsquo;local&rsquo; header file to share between &lsquo;<tt>job.c</tt>&rsquo; and
 &lsquo;<tt>hub.c</tt>&rsquo; use
-</p><table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -g lib -l private jub.c hub.c
+</p><table><tr><td>&nbsp;</td><td><pre class="example">cfunctions -g lib -l private job.c hub.c
 </pre></td></tr></table>
 <p>This will create files &lsquo;<tt>lib.h</tt>&rsquo; and &lsquo;<tt>private.h</tt>&rsquo;.  The
 declaration of <code>private</code> will go into &lsquo;<tt>private.h</tt>&rsquo; and not into
@@ -1654,8 +1654,8 @@ There are two ways to do this.  One way is to write explicit rules for
 generating header files in a &lsquo;Makefile&rsquo;.  For example,
 <a name="index-make_002c-explicit-rules"></a>
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">jubs.h:         jubs.c
-        cfunctions --individual jubs.c
+<table><tr><td>&nbsp;</td><td><pre class="example">job.h:         job.c
+        cfunctions --individual job.c
 </pre></td></tr></table>
 
 <p>Another way is to teach <code>make</code> a rule for making header files from C
@@ -2318,7 +2318,7 @@ GPL and you may use it whatever your licence terms are.
 </tr></table>
 <h1>About This Document</h1>
 <p>
-  This document was generated by <em>Ben Bullock</em> on <em>April 16, 2010</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Ben Bullock</em> on <em>June 5, 2010</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
 </p>
 <p>
   The buttons in the navigation panels have the following meaning:
@@ -2420,7 +2420,7 @@ GPL and you may use it whatever your licence terms are.
 <hr size="1">
 <p>
  <font size="-1">
-  This document was generated by <em>Ben Bullock</em> on <em>April 16, 2010</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
+  This document was generated by <em>Ben Bullock</em> on <em>June 5, 2010</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
  </font>
  <br>
 

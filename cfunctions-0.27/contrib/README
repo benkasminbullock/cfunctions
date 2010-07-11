@@ -1,0 +1,29 @@
+This directory contains contributed useful files which I am not
+including in the main distribution.  I have put a complete list of the
+files here.  The format is a blank line, then a name, and then
+`Author' and `Description'.  Optionally there is a field `Reason'
+explaining why it is not included in the distribution.
+
+Complete list of files in the `contrib' directory
+-------------------------------------------------
+
+README
+Author: Ben Bullock
+Description: This file.
+
+flexpp.fl
+Author: Ben Bullock
+Description: Preprocessor to extract C bits from Flex / Bison / Lex /
+             Yacc files.
+Reason: Not finished, not documented.
+
+emacs-tags.c
+Author: Ben Bullock
+Description: Make Emacs TAGS file from Cfunctions tags file.
+Reason: Not finished, only just started.
+
+LSM.in
+Author: Ben Bullock
+Description: Linux Software Map entry
+Reason: Linux Software Map software `Sonny' inadequate.
+

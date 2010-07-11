@@ -1,0 +1,12 @@
+@macro version 
+@VERSION@ 
+@end macro
+
+@macro maintainer
+@code{@TEXIMAINTAINER@}
+@end macro
+
+@macro URL
+@code{@CFUNCTIONS_URL@}
+@end macro
+

@@ -235,22 +235,28 @@ compare_letter_options (const void * a, const void * b)
   return av - bv;
 }
 
+enum {
+    none,
+    texi,
+    man,
+    cgi,
+} mode;
+
 int
 main(int argc, char *argv[])
 {
   unsigned i;
-  int texi_mode = 0;
-  int man_mode = 0;
   unsigned * order;
 
   program_name = "options";
 
-  while ((i = getopt (argc, argv, "mt")) != EOF)
+  while ((i = getopt (argc, argv, "mtc")) != EOF)
     {
       switch (i)
 	{
-	  case 'm': man_mode = 1; break;
-	  case 't': texi_mode = 1; break;
+	  case 'm': mode = man; break;
+	  case 't': mode = texi; break;
+	  case 'c': mode = cgi; break;
 	  case '?': return 1;
 	  default: error ("unknown option: '%c'", i);
 	}
@@ -258,13 +264,20 @@ main(int argc, char *argv[])
   if (optind < argc) 
     error ("can't have arguments");
 
-  if (man_mode)
+  if (mode == man)
     fcopy (stdout, "man.head");
 
-  if (texi_mode)
+  switch (mode) {
+  case texi:
     printf ("%s", texi_begin);
-  else if (man_mode)
+    break;
+  case man:
     printf ("%s", man_begin);
+    break;
+  case cgi:
+  default:
+      error ("");
+  }
 
   /* Sort things into the alphabetical order of the short options. */
 
@@ -279,10 +292,10 @@ main(int argc, char *argv[])
       if (! usage[j])
         error ("empty usage message for option '%c'", long_options[j].val);
 
-      if (texi_mode)
-	{
+      switch (mode) {
+      case texi:
 	  printf ("@cindex @code{-%c}\n@cindex @code{--%s}\n",
-                   long_options [j].val, long_options [j].name);
+                  long_options [j].val, long_options [j].name);
 	  printf ("@item -%c ",             long_options [j].val);
           if (long_options [j].has_arg == required_argument)
 	    printf (" @var{argument}");
@@ -297,9 +310,8 @@ main(int argc, char *argv[])
                     "in @file{.cfunctionsrc}\n", 
                     other_stuff[j].rc_name);
 	  printf ("\n");
-        }
-      else if (man_mode)
-	{
+          break;
+      case man:
 	  printf (".TP\n\\fB-%c\\fP", long_options [j].val);
 	  if (long_options [j].has_arg == required_argument)
 	    printf (" \\fIargument\\fP");
@@ -314,16 +326,32 @@ main(int argc, char *argv[])
             printf ("You can also control this with a line `%s' "
                     "in $HOME/.cfunctionsrc\n", 
                     other_stuff[j].rc_name);
-	}
+          break;
+      case cgi:
+      default:
+          error ("");
+      }
     }
-  if (texi_mode)
+  switch (mode) {
+  case texi:
     printf (texi_end);
-  else if (man_mode) 
-    {
-      printf (man_end);
-      fcopy (stdout, "man.tail");
-    }
+    break;
+  case man:
+    printf (man_end);
+    fcopy (stdout, "man.tail");
+    break;
+  case cgi:
+  default:
+    error ("");
+  }
   return 0;
 }
 
 #endif /* MANUAL */
+
+/*
+  Local variables:
+  c-file-style: "gnu"
+  c-basic-offset: 2
+  End:
+ */

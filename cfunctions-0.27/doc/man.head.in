@@ -1,0 +1,45 @@
+.\" $Id: cfunctions_a.man_in,v $
+.\"
+.\" cfunctions man page
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License.
+.\"
+.TH CFUNCTIONS 1 \"@MAN_DATE@\" \"V@VERSION@\"
+.SH NAME
+.I cfunctions
+\- auto-generate C header files
+
+.SH SYNOPSIS
+.I cfunctions
+[
+.I options
+] [
+.I filename...
+]   
+
+.SH DESCRIPTION
+.PP
+This manual page documents only command-line options.  Please refer to
+the Texinfo documentation for further details.
+
+.I cfunctions
+(pronounced \fIsee-functions\fP) extracts function declarations,
+prototypes and global variable declarations from C files and makes
+header files.
+.I cfunctions
+can make one header from several C files (see the
+.I -g
+option), a header for each C file (see the
+.I -i
+option), and various other combinations.
+.PP
+.I cfunctions
+accepts a list of C filename on the command line. If no argument is
+given, 
+.I cfunctions
+reads from the standard input.
+.PP
+Without any options, 
+.I cfunctions
+writes to the standard output.

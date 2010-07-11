@@ -5,7 +5,7 @@
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License.
 .\"
-.TH CFUNCTIONS 1 \"27 Jun 2009\" \"V0.26\"
+.TH CFUNCTIONS 1 \"05 Jun 2010\" \"V0.27\"
 .SH NAME
 .I cfunctions
 \- auto-generate C header files
@@ -106,8 +106,8 @@ You can also control this with a line `local macro' in $HOME/.cfunctionsrc
 .TP
 \fB-m\fP, \fB--write-comments\fP
 Write comments to header file.
-See node `Comments' in the info documentation.
-You can also control this with a line `write comments' in $HOME/.cfunctionsrc
+See node `Warnings' in the info documentation.
+You can also control this with a line `warn' in $HOME/.cfunctionsrc
 .TP
 \fB-n\fP, \fB--line-numbers\fP
 Write #line information in the .h files.
@@ -140,28 +140,30 @@ You can also control this with a line `backup suffix' in $HOME/.cfunctionsrc
 Create a tag table.
 See node `Making tag tables' in the info documentation.
 .TP
+\fB-u\fP, \fB--no-upgrade\fP
+Don't upgrade traditional C.
+.TP
 \fB-v\fP, \fB--version\fP
 Write version information and exit.
-.TP
-\fB-V\fP \fIargument\fP, \fB--version-control\fP \fIargument\fP
-Use version control style \fIargument\fP.
 See node `Backups' in the info documentation.
 You can also control this with a line `version control' in $HOME/.cfunctionsrc
 .TP
+\fB-V\fP \fIargument\fP, \fB--version-control\fP \fIargument\fP
+Use version control style \fIargument\fP.
+See node `Wrappers' in the info documentation.
+.TP
 \fB-W\fP \fIargument\fP, \fB--warn\fP \fIargument\fP
 Warn about malpractices.
-See node `Warnings' in the info documentation.
-You can also control this with a line `warn' in $HOME/.cfunctionsrc
 .TP
 \fB-w\fP \fIargument\fP, \fB--wrap\fP \fIargument\fP
 Write a wrapper when writing to stdout.
-See node `Wrappers' in the info documentation.
+See node `Comments' in the info documentation.
+You can also control this with a line `write comments' in $HOME/.cfunctionsrc
 .TP
 \fB-x\fP, \fB--extensions\fP
 Don't copy the `c-extensions.h' file.
 See node `Input file format' in the info documentation.
 .\" End of file.
-
 .SH ENVIRONMENT
 .TP
 \fBSIMPLE_BACKUP_SUFFIX\fP
@@ -178,17 +180,13 @@ The default method is \fBexisting\fP.
 
 .SH BUGS
 .PP
-The current version is for testing.  Please report all bugs to the
-maintainer.
+Please report all bugs to the maintainer.
 
 .SH AUTHOR
 Ben K. Bullock
 .br
 Report bugs to 
-.B "cfunctions@hayamasa.demon.co.uk"
-.br
-Man-page maintained by
-.B "egil@kvaleberg.no"
+.B "benkasminbullock@gmail.com"
 
 .SH "SEE ALSO"
 Please see the

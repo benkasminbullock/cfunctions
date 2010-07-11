@@ -58,7 +58,7 @@ enum bool { FALSE, TRUE };
 
 static char * command_line;
 
-/* Maximum number of brackets `(' to expect in function arguments. */
+/* Maximum number of brackets '(' to expect in function arguments. */
 
 #define MAX_ARG_BR_DEPTH 3
 
@@ -78,12 +78,12 @@ static char * command_line;
 #include "argument.h"
 
 /* The store of information about print format.  This is for the GNU C
-   extension `__attribute__((format(printf,,)))' which tells the
-   compiler that the arguments to a function are in `printf' format
+   extension '__attribute__((format(printf,,)))' which tells the
+   compiler that the arguments to a function are in 'printf' format
    and asks it to check them for errors.  */
 
 #ifdef HEADER
-/* Temporarily, this is a `tentative definition'.  The fix I will make
+/* Temporarily, this is a 'tentative definition'.  The fix I will make
    is to make PRINT_FORMAT just one rule. */
 struct
 {
@@ -93,17 +93,17 @@ struct
 pf;
 #endif /* HEADER */
 
-/* Files to write output to.  The file `outfile' is the usual output
-   file.  The file `localfile' is the file for outputting things which
-   are prefixed with `LOCAL'.  The file `verbatimfile' is the file to
-   write verbatim output to.  This can be either `localfile' or
-   `outfile'. */
+/* Files to write output to.  The file 'outfile' is the usual output
+   file.  The file 'localfile' is the file for outputting things which
+   are prefixed with 'LOCAL'.  The file 'verbatimfile' is the file to
+   write verbatim output to.  This can be either 'localfile' or
+   'outfile'. */
 
 FILE * outfile;
 FILE * localfile;
 FILE * verbatim_file;
 
-/* Name of source file from `#line' directives. */
+/* Name of source file from '#line' directives. */
 
 #define MAX_LINE_NAME 0x100
 char line_source_name[MAX_LINE_NAME];
@@ -114,11 +114,11 @@ char line_source_name[MAX_LINE_NAME];
 #define CFUNCTIONS_AD \
   "/* This is a Cfunctions (version %s) generated header file.\n"\
   "   Cfunctions is a free program for extracting headers from C files.\n"\
-  "   Get Cfunctions from `%s'. */\n\n"
+  "   Get Cfunctions from '%s'. */\n\n"
 
 /* Command line option-related variables.  Each variable is followed
    by the short form of the option which affects it.  See the arrays
-   `usage' and `long_options' in `options.c' for explanation. */
+   'usage' and 'long_options' in 'options.c' for explanation. */
 
 const char * advert = CFUNCTIONS_AD;  /* -a */
 BOOL advert_arg;                /* -a */
@@ -157,11 +157,11 @@ const char *prototype_macro = "PROTO"; /* -p */
 
 const char * inline_macro = "X_INLINE";
 
-/* The depth of braces `{' and `}' seen. */
+/* The depth of braces '{' and '}' seen. */
 
 unsigned curly_braces_depth;
 
-/* If `curly_braces_depth' goes beyond the following arbitrary limit
+/* If 'curly_braces_depth' goes beyond the following arbitrary limit
    Cfunctions gives a warning message.  Mostly this is in case
    Cfunctions itself has gone bananas.  Because most counters in
    Cfunctions are unsigned, overflow errors with large numbers
@@ -179,7 +179,7 @@ unsigned curly_braces_depth;
 typedef enum 
 {
   CPP_ZAP, /* CPP_ZAP must be equal to zero, because it is used in
-              tidying up `retired' stack elements. */
+              tidying up 'retired' stack elements. */
   CPP_IF, CPP_ELSE, CPP_ELIF, CPP_ENDIF, N_CPP_IF_TYPES
 }
 Cpp_If_Type;
@@ -188,12 +188,12 @@ Cpp_If_Type;
 struct cpp_if
 {
   Cpp_If_Type type;
-  char * text;          /* This can be NULL if not `#if' or `#elif'. */
+  char * text;          /* This can be NULL if not '#if' or '#elif'. */
   unsigned printed : 1; /* TRUE if this has been printed */
 
-  /* Boolean `external' is TRUE if this CPP element is outside an
+  /* Boolean 'external' is TRUE if this CPP element is outside an
      argument or function definition list.  This is set for all
-     elements on which a `tidy' is performed but not for elements
+     elements on which a 'tidy' is performed but not for elements
      inside a function for example. */
 
   unsigned external : 1; 
@@ -201,12 +201,12 @@ struct cpp_if
   unsigned print_line; /* For debugging: if printed, when was it printed ? */
 #endif
 }
-/* The stack of CPP `#if', `#else', `#elif' and `#endif'
+/* The stack of CPP '#if', '#else', '#elif' and '#endif'
    statements. */
 
 cpp_if_stack[MAX_CPP_IFS], 
 
-/* An empty element which is copied to places in `cpp_if_stack'
+/* An empty element which is copied to places in 'cpp_if_stack'
    which Cfunctions wants to clean up. */
 
 empty_cpp_if;
@@ -220,7 +220,7 @@ unsigned cpp_prints;
 
 #endif /* CFUNCTIONS_DEBUG */
 
-/* The top of the `cpp_if_stack' stack. */
+/* The top of the 'cpp_if_stack' stack. */
 
 unsigned cpp_if_now; 
 
@@ -265,23 +265,25 @@ struct
 }
 cfunctions_dbug;
 
+unsigned string_debug_on = 0;
+
 #endif /* CFUNCTIONS_DEBUG */
 
 /* Are we writing an inline function?  This is not part of the parsing
-   state because it needs to survive through `function_reset'. */
+   state because it needs to survive through 'function_reset'. */
 
 BOOL inlining;
 
-/* Is Cfunctions copying everything?  (this is set by `#ifdef HEADER'
+/* Is Cfunctions copying everything?  (this is set by '#ifdef HEADER'
    statements) */
 
 BOOL verbatiming;
 
-/* Is Cfunctions copying a `.hin' file into the header file? */
+/* Is Cfunctions copying a '.hin' file into the header file? */
 
 BOOL hin_copying;
 
-/* The parsing state information.  `function_reset' resets this to all
+/* The parsing state information.  'function_reset' resets this to all
    zeros. */
 
 struct cfunctions_parse_state
@@ -294,16 +296,16 @@ struct cfunctions_parse_state
 
   enum { RETURN, VOID } c_return_value;
 
-  /* Have we seen `extern'?  This is needed to extract global variables
-     correctly (`extern' global variables are ignored by Cfunctions). */
+  /* Have we seen 'extern'?  This is needed to extract global variables
+     correctly ('extern' global variables are ignored by Cfunctions). */
 
   unsigned seen_extern;
 
-  /* Have we seen `static'? */
+  /* Have we seen 'static'? */
 
   unsigned seen_static : 1;
 
-  /* Have we seen the `inline' keyword? */
+  /* Have we seen the 'inline' keyword? */
 
   unsigned seen_inline : 1;
 
@@ -315,8 +317,8 @@ struct cfunctions_parse_state
 
   unsigned seen_arguments : 1;
 
-  /* TRUE if the function never returns (for example `exit'). 
-     This is set by `NO_RETURN'. */
+  /* TRUE if the function never returns (for example 'exit'). 
+     This is set by 'NO_RETURN'. */
 
   unsigned c_no_return : 1 ;
 
@@ -341,17 +343,17 @@ struct cfunctions_parse_state
 
   unsigned is_trad : 1;
 
-  /* TRUE if Cfunctions saw a word after a `struct', `union' or `enum'
+  /* TRUE if Cfunctions saw a word after a 'struct', 'union' or 'enum'
      statement. */
 
   unsigned saw_word : 1;
 
-  /* TRUE for `(void)' functions. */
+  /* TRUE for '(void)' functions. */
 
   unsigned void_arguments : 1;
 }
 
-/* The state information is kept in `s'.  The instance `z' is kept
+/* The state information is kept in 's'.  The instance 'z' is kept
    empty and used just for copying to reset the state.  Doing this via
    struct copying makes the code simpler and means that Cfunctions
    never forgets to reset all of the states at the end of parsing a
@@ -405,7 +407,7 @@ process_warning (const char * warning_arg)
       warns.reserved_words = 1;
       return;
     }
-  warning ("unknown argument `%s' to -W", warning_arg);
+  warning ("unknown argument '%s' to -W", warning_arg);
 }
 
 static void
@@ -426,7 +428,7 @@ check_overflow (unsigned n, const unsigned max, const char * name)
                   name, n, max);
 }
 
-/* count a `{'. */
+/* count a '{'. */
 
 void
 brace_open (void) 
@@ -434,14 +436,14 @@ brace_open (void)
   curly_braces_depth++; 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.brace) 
-    printf ("%s:%u: brace debug: `{' (%d deep) at %s:%u\n", 
+    printf ("%s:%u: brace debug: '{' (%d deep) at %s:%u\n", 
             source_name, yylineno, curly_braces_depth, __FILE__, 
             __LINE__ ); 
   check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
 #endif /* CFUNCTIONS_DEBUG */
 }
 
-/* count a `}'. */
+/* count a '}'. */
 
 void
 brace_close (void)
@@ -449,7 +451,7 @@ brace_close (void)
   curly_braces_depth--; 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.brace) 
-    printf ("%s:%u: brace debug: `}' (%d deep)\n", 
+    printf ("%s:%u: brace debug: '}' (%d deep)\n", 
             source_name, yylineno, curly_braces_depth); 
   check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
 #endif /* CFUNCTIONS_DEBUG */
@@ -565,7 +567,7 @@ void
 do_void_pointer (const char * text)
 {
   char * c;
- /* `void *' functions have a return value */
+ /* 'void *' functions have a return value */
   function_save ("void", 4 );
   c = strchr (text, '*');
   function_save (c, strlen (c));
@@ -593,7 +595,7 @@ do_function_pointer (const char * text)
   inline_print (text);
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.fptr)
-    printf ("pointer to function `%s'\n", text);
+    printf ("pointer to function '%s'\n", text);
 #endif
 }
 
@@ -625,7 +627,7 @@ inline_print (const char * x)
     fprintf (verbatim_file, "%s", x);
 }
 
-/* Deal with preprocessor `#line' directives. */
+/* Deal with preprocessor '#line' directives. */
 
 void
 line_change (const char * text)
@@ -638,7 +640,7 @@ line_change (const char * text)
 #ifdef CFUNCTIONS_DEBUG
   if (name_length > MAX_LINE_NAME)
     {
-      line_warning ("very long source name `%s': truncating",
+      line_warning ("very long source name '%s': truncating",
                 first_quote);
       strncpy (line_source_name, first_quote + 1, 
                MAX_LINE_NAME);
@@ -657,7 +659,7 @@ line_change (const char * text)
 #ifdef CFUNCTIONS_DEBUG
       if ( ! line_at )
             bug (HERE, "peculiar mismatch in strstr: "
-                 "no `line' or `#' in `%s'", text);
+                 "no 'line' or '#' in '%s'", text);
 #endif
       line_at += 1;
     }
@@ -672,13 +674,13 @@ line_change (const char * text)
 
 
 /* Fix for Flex bug which causes wrong line numbers.  The problem is
-   the `$' in the rule for matching C preprocessor stuff.  These rules
+   the '$' in the rule for matching C preprocessor stuff.  These rules
    have a dollar to match end of line.  The problem arises because
-   Flex actually counts the `\n' which comes after the dollar when it
-   is calculating yylineno, and then it `rejects' the `\n', then
+   Flex actually counts the '\n' which comes after the dollar when it
+   is calculating yylineno, and then it 'rejects' the '\n', then
    because it was rejected it counts it again.  I have sent the full
    description of the bug to Vern Paxson, the author of Flex, who said
-   it is on the `to do' list. */
+   it is on the 'to do' list. */
 
 /* I am hoping that the bug will be fixed by version 2.6 of Flex. */
 
@@ -694,13 +696,13 @@ line_change (const char * text)
 #warning "wrong, please report the bug to the "
 #warning "Cfunctions maintainer and the Flex "
 #warning "maintainer.  Use"
-#warning "`#define FLEX_BUG_WARNING_OFF' to stop"
+#warning "'#define FLEX_BUG_WARNING_OFF' to stop"
 #warning "seeing this message next time."
 #endif /* HAS_WARNING */
 #endif /* FLEX_BUG_WARNING_OFF */
 #endif /* new version of Flex */
 
-/* Cfunctions sometimes needs to include `c-extensions.h' because it
+/* Cfunctions sometimes needs to include 'c-extensions.h' because it
    defines all the information about C extensions. */
 
 void
@@ -720,7 +722,7 @@ copy_c_extensions (void)
       else if ( fexists ( C_EX_LOCAL ))
         c_ex_file_name = C_EX_LOCAL;
       else
-        warning ( "cannot find master copy of `%s'", C_EX_FILE_NAME );
+        warning ( "cannot find master copy of '%s'", C_EX_FILE_NAME );
     }
 
   if ( copy_c_ex )
@@ -729,7 +731,7 @@ copy_c_extensions (void)
         {
           fprintf (outfile, "#line 1 \"%s\"\n", c_ex_file_name);
           if ( fcopy (outfile, c_ex_file_name ) )
-            warning ( "could not copy `%s': %s", c_ex_file_name, 
+            warning ( "could not copy '%s': %s", c_ex_file_name, 
                       strerror (errno));
         }
     }
@@ -756,7 +758,7 @@ copy_c_extensions (void)
 
           c_ex = fopen_or_exit ( C_EX_FILE_NAME, "w" );
           if ( fcopy (c_ex, c_ex_file_name ) ) 
-            warning ( "could not copy `%s': %s", c_ex_file_name,
+            warning ( "could not copy '%s': %s", c_ex_file_name,
                       strerror (errno));
           fclose (c_ex);
         }
@@ -769,7 +771,7 @@ static unsigned written_c_extensions;
    turned off by default.  If the user needs them, then write a
    statement #include "c-extensions.h".  The user needs the extensions
    file also if he uses traditional C declarations, because the
-   definition of a macro `PROTO' for the traditional C declarations is
+   definition of a macro 'PROTO' for the traditional C declarations is
    in there.  */
 
 void 
@@ -789,7 +791,7 @@ static const char * cpp_if_names[N_CPP_IF_TYPES] =
   "ZAP", "if", "else", "elif", "endif"
 };
 
-/* The string lengths of `cpp_if_names'. */
+/* The string lengths of 'cpp_if_names'. */
 
 static unsigned cpp_if_len[N_CPP_IF_TYPES] = 
 {
@@ -797,11 +799,11 @@ static unsigned cpp_if_len[N_CPP_IF_TYPES] =
 };
 
 /* 
-   Given a `#endif', find the matching `#if'.
+   Given a '#endif', find the matching '#if'.
 
-   Return value: stack position of matching `#if'.  
+   Return value: stack position of matching '#if'.  
 
-   Side effects: If this routine cannot find the matching `#if' it
+   Side effects: If this routine cannot find the matching '#if' it
    aborts with an error message.
 
    Deficiency: this routine is a duplicate of code in the
@@ -822,7 +824,7 @@ cpp_stack_find_if (int i)
         line_error ("can't find matching #if");
 #ifdef CFUNCTIONS_DEBUG
       if (cfunctions_dbug.cpp)
-        printf ("Looking at depth %d: type is `%s', string is `%s'\n", depth, 
+        printf ("Looking at depth %d: type is '%s', string is '%s'\n", depth, 
                 cpp_if_names[cpp_if_stack[depth].type], 
                 cpp_if_stack[depth].text ? cpp_if_stack[depth].text : "empty");
 #endif
@@ -851,14 +853,14 @@ cpp_stack_find_if (int i)
     }
 }
 
-/* Stack position of an `#if' statement which started a `verbatim
+/* Stack position of an '#if' statement which started a 'verbatim
    copying' routine. */
 
 static unsigned verbatim_limit;
 
 #ifdef CFUNCTIONS_DEBUG
 
-/* Debugging function to show `cpp_if_stack'.  */
+/* Debugging function to show 'cpp_if_stack'.  */
 
 static void
 show_cpp_if_stack(unsigned i)
@@ -932,7 +934,7 @@ cpp_fill_holes (void)
 }
 
 /* 
-   Find all matching #if and #endif pairs in `cpp_if_stack' and remove
+   Find all matching #if and #endif pairs in 'cpp_if_stack' and remove
    them, then move all the remaining entries downwards.
 */
 
@@ -941,15 +943,15 @@ cpp_stack_tidy (void)
 {
   int i;
 
-  /* Find matching pairs of `#if' and `#endif' and mark them for
+  /* Find matching pairs of '#if' and '#endif' and mark them for
      deletion. */
 
   for (i = cpp_if_now - 1; i >= 0; i--)
     {
       if (cpp_if_stack[i].type == CPP_ENDIF)
         {
-          /* Cfunctions has found an `#endif', and it will now descend
-             the stack looking for the partner `#if'. */
+          /* Cfunctions has found an '#endif', and it will now descend
+             the stack looking for the partner '#if'. */
 
           unsigned endif_level = 1;
           int depth;
@@ -972,7 +974,7 @@ cpp_stack_tidy (void)
           while (1)
             {
               if (depth < 0)
-                line_error ("too many `#endif's");
+                line_error ("too many '#endif's");
 #ifdef CFUNCTIONS_DEBUG
               if (cfunctions_dbug.cpp)
                 show_cpp_if_stack (depth);
@@ -998,7 +1000,7 @@ cpp_stack_tidy (void)
                       cpp_if_stack[depth].type = CPP_ZAP;
 #ifdef CFUNCTIONS_DEBUG
                       if (cfunctions_dbug.cpp)
-                        printf ("CPP debug: zapping `#if %s'\n", 
+                        printf ("CPP debug: zapping '#if %s'\n", 
                                 cpp_if_stack[depth].text);
 #endif
                       goto zapped;
@@ -1035,13 +1037,13 @@ cpp_stack_tidy (void)
               depth--;
             }
         zapped:
-          /* Cfunctions has found a matching `#if' and `#endif' pair. */
+          /* Cfunctions has found a matching '#if' and '#endif' pair. */
           cpp_if_stack[i].type = CPP_ZAP;
         }
     }
   cpp_fill_holes ();
 
-  /* Set everything to `external'.  Now Cfunctions knows that the C
+  /* Set everything to 'external'.  Now Cfunctions knows that the C
      preprocessor stuff currently on the stack is not entangled with
      the currently parsed function or variable. */
 
@@ -1066,7 +1068,7 @@ cpp_add (char * text, Cpp_If_Type type)
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.cpp)
     printf ( "CPP debug: function \"cpp_add\":"
-             "saving `%s' of type `%s' from line %u\n", 
+             "saving '%s' of type '%s' from line %u\n", 
              text, cpp_if_names[type], yylineno );
 #endif
 
@@ -1074,7 +1076,7 @@ cpp_add (char * text, Cpp_If_Type type)
 
 #ifdef CFUNCTIONS_DEBUG
   if ( ! x )
-    bug ( HERE, "bad string `%s' in cpp_add: should contain `%s'", text,
+    bug ( HERE, "bad string '%s' in cpp_add: should contain '%s'", text,
           cpp_if_names[type]);
 #endif
 
@@ -1134,11 +1136,11 @@ cpp_add (char * text, Cpp_If_Type type)
       if ( type == CPP_ENDIF && ! hin_copying && 
            cpp_stack_find_if (cpp_if_now) == verbatim_limit)
         {
-          /* Cfunctions has hit the final `#endif' of a verbatim copying
+          /* Cfunctions has hit the final '#endif' of a verbatim copying
              area. */
 #ifdef CFUNCTIONS_DEBUG
           if ( cfunctions_dbug.cpp )
-            printf ("CPP debug: final `#endif' of a verbatim area\n");
+            printf ("CPP debug: final '#endif' of a verbatim area\n");
 #endif
           cpp_stack_top.printed = TRUE;
           cpp_stack_tidy ();
@@ -1153,11 +1155,11 @@ cpp_add (char * text, Cpp_If_Type type)
   else
     {
       /* The following string acts as a marker to other routines that they
-         should call `cpp_eject' with the number printed at the end of the
+         should call 'cpp_eject' with the number printed at the end of the
          string.
 
-         Each client routine has to call `atoi' to get the number and call
-         `cpp_eject'. */
+         Each client routine has to call 'atoi' to get the number and call
+         'cpp_eject'. */
 
       leng = sprintf ( cpp_word, "@CPP%u", cpp_if_now);
       
@@ -1175,9 +1177,9 @@ cpp_add (char * text, Cpp_If_Type type)
       else
         {
           /* Even if the statement is ignored here, it remains on the
-             stack until the next call to `cpp_stack_tidy'.  The `printed'
-             flag in `cpp_ifstack' ensures that an `#endif' will be
-             printed if a corresponding `#if' has been emitted. */
+             stack until the next call to 'cpp_stack_tidy'.  The 'printed'
+             flag in 'cpp_ifstack' ensures that an '#endif' will be
+             printed if a corresponding '#if' has been emitted. */
           ; 
         }
     }
@@ -1194,10 +1196,10 @@ cpp_add (char * text, Cpp_If_Type type)
   /* Deficiency: there is no way to resize the stack */
 
   if (cpp_if_now > MAX_CPP_IFS)
-    line_error ("too many `#if's: limit is %d", MAX_CPP_IFS );
+    line_error ("too many '#if's: limit is %d", MAX_CPP_IFS );
 }
 
-/* Write out the preprocessor statement on the stack at position `u'.  */
+/* Write out the preprocessor statement on the stack at position 'u'.  */
 
 void
 cpp_eject (unsigned u)
@@ -1208,7 +1210,7 @@ cpp_eject (unsigned u)
       unsigned j;
       for (j = 0; j < cpp_if_now; j++ )
         show_cpp_if_stack(j);
-      bug (HERE, "Attempt to eject already printed statement %d `%s'", 
+      bug (HERE, "Attempt to eject already printed statement %d '%s'", 
            u, cpp_if_stack[u].text);
     }
 #endif
@@ -1216,7 +1218,7 @@ cpp_eject (unsigned u)
   if (cpp_if_stack[u].type == CPP_ZAP)
     return;
 
-  /* The following one might point `outfile' to the global file
+  /* The following one might point 'outfile' to the global file
      wrongly when parsing local files. */
 
   if (global.file)
@@ -1239,13 +1241,13 @@ cpp_eject (unsigned u)
         {
           #ifdef CFUNCTIONS_DEBUG
           if (cfunctions_dbug.cpp)
-            printf ( "CPP debug: `#endif' but matching `#if' not printed\n" );
+            printf ( "CPP debug: '#endif' but matching '#if' not printed\n" );
           #endif
           return;
         }
       /* Deficiency: depending on the previous statement, this sometimes
-         prints too many `\n's.  If the last statement ended with `\n'
-         there will be two consecutive `\n's */
+         prints too many '\n's.  If the last statement ended with '\n'
+         there will be two consecutive '\n's */
 
       if (cpp_if_stack[u].text)
         fprintf (outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
@@ -1403,11 +1405,11 @@ do_brace_close (void)
           inlining = FALSE;
           
           /* Because Cfunctions was copying an inline function, the
-             first call to `function_print' did not call
-             `function_reset', so that Cfunctions can call
-             `function_print' again here.  
+             first call to 'function_print' did not call
+             'function_reset', so that Cfunctions can call
+             'function_print' again here.  
 
-             Unfortunately this resets `outfile' to `localfile'. */
+             Unfortunately this resets 'outfile' to 'localfile'. */
           
           function_print ();
           fprintf (outfile_now, "\n#endif /* def %s */\n", inline_macro);
@@ -1422,7 +1424,7 @@ do_brace_close (void)
     inline_print ("}");
 }
 
-/* Handle `(void)' argument declarations. */
+/* Handle '(void)' argument declarations. */
 
 void
 do_void_arguments (void)
@@ -1456,22 +1458,22 @@ cpp_stack_free (unsigned p)
   cpp_if_stack[p] = empty_cpp_if;
 }
 
-/* Zap pairs of #if and #endif where #if is `external'. */
+/* Zap pairs of #if and #endif where #if is 'external'. */
 
 void
 cpp_external_tidy (void)
 {
   int i;
 
-  /* Find matching pairs of `#if' and `#endif' and mark them for
+  /* Find matching pairs of '#if' and '#endif' and mark them for
      deletion. */
 
   for (i = cpp_if_now - 1; i >= 0; i--)
     {
       if (cpp_if_stack[i].type == CPP_ENDIF)
         {
-          /* Cfunctions has found an `#endif', and it will now descend
-             the stack looking for the partner `#if'. */
+          /* Cfunctions has found an '#endif', and it will now descend
+             the stack looking for the partner '#if'. */
 
           unsigned endif_level = 1;
           int depth; 
@@ -1543,7 +1545,7 @@ struct arg ** fargs;
 
 unsigned n_fargs;
 
-/* Size of allocated memory for `fargs'. */
+/* Size of allocated memory for 'fargs'. */
 
 unsigned max_fargs;
 
@@ -1573,7 +1575,7 @@ argument_save (const char * text, unsigned text_length )
 {
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.arg)
-    printf ( "%s:%u: saving argument `%s' to slot %d\n", 
+    printf ( "%s:%u: saving argument '%s' to slot %d\n", 
              source_name, yylineno, text, n_fargs - 1);
 #endif /* CFUNCTIONS_DEBUG */
   arg_add (fargs[n_fargs - 1], text, 0);
@@ -1621,7 +1623,7 @@ argument_next (void)
 }
 
 /* Print out the list of arguments that were seen between the most
-   recently seen pair of brackets `(' and `)' */
+   recently seen pair of brackets '(' and ')' */
 
 void
 argument_print (void)
@@ -1699,10 +1701,10 @@ external_clear (void)
 
 /* Print an external variable and reset everything. 
 
-   The argument is a semicolon char or a `{'.  The semicolon is usual,
+   The argument is a semicolon char or a '{'.  The semicolon is usual,
    the curly brace occurs when dealing with a named struct such as
-   `struct x { ... } y, z' where Cfunctions needs to print the `x' as
-   well as `y' and `z'. */
+   'struct x { ... } y, z' where Cfunctions needs to print the 'x' as
+   well as 'y' and 'z'. */
 
 void
 external_print (const char * semicolon)
@@ -1712,7 +1714,7 @@ external_print (const char * semicolon)
   printable = ! s.seen_static;
 
   if (inlining)
-    bug ( HERE, "an external variable cannot be `inline'");
+    bug ( HERE, "an external variable cannot be 'inline'");
 
   if ( verbatiming || ( ! (s.seen_arguments || s.seen_extern) && 
                         ! s.seen_typedef &&
@@ -1746,7 +1748,7 @@ external_print (const char * semicolon)
   function_reset ();
 }
 
-/* Print something like `struct empty;'. */
+/* Print something like 'struct empty;'. */
 
 void
 forward_print (const char * end)
@@ -1790,7 +1792,7 @@ function_save (const char * text, unsigned yylength )
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.func)
-    printf ("%s:%u: saving function word `%s'\n%s:%u: word appears here\n", 
+    printf ("%s:%u: saving function word '%s'\n%s:%u: word appears here\n", 
             "cfunctions.fl", rule_line, text, source_name, yylineno );
 #endif
 
@@ -1873,8 +1875,8 @@ function_print (void)
         {
           fprintf (outfile,  "\n{" );
 
-          /* Return from the function here so that `function_reset' is
-             not called, because we will need to call `function_print'
+          /* Return from the function here so that 'function_reset' is
+             not called, because we will need to call 'function_print'
              again for the non-inline case. */
           
           if (inlining)
@@ -1890,7 +1892,7 @@ void
 print_name_stamp (const char * name)
 {
   if ( name )
-    fprintf (outfile, "/* From `%s': */\n", name);
+    fprintf (outfile, "/* From '%s': */\n", name);
 }
 
 /* Print the name of the current source file into the library (user)
@@ -1925,13 +1927,13 @@ print_advert (void)
                 error ("fcopy failed: %s", strerror(errno));
             }
           else
-            warning ("cannot find -a argument `%s'", advert);
+            warning ("cannot find -a argument '%s'", advert);
         }
     }
 }
 
 /* Print a guard wrapper for a header file.  A guard wrapper is the
-   `#ifndef' construction to stop the contents of the file being seen
+   '#ifndef' construction to stop the contents of the file being seen
    twice. */
 
 void
@@ -1941,7 +1943,7 @@ wrapper_top (char * h_file_name, char ** h_file_guard)
 
   print_advert();
 
-  fprintf (outfile, "/* This file was generated with:\n`%s' */\n",
+  fprintf (outfile, "/* This file was generated with:\n'%s' */\n",
            command_line);
 
   /* print out so that contents of the header are only included once */
@@ -1952,7 +1954,7 @@ wrapper_top (char * h_file_name, char ** h_file_guard)
 
   * h_file_guard = malloc_or_exit (l + 50);
 
-  /* `CFH_' abbreviates CFUNCTIONS HEADER FILE.  This should prevent
+  /* 'CFH_' abbreviates CFUNCTIONS HEADER FILE.  This should prevent
      clashes I hope. */
 
   j += sprintf ( * h_file_guard, "CFH_" );
@@ -1981,8 +1983,8 @@ wrapper_top (char * h_file_name, char ** h_file_guard)
 #endif
 }
 
-/* Write the bottom wrapper (the `#endif') of the guard wrapper for a
-   `.h' file (see the comments before the function `wrapper_top' for
+/* Write the bottom wrapper (the '#endif') of the guard wrapper for a
+   '.h' file (see the comments before the function 'wrapper_top' for
    an explanation).  */
 
 void
@@ -2047,7 +2049,7 @@ read_file (void)
 
   if ( curly_braces_depth )
     {
-      warning ("%d too many open braces in `%s'", curly_braces_depth,
+      warning ("%d too many open braces in '%s'", curly_braces_depth,
                source_name );
 
       /* Reset this variable for the next source file to prevent
@@ -2068,7 +2070,7 @@ do_backup (char * file_name)
   if (fexists (file_name))
     {
       if (rename (file_name, b))
-        error ( "could not rename `%s' to `%s': %s", file_name, b, 
+        error ( "could not rename '%s' to '%s': %s", file_name, b, 
                 strerror (errno));
       return b;
     }
@@ -2149,14 +2151,14 @@ extract (char * c_file_name)
       wrapper_bottom (h_file_guard);
       fclose ( localfile );
 
-      /* check whether anything was written to the `individual' file */
+      /* check whether anything was written to the 'individual' file */
 
       if ( global.file && ! n_local_writes && ! keep_empty_files )
         {
           if ( backup_name )
             {
               if ( rename (backup_name, h_file_name))
-                error ( "could not rename `%s' to `%s': %s", backup_name,
+                error ( "could not rename '%s' to '%s': %s", backup_name,
                         h_file_name, strerror(errno));
               free (backup_name);
             }
@@ -2184,7 +2186,7 @@ open_library_output ( struct outfile * x )
     {
       char * file_aux_name;
 
-      /* Make the `.h' file name. */
+      /* Make the '.h' file name. */
 
       x->name_len = strlen (x->name);
       x->file_name = malloc_or_exit (x->name_len + 3);
@@ -2196,7 +2198,7 @@ open_library_output ( struct outfile * x )
       
       x->backup_name = do_backup (x->file_name);
 
-      /* Write the top wrapper and `.hin' header information */
+      /* Write the top wrapper and '.hin' header information */
 
       x->file = fopen_or_exit (x->file_name, "w");
       outfile = x->file;
@@ -2265,12 +2267,14 @@ set_debug_flag ( char * flag_name )
     cfunctions_dbug.arg = 1;
   else if (strcmp(flag_name, "fptr")==0)
     cfunctions_dbug.fptr = 1;
+  else if (strcmp(flag_name, "string")==0)
+    string_debug_on = 1;
   else if (strcmp(flag_name, "flex")==0)
     yy_flex_debug = 1;
   else if (strcmp(flag_name, "trad")==0)
     trad_debug = 1;
   else
-    warning ( "unknown debug flag `%s': see the Cfunctions manual for a list "
+    warning ( "unknown debug flag '%s': see the Cfunctions manual for a list "
               "of possible debugging flags", flag_name );
 }
 
@@ -2284,8 +2288,8 @@ overwrite_check ( char * c_file_name, struct outfile * x )
        strncmp (x->name, c_file_name, x->name_len ) == 0 && 
        individual )
     
-    error ( "global header `%s.h' will be overwritten by "
-            "individual header of `%s'", x->name, c_file_name);
+    error ( "global header '%s.h' will be overwritten by "
+            "individual header of '%s'", x->name, c_file_name);
 }
 
 static void
@@ -2310,7 +2314,7 @@ preserve_command_line (int argc, char ** argv)
           running_len = 2;
           continue;
         }
-      else if (running_len + len > error_msg_width) /* see `error_msg.c' */
+      else if (running_len + len > error_msg_width) /* see 'error_msg.c' */
         {
           running_len = len + 2;
           strcat (command_line, "\n");
@@ -2444,7 +2448,7 @@ main (int argc, char ** argv)
         case 'g':
           global.name = optarg;
           if ( is_c_file ( global.name ))
-            warning ( "global header name `%s' looks like a C file name", 
+            warning ( "global header name '%s' looks like a C file name", 
                       global.name );
           global.name_len = strlen(global.name);
           break;
@@ -2466,7 +2470,7 @@ main (int argc, char ** argv)
         case 'l':
           local.name = optarg;
           if ( is_c_file ( local.name ))
-            warning ( "local header name `%s' looks like a C file name", 
+            warning ( "local header name '%s' looks like a C file name", 
                       local.name );
           local.name_len = strlen(local.name);
           break;
@@ -2489,7 +2493,7 @@ main (int argc, char ** argv)
 #ifndef DISABLE_CPP
           if (! c_preprocess)
             warning ("ignoring -P / --cpp-arg %s: for C preprocessing "
-                     "use `-C / --cpp'", optarg);
+                     "use '-C / --cpp'", optarg);
           else
             cpp_add_argument (optarg);
 #endif
@@ -2532,7 +2536,7 @@ main (int argc, char ** argv)
   /* sanity checks for arguments */
 
   if ( local.name && individual )
-    error ("option `--local' is incompatible with option `--individual'");
+    error ("option '--local' is incompatible with option '--individual'");
 
   if ( individual || global.name || local.name )
     {
@@ -2543,7 +2547,7 @@ main (int argc, char ** argv)
     writing_to_stdout = TRUE;
 
   if (( individual || ( local.name && global.name)) && wrap)
-    warning ( "`--wrap %s' will be ignored because output files "
+    warning ( "'--wrap %s' will be ignored because output files "
               "were specified", wrap );
   if (c_preprocess && (copy_c_ex || global.name || local.name))
     warning ("-c, -x, -g, -l options are useless when C preprocessing");
@@ -2552,7 +2556,7 @@ main (int argc, char ** argv)
     extensions = TRUE;
 
   if (local.name && global.name && strcmp(local.name, global.name) == 0)
-    error ("local name `%s' is the same as the global name.", local.name);
+    error ("local name '%s' is the same as the global name.", local.name);
 
   open_library_output ( & global );
 
@@ -2576,7 +2580,7 @@ main (int argc, char ** argv)
       {
         c_file_name = argv[optind++];
         if ( ! is_c_file ( c_file_name ) )
-          warning ( "`%s' does not look like a C file", c_file_name );
+          warning ( "'%s' does not look like a C file", c_file_name );
         overwrite_check ( c_file_name, & global );
         overwrite_check ( c_file_name, & local );
 
