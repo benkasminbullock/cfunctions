@@ -1,2 +1,10 @@
 *.o
 *.~*~
+autom4te.cache
+configure
+cfunctions-*.tar.gz
+cfunctions-*.tar.bz2
+cfunctions-0.*
+Makefile
+src/Makefile
+doc/Makefile
