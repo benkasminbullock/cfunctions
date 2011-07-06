@@ -54,6 +54,13 @@ const char * state_message (void);
 enum bool { FALSE, TRUE };
 #endif /* HEADER */
 
+/* Macro for printing debugging statements. */
+
+#define DBMSG(format,msg...) do {                               \
+        printf ("%s:%d [%s]:", __FILE__, __LINE__, __func__);   \
+        printf (format, ## msg);                                \
+    } while (0)
+
 /* The whole command line. */
 
 static char * command_line;
@@ -134,8 +141,8 @@ BOOL save_static_funcs;         /* -s */
 char * wrap;                    /* -w */
 BOOL extensions = TRUE;         /* -x */
 
-const char * local_macro = "LOCAL_H"; /* -L */
-const char * global_macro = "HEADER"; /* -G */
+static const char * local_macro = "LOCAL_H"; /* -L */
+static const char * global_macro = "HEADER"; /* -G */
 
 static struct cfunctionsrc rc;
 
@@ -436,7 +443,7 @@ brace_open (void)
   curly_braces_depth++; 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.brace) 
-    printf ("%s:%u: brace debug: '{' (%d deep) at %s:%u\n", 
+    DBMSG ("%s:%u: brace debug: '{' (%d deep) at %s:%u\n", 
             source_name, yylineno, curly_braces_depth, __FILE__, 
             __LINE__ ); 
   check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
@@ -595,7 +602,7 @@ do_function_pointer (const char * text)
   inline_print (text);
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.fptr)
-    printf ("pointer to function '%s'\n", text);
+    DBMSG ("pointer to function '%s'\n", text);
 #endif
 }
 
@@ -865,7 +872,7 @@ static unsigned verbatim_limit;
 static void
 show_cpp_if_stack(unsigned i)
 {
-  printf ( "CPP debug: cpp_if_stack[%d] = #%s%s\n", i,
+  DBMSG ( "CPP debug: cpp_if_stack[%d] = #%s%s\n", i,
            cpp_if_names[cpp_if_stack[i].type], 
            cpp_if_stack[i].text );
 }
@@ -899,7 +906,7 @@ cpp_fill_holes (void)
                 {
 #ifdef CFUNCTIONS_DEBUG
                   if (cfunctions_dbug.cpp)
-                    printf ("CPP debug: lowering verbatim limit "
+                    DBMSG ("CPP debug: lowering verbatim limit "
                             "from %d to %d\n", i, j);
 #endif
                   verbatim_limit = j;
@@ -920,7 +927,7 @@ cpp_fill_holes (void)
     
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.cpp)
-    printf ( "CPP debug: stack size after tidying %d\n", cpp_if_now );
+    DBMSG ( "CPP debug: stack size after tidying %d\n", cpp_if_now );
 #endif
 #if 0
   printf ("HOLES AFTER: ");
@@ -962,13 +969,13 @@ cpp_stack_tidy (void)
 #ifdef CFUNCTIONS_DEBUG
           if (cfunctions_dbug.cpp)
             {
-              printf ( "CPP debug: zapping #endif %s\n", 
+              DBMSG ( "CPP debug: zapping #endif %s\n", 
                        cpp_if_stack[i].text );
               if (printed)
-                printf ("CPP debug: already printed at %u.\n",
+                DBMSG ("CPP debug: already printed at %u.\n",
                         cpp_if_stack[i].print_line);
               else
-                printf ("CPP debug: not printed.\n");
+                DBMSG ("CPP debug: not printed.\n");
             }
 #endif
           while (1)
@@ -994,13 +1001,13 @@ cpp_stack_tidy (void)
                         if (cfunctions_dbug.cpp)
                           {
                             if (! cpp_if_stack[depth].printed)
-                              printf ("CPP debug: #if was not printed\n");
+                              DBMSG ("CPP debug: #if was not printed\n");
                           }
 #endif
                       cpp_if_stack[depth].type = CPP_ZAP;
 #ifdef CFUNCTIONS_DEBUG
                       if (cfunctions_dbug.cpp)
-                        printf ("CPP debug: zapping '#if %s'\n", 
+                        DBMSG ("CPP debug: zapping '#if %s'\n", 
                                 cpp_if_stack[depth].text);
 #endif
                       goto zapped;
@@ -1017,10 +1024,10 @@ cpp_stack_tidy (void)
                       #ifdef CFUNCTIONS_DEBUG
                       if (cfunctions_dbug.cpp)
                         {
-                          printf ("CPP debug: zapping #else/#elif \"%s\"\n", 
+                          DBMSG ("CPP debug: zapping #else/#elif \"%s\"\n", 
                                   cpp_if_stack[depth].text);
                           if (! cpp_if_stack[depth].printed)
-                            printf ("CPP debug: not printed\n");
+                            DBMSG ("CPP debug: not printed\n");
                         }
                       #endif
                     }
@@ -1067,7 +1074,7 @@ cpp_add (char * text, Cpp_If_Type type)
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.cpp)
-    printf ( "CPP debug: function \"cpp_add\":"
+    DBMSG ( "CPP debug: function \"cpp_add\":"
              "saving '%s' of type '%s' from line %u\n", 
              text, cpp_if_names[type], yylineno );
 #endif
@@ -1127,8 +1134,8 @@ cpp_add (char * text, Cpp_If_Type type)
         {
           if ( cfunctions_dbug.cpp )
             {
-              printf ("CPP debug: looking for end of verbatim\n");
-              printf ("%d %d\n", cpp_stack_find_if (cpp_if_now), 
+              DBMSG ("CPP debug: looking for end of verbatim\n");
+              DBMSG ("%d %d\n", cpp_stack_find_if (cpp_if_now), 
                       verbatim_limit);
             }
         }
@@ -1140,7 +1147,7 @@ cpp_add (char * text, Cpp_If_Type type)
              area. */
 #ifdef CFUNCTIONS_DEBUG
           if ( cfunctions_dbug.cpp )
-            printf ("CPP debug: final '#endif' of a verbatim area\n");
+            DBMSG ("CPP debug: final '#endif' of a verbatim area\n");
 #endif
           cpp_stack_top.printed = TRUE;
           cpp_stack_tidy ();
@@ -1167,7 +1174,7 @@ cpp_add (char * text, Cpp_If_Type type)
         {
 #ifdef CFUNCTIONS_DEBUG
           if (cfunctions_dbug.func)
-            printf ("initial state\n");
+            DBMSG ("initial state\n");
 #endif
 
           function_save (cpp_word, leng);
@@ -1190,7 +1197,7 @@ cpp_add (char * text, Cpp_If_Type type)
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.cpp)
-    printf ( "CPP debug: if stack now %u deep\n", cpp_if_now );
+    DBMSG ( "CPP debug: if stack now %u deep\n", cpp_if_now );
 #endif
 
   /* Deficiency: there is no way to resize the stack */
@@ -1241,7 +1248,7 @@ cpp_eject (unsigned u)
         {
           #ifdef CFUNCTIONS_DEBUG
           if (cfunctions_dbug.cpp)
-            printf ( "CPP debug: '#endif' but matching '#if' not printed\n" );
+            DBMSG ( "CPP debug: '#endif' but matching '#if' not printed\n" );
           #endif
           return;
         }
@@ -1279,7 +1286,7 @@ cpp_eject (unsigned u)
 
   cpp_if_stack[u].print_line = cpp_prints++;
   if (cfunctions_dbug.cpp)
-    printf ("CPP debug: print line %u\n", cpp_if_stack[u].print_line);
+    DBMSG ("CPP debug: print line %u\n", cpp_if_stack[u].print_line);
 #endif
 }
 
@@ -1298,7 +1305,7 @@ do_escaped_brace (const char * text)
   inline_print (text);
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.brace)
-    printf ("%s:%u: matched escaped brace.\n",
+    DBMSG ("%s:%u: matched escaped brace.\n",
             source_name, yylineno);
 #endif
 }
@@ -1516,7 +1523,7 @@ cpp_external_print (void)
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.cpp)
-    printf ( "CPP debug: doing external print\n");
+    DBMSG ( "CPP debug: doing external print\n");
 #endif
 
   cpp_external_tidy ();
@@ -1525,14 +1532,14 @@ cpp_external_print (void)
     {
 #ifdef CFUNCTIONS_DEBUG
       if (cfunctions_dbug.cpp)
-        printf ( "CPP debug: external print of %u\n", i);
+        DBMSG ( "CPP debug: external print of %u\n", i);
 #endif
 
       if (cpp_if_stack[i].external && ! cpp_if_stack[i].printed)
         cpp_eject (i);
 #ifdef CFUNCTIONS_DEBUG
       else if (cfunctions_dbug.cpp)
-        printf ( "CPP debug: not external so rejected\n");
+        DBMSG ( "CPP debug: not external so rejected\n");
 #endif
     }
 }
@@ -1560,7 +1567,7 @@ argument_reset(void)
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.arg)
-    printf ("argument reset.\n");
+    DBMSG ("argument reset.\n");
 #endif
   for (i = 0; i < n_fargs; i++)
     arg_free (fargs[i]);
@@ -1575,7 +1582,7 @@ argument_save (const char * text, unsigned text_length )
 {
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.arg)
-    printf ( "%s:%u: saving argument '%s' to slot %d\n", 
+    DBMSG ( "%s:%u: saving argument '%s' to slot %d\n", 
              source_name, yylineno, text, n_fargs - 1);
 #endif /* CFUNCTIONS_DEBUG */
   arg_add (fargs[n_fargs - 1], text, 0);
@@ -1634,7 +1641,7 @@ argument_print (void)
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.arg)
-    printf ("printing argument\n");
+    DBMSG ("printing argument\n");
 #endif 
 
   fprintf (outfile,  " ");
@@ -1767,7 +1774,7 @@ function_reset (void)
 {
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.func)
-    printf ("function reset\n");
+    DBMSG ("function reset\n");
 #endif
 
   if (current_arg)
@@ -1792,7 +1799,7 @@ function_save (const char * text, unsigned yylength )
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.func)
-    printf ("%s:%u: saving function word '%s'\n%s:%u: word appears here\n", 
+    DBMSG ("%s:%u: saving function word '%s'\n%s:%u: word appears here\n", 
             "cfunctions.fl", rule_line, text, source_name, yylineno );
 #endif
 
@@ -1801,8 +1808,11 @@ function_save (const char * text, unsigned yylength )
       current_arg = arg_start ();
 #ifdef CFUNCTIONS_DEBUG
       if (cfunctions_dbug.func)
-        printf ("new current_arg for \"%s\" will be created\n", text);
+        DBMSG ("new current_arg for \"%s\" will be created\n", text);
 #endif
+      if (strcmp (text, "typedef") == 0) {
+          current_arg->is_typedef = 1;
+      }
     }
   arg_add (current_arg, text, yylineno);
   s.function_type_n++;
@@ -1838,7 +1848,7 @@ function_print (void)
 
 #ifdef CFUNCTIONS_DEBUG
   if (cfunctions_dbug.func)
-    printf ("printing function\n");
+    DBMSG ("printing function\n");
 #endif 
   if (! s.seen_arguments) 
     return;

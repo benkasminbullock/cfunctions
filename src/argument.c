@@ -66,6 +66,8 @@ struct arg
   struct type * suffixes;     /* Array suffixes. */
   unsigned line;              /* Line number of the name. */
   struct arg * prev, * next;  /* For shared arguments. */
+    /* This is true if the current argument is a typedef. */
+    int is_typedef;
 };
 
 #endif /* HEADER */
@@ -83,6 +85,7 @@ arg_start (void)
   a = calloc_or_exit (1, sizeof (struct arg));
   a->types = calloc_or_exit (1, sizeof (struct shared_type));
   a->types->ref_count++;
+  a->is_typedef = 0;
   return a;
 }
 
@@ -299,13 +302,20 @@ extern void cpp_eject (unsigned);
 /* Print a list of array suffixes to the specified stream. */
 
 static void
-suffix_fprint (FILE * f, struct type * t)
+suffix_fprint (FILE * f, struct arg * a)
 {
+  struct type * t;
+  t = a->suffixes;
   if (! t)
     return;
   while (t->prev)
     t = t->prev;
-  fprintf (f, "[]");
+  if (a->is_typedef) {
+      fprintf (f, "%s", t->name);
+  }
+  else {
+      fprintf (f, "[]");
+  }
   t = t->next;
   while (t)
     {
@@ -370,8 +380,8 @@ arg_fprint (FILE * f, struct arg * a)
     }
   type_fprint (f, a->pointers, 0);
   if (a->name)
-    fprintf (f, "%s", a->name->name);
-  suffix_fprint (f, a->suffixes);
+    fprintf (f, "%s", a->name->name); 
+  suffix_fprint (f, a);
 }
 
 /* Print all the arguments in a list of them.  This is used for
@@ -390,7 +400,7 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
       type_fprint (f, a->pointers, 0);
       if (a->name)
         fprintf (f, "%s", a->name->name);
-      suffix_fprint (f, a->suffixes);
+      suffix_fprint (f, a);
       if (a->next)
         fprintf (f, ", ");
     }

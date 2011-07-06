@@ -9,3 +9,6 @@ Makefile
 src/Makefile
 doc/Makefile
 tests/test.perl
+
+config.log
+config.status
