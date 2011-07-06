@@ -1,3 +1,3 @@
-// error: too many `#endif's
+// error: too many '#endif's
 
 #endif

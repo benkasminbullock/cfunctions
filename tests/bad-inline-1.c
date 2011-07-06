@@ -1,3 +1,3 @@
-// error: an external variable cannot be `inline'.
+// error: an external variable cannot be 'inline'.
 
 INLINE int jubs;

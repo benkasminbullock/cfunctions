@@ -1,8 +1,10 @@
 #!@PERL@
 use warnings;
 use strict;
+use FindBin;
+#use Test::More;
 
-# Copyright (C) 1998-2010  Ben Bullock
+# Copyright (C) 1998-2011  Ben Bullock
  
 # Cfunctions is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,16 +25,7 @@ use strict;
 
 # The output is a test script for Cfunctions written in Perl.
  
-my $cfunctions = "../src/cfunctions";
-
-# Make sure that the executable Cfunctions does exist.
-
-if ( ! -e $cfunctions || ! -x $cfunctions )
-{
-    print STDERR 
-        "$0: '$cfunctions' cannot be found or is not executable.\n";
-    exit ( 1 );
-}
+my $cfunctions = "$FindBin::Bin/../src/cfunctions";
 
 my $cc         = "@CC@";
 my $GNU_c      = "@GCC@"; # are we using GNU C?
@@ -635,6 +628,15 @@ sub stdin_test
 
 # Main program starts here
 
+# Make sure that the executable Cfunctions does exist.
+
+if ( ! -e $cfunctions || ! -x $cfunctions )
+{
+    print STDERR 
+        "$0: '$cfunctions' cannot be found or is not executable.\n";
+    exit ( 1 );
+}
+
 rm_h_files();
 
 opendir(THISDIR, ".");
@@ -694,7 +696,7 @@ print "\nTotal tests = $n_test, success rate = $n_succeed / $n_test\n";
 
 if ( $n_failed )
 {
-    print "WARNING: $n_bad_tests of the tests didn't work.\n";
+    print "WARNING: $n_failed of the tests failed.\n";
 }
 else
 {

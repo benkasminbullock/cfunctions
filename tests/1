@@ -1,1 +1,0 @@
-cfunctions: error: bad option -i / --individual: Cfunctions cannot write individual .h files for stdin.

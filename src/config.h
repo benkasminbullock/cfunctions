@@ -7,7 +7,7 @@
 #define GETOPT_LONG @GETOPT_LONG@
 #define C_EX_FILE_NAME "c-extensions.h"
 #define C_EXTENSIONS_FILE "/usr/local/share/cfunctions/"C_EX_FILE_NAME
-#define C_EX_LOCAL "/usr/home/ben/cfunctions/current/src/"C_EX_FILE_NAME
+#define C_EX_LOCAL "/usr/home/ben/projects/cfunctions/current/src/"C_EX_FILE_NAME
 
 #define CPP "gcc -E"
 

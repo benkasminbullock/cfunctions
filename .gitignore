@@ -8,3 +8,4 @@ cfunctions-0.*
 Makefile
 src/Makefile
 doc/Makefile
+tests/test.perl

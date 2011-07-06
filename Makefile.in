@@ -25,6 +25,8 @@ BZIP2 = @BZIP2@
 all: 
 	cd src;make;cd ../doc;make
 
+test:	check
+
 check: 	all
 	cd tests/;./test.perl
 
