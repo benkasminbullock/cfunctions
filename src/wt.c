@@ -1,7 +1,7 @@
 /* Main program of Cfunctions. */
 
 /* 
-   Copyright (C) 1998, 2004, 2009  Ben K. Bullock
+   Copyright (C) 1998, 2004, 2009, 2011  Ben K. Bullock
 
    Cfunctions is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ enum bool { FALSE, TRUE };
 /* Macro for printing debugging statements. */
 
 #define DBMSG(format,msg...) do {                               \
-        printf ("%s:%d [%s]:", __FILE__, __LINE__, __func__);   \
+        printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);   \
         printf (format, ## msg);                                \
     } while (0)
 
@@ -2283,6 +2283,66 @@ set_debug_flag ( char * flag_name )
     yy_flex_debug = 1;
   else if (strcmp(flag_name, "trad")==0)
     trad_debug = 1;
+  else if (strcmp (flag_name, "help") == 0) {
+      int i;
+      const struct debug_argument {
+          char * option;
+          char * explanation;
+      }
+      debug_options[] = {
+          {
+              "tag",
+              "tag creation"
+          },
+          {
+              "func",
+              "function and function argument"
+          },
+          {
+              "cpp",
+              "C preprocessor-like actions"
+          },
+          {
+              "comment",
+              "C comments",
+          },
+          {
+              "brace",
+              "handling of { and }"
+          },
+          {
+              "arg",
+              "function arguments"
+          },
+          {
+              "fptr",
+              "function pointers"
+          },
+          {
+              "string",
+              "C strings"
+          },
+          {
+              "flex",
+              "flex lexer"
+          },
+          {
+              "trad",
+              "pre-ANSI (traditional C) handling"
+          },
+          {
+              "help",
+              "Print these messages"
+          }
+      };
+      printf ("The following flags may be passed after -D:\n");
+      for (i = 0; i < sizeof (debug_options) / sizeof (struct debug_argument); i++) {
+          printf ("%10s: debug %-60s\n",
+                  debug_options[i].option,
+                  debug_options[i].explanation);
+      }
+      exit (0);
+  }
   else
     warning ( "unknown debug flag '%s': see the Cfunctions manual for a list "
               "of possible debugging flags", flag_name );
