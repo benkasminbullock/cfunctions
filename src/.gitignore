@@ -1,3 +1,9 @@
 # compiler output
 
 cfunctions
+options
+
+# Made by configure script
+
+config.h
+Makefile
