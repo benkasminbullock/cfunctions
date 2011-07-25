@@ -29,3 +29,11 @@ sys_or_exit.h
 tags.h
 traditional.h
 wt.h
+
+# Made by etags
+
+TAGS
+
+# Made by flex
+
+cfunctions.c

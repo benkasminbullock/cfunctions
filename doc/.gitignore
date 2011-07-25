@@ -4,3 +4,6 @@ man.head
 Makefile
 version.texi
 man.tail
+cfunctions.html
+cfunctions.info
+options.texi

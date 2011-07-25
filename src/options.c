@@ -86,7 +86,7 @@ const char * usage [ N_OPTIONS ] =
   "Copy the `c-extensions.h' into the header file",
   "Pass input through the C preprocessor",
   #ifdef CFUNCTIONS_DEBUG
-  "Set debugging option "arg,
+  "Set debugging option "arg" (-D help for list)",
   #endif
   "Create an Emacs tag table",
   "Don't copy the `c-extensions.h' file",
