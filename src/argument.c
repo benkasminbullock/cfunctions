@@ -85,7 +85,6 @@ arg_start (void)
   a = calloc_or_exit (1, sizeof (struct arg));
   a->types = calloc_or_exit (1, sizeof (struct shared_type));
   a->types->ref_count++;
-  a->is_typedef = 0;
   return a;
 }
 
