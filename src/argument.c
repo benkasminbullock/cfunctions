@@ -66,8 +66,16 @@ struct arg
   struct type * suffixes;     /* Array suffixes. */
   unsigned line;              /* Line number of the name. */
   struct arg * prev, * next;  /* For shared arguments. */
+    
+    /* Stopgaps. */
+    char * function_pointer;
+    char * function_pointer_arguments;
     /* This is true if the current argument is a typedef. */
-    int is_typedef;
+    unsigned is_typedef : 1;
+    /* This is true if the current argument is a function pointer. */
+    unsigned is_function_pointer : 1;
+    /* Print debugging messages. */
+    unsigned debug : 1;
 };
 
 #endif /* HEADER */
@@ -78,13 +86,14 @@ static const struct arg  arg_null;
 /* Create a completely new "arg" structure. */
 
 struct arg * 
-arg_start (void)
+arg_start (int debug)
 {
   struct arg * a;
 
   a = calloc_or_exit (1, sizeof (struct arg));
   a->types = calloc_or_exit (1, sizeof (struct shared_type));
   a->types->ref_count++;
+  a->debug = debug;
   return a;
 }
 
@@ -109,12 +118,11 @@ arg_share (struct arg * a)
 static void
 type_list_add (struct type ** a, struct type * b)
 {
-  if (* a)
-    {
-      (* a)->next = b;
-      b->prev = * a;
+    if (* a) {
+        (* a)->next = b;
+        b->prev = * a;
     }
-  * a = b;
+    * a = b;
 }
 
 /* Check for a muddled situation */
@@ -146,6 +154,13 @@ arg_add (struct arg * a, const char * t, unsigned line)
     unsigned t_len;
     struct type * x;
 
+#ifdef CFUNCTIONS_DEBUG
+    if (a->debug) {
+        DBMSG ("Adding '%s' in state %d\n", t, a->parse_state);
+    }
+#endif
+
+
     t_len = strlen (t);
     x = calloc_or_exit (1, sizeof (struct type));
     x->name = malloc_or_exit (t_len + 1);
@@ -174,6 +189,11 @@ arg_add (struct arg * a, const char * t, unsigned line)
             bug (HERE, "addition to a shared type list");
         }
         else {
+#ifdef CFUNCTIONS_DEBUG
+            if (a->debug) {
+                DBMSG ("Adding '%s' to list of types\n", t);
+            }
+#endif
             type_list_add (& a->types->t, x);
         }
         break;
@@ -205,8 +225,20 @@ type_list_move (struct arg * a, struct type ** t)
 void
 arg_put_name (struct arg * a)
 {
-  if (a->name)
-    return;
+#ifdef CFUNCTIONS_DEBUG
+    if (a->debug) {
+        DBMSG ("putting name\n");
+    }
+#endif
+    /* Kludge. */
+    if (a->is_function_pointer) {
+        return;
+    }
+
+
+    if (a->name) {
+        return;
+    }
   switch (a->parse_state)
     {
     case POINTER:
@@ -371,6 +403,12 @@ type_fprint (FILE * f, struct type * t, int do_extern)
 void
 arg_fprint (FILE * f, struct arg * a)
 {
+#ifdef CFUNCTIONS_DEBUG
+    if (a->debug) {
+        DBMSG ("Printing one argument.\n");
+    }
+
+#endif
     if (a->types->t) {
         type_fprint (f, a->types->t, 0);
     }
@@ -394,9 +432,35 @@ arg_fprint (FILE * f, struct arg * a)
 void
 arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 {
+#ifdef CFUNCTIONS_DEBUG
+    if (a->debug) {
+        DBMSG ("Printing all arguments: do extern is %d.\n", do_extern);
+        if (a->is_function_pointer) {
+            DBMSG ("Function pointer.\n");
+        }
+    }
+
+#endif
     if (a->types->t) {
+#ifdef CFUNCTIONS_DEBUG
+        if (a->debug) {
+            DBMSG ("doing type_fprint.\n");
+        }
+#endif
         type_fprint (f, a->types->t, do_extern);
     }
+#ifdef CFUNCTIONS_DEBUG
+    else {
+        DBMSG ("No types.\n");
+    }
+#endif
+    /* Kludge. */
+    if (a->is_function_pointer) {
+        fprintf (f, "(* %s) (%s)",
+                 a->function_pointer,
+                 a->function_pointer_arguments);
+    }
+    else {
     while (a->prev) {
         a = a->prev;
     }
@@ -409,6 +473,7 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
         if (a->next) {
             fprintf (f, ", ");
         }
+    }
     }
 }
 

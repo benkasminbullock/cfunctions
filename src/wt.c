@@ -52,14 +52,14 @@ const char * state_message (void);
 #undef BOOL
 #define BOOL int
 enum bool { FALSE, TRUE };
-#endif /* HEADER */
-
-/* Macro for printing debugging statements. */
-
 #define DBMSG(format,msg...) do {                               \
         printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);   \
         printf (format, ## msg);                                \
     } while (0)
+
+#endif /* HEADER */
+
+/* Macro for printing debugging statements. */
 
 /* The whole command line. */
 
@@ -589,6 +589,11 @@ do_void_pointer (const char * text)
 void
 do_start_arguments (void)
 {
+#ifdef CFUNCTIONS_DEBUG
+    if (cfunctions_dbug.arg) {
+        DBMSG ("start arguments\n");
+    }
+#endif
   argument_next ();
   arg_put_name (current_arg);
   s.seen_arguments = TRUE;
@@ -597,6 +602,11 @@ do_start_arguments (void)
 void
 do_arguments (void)
 {
+#ifdef CFUNCTIONS_DEBUG
+    if (cfunctions_dbug.arg) {
+        DBMSG ("do arguments\n");
+    }
+#endif
   arg_put_name (current_arg);
   s.seen_arguments = TRUE;
 }
@@ -606,13 +616,17 @@ do_arguments (void)
 void
 do_function_pointer (const char * text)
 {
-    s.function_pointer = TRUE;
+    if (! current_arg) {
+        bug (HERE, "null pointer for current arg");
+    }
+    current_arg->is_function_pointer = TRUE;
     inline_print (text);
 #ifdef CFUNCTIONS_DEBUG
     if (cfunctions_dbug.fptr) {
         DBMSG ("pointer to function '%s'\n", text);
     }
 #endif
+    current_arg->function_pointer = strdup (text);
 }
 
 void
@@ -624,6 +638,7 @@ do_function_pointer_argument (const char * text)
         DBMSG ("argument to function pointer '%s'\n", text);
     }
 #endif
+    current_arg->function_pointer_arguments = strdup (text);
 }
 
 
@@ -1315,8 +1330,9 @@ cpp_eject (unsigned u)
 void 
 do_start_cpp (const char * text)
 {
-  if (initial_state ())
-    function_reset ();
+    if (initial_state ()) {
+        function_reset ();
+    }
   push_in_cpp (); 
   inline_print (text); 
 }
@@ -1467,8 +1483,9 @@ void
 do_define (const char * text)
 {
   unsigned char * macro_name;
-  if (initial_state ())
-    function_reset ();
+  if (initial_state ()) {
+      function_reset ();
+  }
   macro_name = (unsigned char *) strstr (text, "define") + 7;
   while ( !(isalnum (macro_name[0]) || macro_name[0] == '_'))
     macro_name++;
@@ -1582,14 +1599,15 @@ unsigned max_fargs;
    names, then reset the counter for arguments.  This function is
    called when an argument list has been printed. */
 
-void
-argument_reset(void)
+static void
+argument_reset (void)
 {
   unsigned i;
 
 #ifdef CFUNCTIONS_DEBUG
-  if (cfunctions_dbug.arg)
-    DBMSG ("argument reset.\n");
+  if (cfunctions_dbug.arg) {
+      DBMSG ("argument reset.\n");
+  }
 #endif
   for (i = 0; i < n_fargs; i++)
     arg_free (fargs[i]);
@@ -1648,7 +1666,7 @@ argument_next (void)
           fargs = malloc_or_exit (sizeof (struct arg *) * max_fargs);
         }
     }
-  fargs[n_fargs - 1] = arg_start ();
+  fargs[n_fargs - 1] = arg_start (cfunctions_dbug.arg);
 }
 
 /* Print out the list of arguments that were seen between the most
@@ -1692,21 +1710,20 @@ argument_print (void)
       else
         fprintf (outfile, ")");
     }
-  else
-    {
+  else {
       if (s.void_arguments)
         fprintf (outfile, "(void)");
-      else 
-        {
+      else {
           if (warns.strict_prototypes)
             line_warning ("function with no prototype");
-          /* Cfunctions is a prototype fascist. */
+          /* Cfunctions insists on prototypes. */
           fprintf (outfile, "PROTO ((void))");
         }
     }
 
-  if ( ! inlining )
+  if ( ! inlining ) {
     argument_reset ();
+  }
 }
 
 /* Print everything external which has been seen regardless of anything
@@ -1725,7 +1742,7 @@ external_clear (void)
   if (verbatiming || ! s.seen_static || save_static_funcs)
     arg_tagable (current_arg);
   arg_free (current_arg);
-  current_arg = arg_start ();
+  current_arg = arg_start (cfunctions_dbug.arg);
 }
 
 /* Print an external variable and reset everything. 
@@ -1736,16 +1753,22 @@ external_clear (void)
    well as 'y' and 'z'. */
 
 void
-external_print (const char * semicolon)
+external_print (const char * semicolon, const char * why)
 {
     int printable;
 
     printable = ! s.seen_static;
 
+    if (cfunctions_dbug.func) {
+        DBMSG ("external print called with argument '%s' because %s.\n",
+               semicolon, why);
+    }
+    
+
     if (inlining) {
         bug ( HERE, "an external variable cannot be 'inline'");
     }
-    if ( verbatiming || ( ! (s.seen_arguments || s.seen_extern) && 
+    if (verbatiming || ( ! (s.seen_arguments || s.seen_extern) && 
                           ! s.seen_typedef &&
                           ! s.unnamed_struct ) ) {
         if (! s.local_func) {
@@ -1779,6 +1802,7 @@ external_print (const char * semicolon)
     else if (s.seen_typedef) {
         arg_tag (current_arg, TAG_TYPEDEF);
     }
+
     function_reset ();
 }
 
@@ -1788,7 +1812,7 @@ void
 forward_print (const char * end)
 {
   if (verbatiming)
-    external_print (end);
+      external_print (end, "incomplete forward declaration of struct");
   else                  
     function_reset ();
 }
@@ -1800,8 +1824,9 @@ void
 function_reset (void)
 {
 #ifdef CFUNCTIONS_DEBUG
-  if (cfunctions_dbug.func)
-    DBMSG ("function reset\n");
+    if (cfunctions_dbug.func) {
+        DBMSG ("function reset\n");
+    }
 #endif
 
   if (current_arg)
@@ -1825,24 +1850,24 @@ function_save (const char * text, unsigned yylength )
 {
 
 #ifdef CFUNCTIONS_DEBUG
-  if (cfunctions_dbug.func)
-    DBMSG ("%s:%u: saving function word '%s'\n%s:%u: word appears here\n", 
-            "cfunctions.fl", rule_line, text, source_name, yylineno );
+    if (cfunctions_dbug.func)
+        DBMSG ("%s:%u: saving function word '%s'\n%s:%u: word appears here\n", 
+               "cfunctions.fl", rule_line, text, source_name, yylineno );
 #endif
 
-  if (! current_arg)
-    {
-      current_arg = arg_start ();
+    if (! current_arg) {
+        current_arg = arg_start (cfunctions_dbug.arg);
 #ifdef CFUNCTIONS_DEBUG
-      if (cfunctions_dbug.func)
-        DBMSG ("new current_arg for \"%s\" will be created\n", text);
+        if (cfunctions_dbug.func) {
+            DBMSG ("new current_arg starting \"%s\" will be created\n", text);
+        }
 #endif
-      if (strcmp (text, "typedef") == 0) {
-          current_arg->is_typedef = 1;
-      }
+        if (strcmp (text, "typedef") == 0) {
+            current_arg->is_typedef = 1;
+        }
     }
-  arg_add (current_arg, text, yylineno);
-  s.function_type_n++;
+    arg_add (current_arg, text, yylineno);
+    s.function_type_n++;
 }
 
 /* Write GNU C extensions for a function. */

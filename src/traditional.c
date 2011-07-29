@@ -119,7 +119,7 @@ traditional_save (char * text, unsigned length)
   if (n_arg == -1)
     inc_n_arg ();
   if (! args[n_arg])
-    args[n_arg] = arg_start ();
+      args[n_arg] = arg_start (0 /* no debug */);
   arg_add (args[n_arg], text, yylineno);
 }
 

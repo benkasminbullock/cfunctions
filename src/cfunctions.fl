@@ -1,7 +1,7 @@
 /* Cfunctions: extract C function prototypes and global variables. */
 
 /* 
-   Copyright (C) 1998-2010  Ben Bullock
+   Copyright (C) 1998-2011  Ben Bullock
 
    Cfunctions is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -304,7 +304,7 @@ enum              { RULE_LINE;
      initialisers. */
 
 <initialiser>;    {
-                    external_print (";\n");
+                    external_print (";\n", "end initializer");
                     parser_pop_state ();
                   }
 
@@ -337,7 +337,7 @@ enum              { RULE_LINE;
      of them but not for several other cases. */
 
 \({c_opt_space}\*{c_opt_space}     {
-                  external_print ("");
+                  //external_print ("", "start of function pointer");
                   inline_print (yytext);
                   parser_push_state (func_ptr);
                   }
@@ -411,12 +411,12 @@ enum              { RULE_LINE;
                   }
 
 <maybe_traditional>;   {
-                  external_print (";\n");
+                  external_print (";\n", "semicolon (maybe traditional state)");
                   BEGIN (INITIAL);
                   }
 
 <maybe_traditional>,   {
-                  external_print (",\n");
+                  external_print (",\n", "comma (maybe traditional state)");
                   BEGIN (INITIAL);
                   }
 
@@ -534,23 +534,24 @@ extern            { RULE_LINE; do_extern (yytext, yyleng); }
                   }
 
 \;                { RULE_LINE;
-                    if (current_arg)
-                      {                   
+                    if (current_arg) {                   
                         arg_put_name (current_arg);
-                        external_print (";\n");
-                      }
-                    else
+                        external_print (";\n", "semicolon (initial state)");
+                    }
+                    else {
                       /* Function pointer trips here. */;
+                    }                     
                   }
 
 =                 { RULE_LINE;
-                    if (current_arg)
+                    if (current_arg) {
                       arg_put_name (current_arg);
+}
                     else
                       /* Function pointer trips here. */;
                     parser_push_state (initialiser);
                     if (verbatiming)
-                      external_print ("=");
+                      external_print ("=", "equals (initial state)");
                   }
 
 \,                { RULE_LINE;
@@ -560,7 +561,7 @@ extern            { RULE_LINE; do_extern (yytext, yyleng); }
 
 main{c_opt_space}\([^\{]+\{ { /*EK*/
                   /* Never write a prototype for main. */
-                  function_reset();
+                  function_reset ();
                   brace_open ();
                   parser_push_state(function);
                   }
