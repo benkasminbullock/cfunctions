@@ -456,7 +456,7 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 #endif
     /* Kludge. */
     if (a->is_function_pointer) {
-        fprintf (f, "(* %s) (%s)",
+        fprintf (f, "(* %s) (%s",
                  a->function_pointer,
                  a->function_pointer_arguments);
     }
