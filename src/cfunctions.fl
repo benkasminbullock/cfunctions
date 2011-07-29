@@ -352,11 +352,6 @@ enum              { RULE_LINE;
                   parser_pop_state ();
                   }
 
-<func_ptr_arg>\)  {
-                  inline_print (yytext);
-                  parser_pop_state ();
-                  }
-
 <func_ptr>{c_word} {
                    do_function_pointer (yytext);
                    }
@@ -365,7 +360,17 @@ enum              { RULE_LINE;
                   do_function_pointer (yytext);
                   }
 
-<func_ptr_arg>[^\)]+   {
+<func_ptr_arg>\)  {
+                  do_function_pointer_argument (yytext);
+                  parser_pop_state ();
+                  }
+
+<func_ptr_arg>\(   {
+                  do_function_pointer_argument (yytext);
+                  parser_push_state (func_ptr_arg);
+                  }
+
+<func_ptr_arg>[^\(\)]+   {
                   do_function_pointer_argument (yytext);
                   }
 

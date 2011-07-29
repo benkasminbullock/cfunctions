@@ -638,7 +638,24 @@ do_function_pointer_argument (const char * text)
         DBMSG ("argument to function pointer '%s'\n", text);
     }
 #endif
-    current_arg->function_pointer_arguments = strdup (text);
+    if (current_arg->function_pointer_arguments) {
+
+        /* Append "text" to the end of
+           current_arg->function_pointer_arguments. */
+
+        int new_length;
+        char * new;
+
+        new_length = strlen (current_arg->function_pointer_arguments) +
+            strlen (text) + 1;
+        new = malloc_or_exit (new_length);
+        sprintf (new, "%s%s", current_arg->function_pointer_arguments, text);
+        free (current_arg->function_pointer_arguments);
+        current_arg->function_pointer_arguments = new;
+    }
+    else {
+        current_arg->function_pointer_arguments = strdup (text);
+    }
 }
 
 
