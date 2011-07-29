@@ -358,6 +358,11 @@ struct cfunctions_parse_state
   /* TRUE for '(void)' functions. */
 
   unsigned void_arguments : 1;
+
+    /* True if this is a function pointer. */
+
+    unsigned function_pointer : 1;
+
 }
 
 /* The state information is kept in 's'.  The instance 'z' is kept
@@ -596,13 +601,28 @@ do_arguments (void)
   s.seen_arguments = TRUE;
 }
 
+/* */
+
 void
 do_function_pointer (const char * text)
 {
-  inline_print (text);
+    s.function_pointer = TRUE;
+    inline_print (text);
 #ifdef CFUNCTIONS_DEBUG
-  if (cfunctions_dbug.fptr)
-    DBMSG ("pointer to function '%s'\n", text);
+    if (cfunctions_dbug.fptr) {
+        DBMSG ("pointer to function '%s'\n", text);
+    }
+#endif
+}
+
+void
+do_function_pointer_argument (const char * text)
+{
+    inline_print (text);
+#ifdef CFUNCTIONS_DEBUG
+    if (cfunctions_dbug.fptr) {
+        DBMSG ("argument to function pointer '%s'\n", text);
+    }
 #endif
 }
 
@@ -628,10 +648,12 @@ do_typedef (const char * text, int leng)
 void
 inline_print (const char * x) 
 {
-  if (inlining) 
-    fprintf (outfile, "%s", x); 
-  else if (verbatiming) 
-    fprintf (verbatim_file, "%s", x);
+    if (inlining) {
+        fprintf (outfile, "%s", x); 
+    }
+    else if (verbatiming) {
+        fprintf (verbatim_file, "%s", x);
+    }
 }
 
 /* Deal with preprocessor '#line' directives. */

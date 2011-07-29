@@ -354,13 +354,20 @@ enum              { RULE_LINE;
 
 <func_ptr_arg>\)  {
                   inline_print (yytext);
-                  inline_print (";\n");
                   parser_pop_state ();
                   }
 
-<func_ptr>{c_word}                 do_function_pointer (yytext);
+<func_ptr>{c_word} {
+                   do_function_pointer (yytext);
+                   }
 
-<func_ptr,func_ptr_arg>[^\)]       inline_print (yytext);
+<func_ptr>[^\)]+   {
+                  do_function_pointer (yytext);
+                  }
+
+<func_ptr_arg>[^\)]+   {
+                  do_function_pointer_argument (yytext);
+                  }
 
   /* Beginning of a C argument. */
 
