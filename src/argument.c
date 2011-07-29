@@ -38,10 +38,10 @@
 
 struct type
 {
-  unsigned char * name;
-  struct type * next, * prev;
-  unsigned line;              /* Line number of original file it was
-                                 seen on. */
+    unsigned char * name;
+    struct type * next, * prev;
+    /* Line number of original file it was seen on. */
+    unsigned line;
 };
 
 /* Some argument types are shared between several arguments.  For
@@ -50,8 +50,8 @@ struct type
 
 struct shared_type
 {
-  struct type * t;
-  int ref_count;
+    struct type * t;
+    int ref_count;
 };
 
 /* A complete function argument. */
@@ -138,51 +138,53 @@ check_cpp_muddle (struct arg * a, const char * t, unsigned line)
     }
 }
 
-/* Add another string to an argument. */
+/* Add another string "t" to an argument "a" at line "line". */
 
 void
 arg_add (struct arg * a, const char * t, unsigned line)
 {
-  unsigned t_len;
-  struct type * x;
+    unsigned t_len;
+    struct type * x;
 
-  t_len = strlen (t);
-  x = calloc_or_exit (1, sizeof (struct type));
-  x->name = malloc_or_exit (t_len + 1);
-  strcpy ((char *) x->name, t);
-  x->line = line;
-  if ( t[0] == '*')
-    a->parse_state = POINTER;
-  if (a->parse_state == SUFFIX)
-    check_cpp_muddle (a, t, line);
-  switch (a->parse_state)
-    {
+    t_len = strlen (t);
+    x = calloc_or_exit (1, sizeof (struct type));
+    x->name = malloc_or_exit (t_len + 1);
+    strcpy ((char *) x->name, t);
+    x->line = line;
+    if (t[0] == '*') {
+        a->parse_state = POINTER;
+    }
+    if (a->parse_state == SUFFIX) {
+        check_cpp_muddle (a, t, line);
+    }
+    switch (a->parse_state) {
     case SUFFIX:
-      if (! strchr (t, '['))
-        {
-          bug (HERE, "no [ in suffix, string is %s", t);
+        if (! strchr (t, '[')) {
+            bug (HERE, "no [ in suffix, string is %s", t);
         }
-      type_list_add (& a->suffixes, x);
-      break;
+        type_list_add (& a->suffixes, x);
+        break;
 
     case POINTER:
-      type_list_add (& a->pointers, x);
-      break;
-
+        type_list_add (& a->pointers, x);
+        break;
+      
     case TYPE:
-      if (a->types->ref_count > 1)
-        bug (HERE, "addition to a shared type list");
-      else
-        type_list_add (& a->types->t, x);
-      break;
+        if (a->types->ref_count > 1) {
+            bug (HERE, "addition to a shared type list");
+        }
+        else {
+            type_list_add (& a->types->t, x);
+        }
+        break;
 
     case CPP_MUDDLE:
-      /* A C preprocessor statement came after the closing bracket of
-         an argument. */
-      break;
+        /* A C preprocessor statement came after the closing bracket of
+           an argument. */
+        break;
 
     default:
-      bug (HERE, "bad value in switch");
+        bug (HERE, "bad value in switch");
     }
 }
 
@@ -369,18 +371,20 @@ type_fprint (FILE * f, struct type * t, int do_extern)
 void
 arg_fprint (FILE * f, struct arg * a)
 {
-  if (a->types->t)
-    type_fprint (f, a->types->t, 0);
-  else
-    {
-      if (warns.implicit_int)
-        line_warning ("function `%s' is implicit int", a->name->name);
-      fprintf (outfile, "int /* default */");
+    if (a->types->t) {
+        type_fprint (f, a->types->t, 0);
     }
-  type_fprint (f, a->pointers, 0);
-  if (a->name)
-    fprintf (f, "%s", a->name->name); 
-  suffix_fprint (f, a);
+    else {
+        if (warns.implicit_int) {
+            line_warning ("function `%s' is implicit int", a->name->name);
+        }
+        fprintf (outfile, "int /* default */");
+    }
+    type_fprint (f, a->pointers, 0);
+    if (a->name) {
+        fprintf (f, "%s", a->name->name); 
+        suffix_fprint (f, a);
+    }
 }
 
 /* Print all the arguments in a list of them.  This is used for
@@ -390,18 +394,21 @@ arg_fprint (FILE * f, struct arg * a)
 void
 arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 {
-  if (a->types->t)
-    type_fprint (f, a->types->t, do_extern);
-  while (a->prev)
-    a = a->prev;
-  for (; a; a = a->next)
-    {
-      type_fprint (f, a->pointers, 0);
-      if (a->name)
-        fprintf (f, "%s", a->name->name);
-      suffix_fprint (f, a);
-      if (a->next)
-        fprintf (f, ", ");
+    if (a->types->t) {
+        type_fprint (f, a->types->t, do_extern);
+    }
+    while (a->prev) {
+        a = a->prev;
+    }
+    for (; a; a = a->next) {
+        type_fprint (f, a->pointers, 0);
+        if (a->name) {
+            fprintf (f, "%s", a->name->name);
+        }
+        suffix_fprint (f, a);
+        if (a->next) {
+            fprintf (f, ", ");
+        }
     }
 }
 

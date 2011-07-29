@@ -1738,43 +1738,48 @@ external_clear (void)
 void
 external_print (const char * semicolon)
 {
-  int printable;
+    int printable;
 
-  printable = ! s.seen_static;
+    printable = ! s.seen_static;
 
-  if (inlining)
-    bug ( HERE, "an external variable cannot be 'inline'");
-
-  if ( verbatiming || ( ! (s.seen_arguments || s.seen_extern) && 
-                        ! s.seen_typedef &&
-                        ! s.unnamed_struct ) )
-    {
-      if (! s.local_func)
-        if (global.file)
-          outfile = global.file;
-      if (verbatiming || printable)
-        {
-          print_comment ();
-          print_line_number ();
-          cpp_external_print ();
-          if (current_arg)
-            {
-              arg_fprint_all (outfile, current_arg, ! verbatiming);
-              if (! s.seen_arguments)
-                arg_tag (current_arg, TAG_GLOBAL);
-              if (verbatiming)
-                if (n_fargs)
-                  argument_print ();
-            }
-          fprintf (outfile, "%s", semicolon);
-        }
-      else if (save_static_funcs)
-        if (! s.seen_arguments)
-          arg_tag (current_arg, TAG_GLOBAL);
+    if (inlining) {
+        bug ( HERE, "an external variable cannot be 'inline'");
     }
-  else if (s.seen_typedef)
-    arg_tag (current_arg, TAG_TYPEDEF);
-  function_reset ();
+    if ( verbatiming || ( ! (s.seen_arguments || s.seen_extern) && 
+                          ! s.seen_typedef &&
+                          ! s.unnamed_struct ) ) {
+        if (! s.local_func) {
+            if (global.file) {
+                outfile = global.file;
+            }
+        }
+        if (verbatiming || printable) {
+            print_comment ();
+            print_line_number ();
+            cpp_external_print ();
+            if (current_arg) {
+                arg_fprint_all (outfile, current_arg, ! verbatiming);
+                if (! s.seen_arguments) {
+                    arg_tag (current_arg, TAG_GLOBAL);
+                }
+                if (verbatiming) {
+                    if (n_fargs) {
+                        argument_print ();
+                    }
+                }
+            }
+            fprintf (outfile, "%s", semicolon);
+        }
+        else if (save_static_funcs) {
+            if (! s.seen_arguments) {
+                arg_tag (current_arg, TAG_GLOBAL);
+            }
+        }
+    }
+    else if (s.seen_typedef) {
+        arg_tag (current_arg, TAG_TYPEDEF);
+    }
+    function_reset ();
 }
 
 /* Print something like 'struct empty;'. */
