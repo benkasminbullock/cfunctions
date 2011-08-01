@@ -203,7 +203,7 @@ static const char * texi_begin =
 
 "@noindent\n"
 "Cfunctions can be configured with a file @file{.cfunctionsrc} in\n"
-"your home directory.\n"
+"the user's home directory.\n"
 "The possible command-line and configuration options for Cfunctions are\n\n"
 "@table @code\n";
 
@@ -306,7 +306,7 @@ main(int argc, char *argv[])
           if (other_stuff[j].cross_ref)
 	    printf ("@xref{%s}.\n", other_stuff[j].cross_ref);
           if (other_stuff[j].rc_name)
-            printf ("You can also control this with a line `%s' "
+            printf ("This can also be controlled with a line `%s' "
                     "in @file{.cfunctionsrc}\n", 
                     other_stuff[j].rc_name);
 	  printf ("\n");
@@ -323,7 +323,7 @@ main(int argc, char *argv[])
 	    printf ("See node `%s' in the info documentation.\n", 
                     other_stuff[j].cross_ref);
           if (other_stuff[j].rc_name)
-            printf ("You can also control this with a line `%s' "
+            printf ("This can also be controlled with a line `%s' "
                     "in $HOME/.cfunctionsrc\n", 
                     other_stuff[j].rc_name);
           break;

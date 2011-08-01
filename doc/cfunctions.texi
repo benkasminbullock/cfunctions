@@ -2,7 +2,7 @@
 
 @c The manual for Cfunctions.
 
-@c This manual is copyright (C) 1998  Ben K. Bullock.
+@c This manual is copyright (C) 1998-2011  Ben Bullock.
 
 @c This manual is free software; you can redistribute it and/or modify
 @c it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 @titlepage
 @title Cfunctions
-@author Ben K. Bullock
+@author Ben Bullock
 @end titlepage
 
 @dircategory Programming
@@ -41,7 +41,7 @@
 * Invoking Cfunctions::         Command line options 
 * Variable and function declarations::  
 * Output files::                
-* Input file format::           What your C file should look like 
+* Input file format::           What the C file should look like 
 * Other programs::              
 * index::                       
 @end menu
@@ -52,40 +52,21 @@
 @cindex copying Cfunctions
 
 @noindent
-Cfunctions and
-this manual are copyright @copyright{} 1998 Ben K.  Bullock.  Some parts
-of the Cfunctions distribution, the files in the subdirectory `missing',
-are copyright @copyright{} 1997 by the Free Software Foundation (see the
-actual files for details).
+
+Cfunctions and this manual are copyright @copyright{} 1998-2011 Ben K.
+Bullock.  Some parts of the Cfunctions distribution, the files in the
+subdirectory `missing', are copyright @copyright{} 1997 by the Free
+Software Foundation (see the actual files for details).
 
 Cfunctions, and this manual, are free software under the GNU General
-Public Licence (otherwise known as the @sc{GNU GPL} or just the
-@sc{GPL}.  The GNU General Public Licence is in the file @file{COPYING}
-in the Cfunctions distribution directory.  The GNU General Public
-Licence does not apply to the output of Cfunctions.  The file
-@file{c-extensions.h}, which is used with Cfunctions, is licenced
-differently.  Please refer to that file for more information.
+Public Licence.  The GNU General Public Licence does not apply to the
+output of Cfunctions.  The file @file{c-extensions.h}, which is used
+with Cfunctions, is licenced differently.  Please refer to that file
+for more information.
 @cindex GNU General Public Licence
 @cindex GNU GPL
 @cindex GPL
 @cindex @file{c-extensions.h}, licence for
-
-@ifinfo
-You can find the GNU General Public Licence in the GNU Emacs info
-section.  @inforef{Copying, The GNU General Public Licence, emacs}.
-@end ifinfo
-
-@iftex
-Because of the small size of this manual the GNU General Public Licence
-is not included.
-@end iftex
-
-@ifhtml
-You can find the GNU General Public License at
-<a href=http://www.gnu.org>
-The Free Software Foundation
-</a>.
-@end ifhtml
 
 @node Introduction, Invoking Cfunctions, Copying, Top
 @chapter Introduction
@@ -111,9 +92,7 @@ files.
 @section Simple examples
 
 @noindent
-Here are some simple examples of how to run Cfunctions.  If you have
-already compiled the program, you might like to try it out on some C
-files using the following examples as a template.
+Here are some simple examples of how to run Cfunctions.  
 
 @itemize @bullet
 
@@ -128,15 +107,14 @@ writes the function and global variable declarations in the three C
 files to standard output.
 
 @item
-Cfunctions can make an individual header file for each of a set of C
-files.  For example
+Cfunctions can make a header file for each C
+file.  For example,
 @example
 cfunctions -i a.c b.c c.c
 @end example
 @noindent
-creates three files @file{a.h}, @file{b.h} and @file{c.h} containing the
-function and global variable declarations of the three C
-files.
+creates three files @file{a.h}, @file{b.h} and @file{c.h} containing
+the declarations of the three C files.
 
 @item
 Cfunctions can make one header file for several C files.  For example
@@ -154,10 +132,10 @@ files.
 @section Detailed examples
 
 @noindent
-This section gives some examples that you can type in to Cfunctions
-using it as a pipe, reading standard input.
+This section gives examples using Cfunctions
+as a pipe.
 
-Input some C to Cfunctions, for example
+Input C program text to Cfunctions, for example
 @example
 int func (int y) @{ return 0; @}
 @end example
@@ -213,7 +191,7 @@ char * func();
 @end example
 
 @noindent
-because the @code{-w chap} option requested a wrapper @xref{Wrappers}.
+The @code{-w chap} option requested a wrapper @xref{Wrappers}.
 This is already enough to declare the external variables and functions
 in the input file and write them out to a header file.
 
@@ -261,8 +239,6 @@ becomes
 extern int x;
 @end example
 @noindent
-It does not prefix functions with @code{extern}, because there is no
-point in doing so.
 
 @cindex @code{struct}
 @cindex @code{union}
@@ -317,12 +293,11 @@ extern struct heeby geeby;
 @end example
 @noindent
 which will not be understandable to compilers, because @code{struct
-heeby} was not declared: you will get an error message about the
-`incomplete type'.  To avoid this problem, declare structure instances
-such as @code{geeby} in the above with @code{static} so that Cfunctions
-ignores them.  When you want a global instance of a structure like
-@code{geeby}, ask Cfunctions to copy the body as well.
-@xref{Extra header information}.
+heeby} was not declared.  To avoid this, declare structure instances
+such as @code{geeby} in the above with @code{static} so that
+Cfunctions ignores them.  To get a global instance of a structure like
+@code{geeby}, ask Cfunctions to copy the body as well.  @xref{Extra
+header information}.
 
 @node untagged structs,  , struct body, Using struct etc.
 @subsection Untagged @code{struct}s
@@ -374,20 +349,21 @@ extern int mung_sq[][N_MUNG];
 @end example
 @noindent
 @code{N_MUNG} might be a macro defined only in the C file Cfunctions
-read the declaration from, and the C compiler would choke on this
-declaration.  Cfunctions does not check that an array's dimensions are
-valid, it merely copies them, so users must use array dimensions which
-remain valid in the header file.
+read the declaration from, and the C compiler would not be able to
+understand this declaration.  Unfortunately, Cfunctions does not check
+that an array's dimensions are valid, it merely copies them, so users
+must take care to use array dimensions which remain valid in the
+header file.
 
 @node Ignoring static, Traditional C, Arrays, Variable and function declarations
 @section @code{static}
 
 @cindex @code{static}, ignored
 @noindent
-Cfunctions usually ignores @code{static} functions and variables
-.  To make forward declarations for @code{static} C functions, or to
-make a tag table which includes them, use the @code{--static}
-(@code{-s}) option.
+Cfunctions usually ignores @code{static} functions and variables.  To
+make forward declarations for @code{static} C functions, or to make a
+tag table which includes them, use the @code{--static} (@code{-s})
+option.
 
 @node Traditional C, Comments, Ignoring static, Variable and function declarations
 @section Traditional C
@@ -399,8 +375,8 @@ Cfunctions can also make prototype declarations for traditional C files.
 (@dfn{Traditional C} is the language described in edition 1 of Kernighan
 and Ritchie's book `The C programming language'.)
 @cindex @code{PROTO}
-For traditional C files, Cfunctions writes a macro around the prototype
-function arguments.  You then have to define this macro to give either
+For traditional C files, Cfunctions writes a macro around the
+prototype function arguments.  Define this macro to give either
 prototype arguments (for an ANSI C compiler) or nothing (for a
 traditional C compiler).  For example
 @example
@@ -427,7 +403,7 @@ as
 #define PROTO(x) x
 @end example
 @noindent
-which in the above example gives you either
+which in the above example gives either
 @example
 int func (); /* traditional */
 @end example
@@ -437,21 +413,20 @@ or
 int func (/* default */ int x, unsigned long y, char * v); /* ANSI */
 @end example
 
-By default the macro is called @code{PROTO}, but you can change the
-macro name to @var{xxx} with the @code{--proto-macro @var{xxx}}
-(@code{-p@var{xxx}}) option.  
+By default the macro is called @code{PROTO}, but the macro name can be
+changed to @var{xxx} with the @code{--proto-macro @var{xxx}}
+(@code{-p@var{xxx}}) option.
 
-The macro @code{PROTO} is defined in @file{c-extensions.h} (@pxref{Input
-file format}).  If you change the macro name, you also need to ensure
-that your new macro name is defined.
+The macro @code{PROTO} is defined in @file{c-extensions.h}
+(@pxref{Input file format}). 
 
-If you always want to use a different prototype name such as @var{xxx},
+To use a different prototype name such as @var{xxx}, the user should
 add a line containing the name, such as
 @example
 proto macro: @var{xxx}
 @end example
 @noindent
-to a file called @file{.cfunctionsrc} in your top level or home directory.
+to a file called @file{.cfunctionsrc} in the user's home directory.
 
 @node Comments, Warnings, Traditional C, Variable and function declarations
 @section Comments
@@ -495,24 +470,23 @@ Some of the warning names are based on those of GNU C, but the things
 that Cfunctions warns about are not the same things as the warnings of
 GNU C.
 
-If you always want to be warned about any of the above practices, put
-a line such as 
+If the user wishes always to be warned about any of the above
+practices, put a line such as
 @example
 warn: implicit strict-prototypes
 @end example
 @noindent
-to a file called @file{.cfunctionsrc} in your top level or home
-directory.
+in the file called @file{.cfunctionsrc} in the user's home directory.
 
 @node Output files, Input file format, Variable and function declarations, Top
 @chapter Output files
 
 @noindent
-You can invoke Cfunctions with a list of C files as arguments.  Without
-arguments, Cfunctions reads from standard input and writes to standard
-output.  You can redirect this with the @code{--output @emph{argument}}
-(@code{-o@emph{argument}}) command line option, where @emph{argument} is
-the name of the output file.
+Cfunctions may be invoked with a list of C files as arguments.
+Without arguments, Cfunctions reads from standard input and writes to
+standard output.  Output may be redirected with the @code{--output
+@emph{argument}} (@code{-o@emph{argument}}) command line option, where
+@emph{argument} is the name of the output file.
 
 @menu
 * One header::                  Cfunctions writes one header from all files
@@ -568,7 +542,7 @@ creates @file{job.h} and @file{hub.h}.
 
 To generate both `local' headers for each C file and a global header,
 use the @code{--individual} and @code{--global} options together in
-conjunction with @code{LOCAL} and @code{LOCAL_H} directives in your C
+conjunction with @code{LOCAL} and @code{LOCAL_H} directives in the C
 files.  @xref{Making local headers}.
 
 @node Backups, Advertisement, Individual headers, Output files
@@ -582,13 +556,13 @@ old files rather than overwrite them.
 @cindex @code{SIMPLE_BACKUP_SUFFIX} environment variable
 @cindex @code{VERSION_CONTROL} environment variable
 If one uses this option, Cfunctions usually renames old files with a
-@code{~} suffix.  You can change the suffix with the command line option
-@code{--suffix @emph{argument}} (@code{-S@emph{argument}}) where
-@emph{argument} is the suffix to use, or by the environment variable
-@code{SIMPLE_BACKUP_SUFFIX}.  Numbered backups are also possible.  The
-command line option @code{--version-control @emph{argument}} (@code{-V
-@emph{argument}}) switches this on.  The possible values of
-@emph{argument} are
+@code{~} suffix.  The suffix can be changed with the command line
+option @code{--suffix @emph{argument}} (@code{-S@emph{argument}})
+where @emph{argument} is the suffix to use, or by the environment
+variable @code{SIMPLE_BACKUP_SUFFIX}.  Numbered backups are also
+possible.  The command line option @code{--version-control
+@emph{argument}} (@code{-V @emph{argument}}) switches this on.  The
+possible values of @emph{argument} are
 
 @table @code
 @item t, numbered     
@@ -617,21 +591,22 @@ more details.
 @cindex banner, adding your own
 @cindex advert, changing
 @noindent
-Cfunctions usually advertises itself at the top of generated files.  To
-turn this advertisement off, use the option @code{--advert off}
+Cfunctions usually advertises itself at the top of generated files.
+To turn this advertisement off, use the option @code{--advert off}
 (@code{-aoff}).  To substitute another banner, use @code{--advert}
 @emph{file-name} where @emph{file-name} is the name of the file
-containing your information.  Cfunctions will copy it verbatim, so don't
-forget to put text inside C comments.
+containing the information.  Cfunctions will copy it verbatim, so
+don't forget to put text inside C comments.
 
-If you always want to put the same text at the top of each generated
+To always want to put the same text at the top of each generated
 header file, add a line containing the file you wish to have copied,
 such as
 @example
 advert: /home/me/mydirectory/mycopyright
 @end example
 @noindent
-to a file called @file{.cfunctionsrc} in your top level or home directory.
+to a file called @file{.cfunctionsrc} in the user's top level or home
+directory.
 
 @node Wrappers, Making tag tables, Advertisement, Output files
 @section Wrappers
@@ -675,11 +650,12 @@ tag table output accordingly.
 @cindex GNU Indent
 @cindex decorative spacing, not preserved
 @noindent
-Cfunctions does not preserve decorative spacing.  Cfunctions uses only a
-single space for all spacing within a particular prototype.  In fact,
-Cfunctions has no facilities for formatting its output to a particular
-taste.  To reformat the generated header files according to your tastes,
-use an indenting program such as GNU indent.  
+Cfunctions does not preserve decorative spacing.  Cfunctions uses only
+a single space for all spacing within a particular prototype.  In
+fact, Cfunctions has no facilities for formatting its output to a
+particular taste.  Users who wish to reformat the generated header
+files may wish to use an indenting program such as GNU indent to
+format the output files.
 @ifinfo
 @inforef{Top, GNU Indent, indent.info}.
 @end ifinfo
@@ -697,31 +673,31 @@ formats do not affect compilation.  The formats are designed so that
 Cfunctions never needs to alter C files.
 
 @cindex @file{c-extensions.h}
-If you use Cfunctions's special features, Cfunctions automatically
-writes 
+If the user uses Cfunctions's special features, Cfunctions
+automatically writes
 @example
 #include "c-extensions.h" 
 @end example
 @noindent
-into your generated header file.  The file @file{c-extensions.h}
-contains definitions of macros which make the special features such as C
-extensions work both with compilers with the C extensions, and without
-them.  
+into the generated header file.  The file @file{c-extensions.h}
+contains definitions of macros which make the special features such as
+C extensions work both with compilers with the C extensions, and
+without them.
 
 Cfunctions also usually copies the file itself into the current
-directory.  You can prevent this with the @code{--extension} (@code{-x})
-option.
+directory.  This can be prevented with the @code{--extension}
+(@code{-x}) option.
 
-If you prefer the following type of statement,
+To obtain
 @example
 #include <c-extensions.h>
 @end example
 @noindent
-use the @code{--include-c-ex} (@code{-I}) command line option.  In this
-case Cfunctions will never copy the file into the current directory,
-since that would be useless: you should instruct the C compiler where to
-find the file (this may be with the @code{-I} option, hence the short
-option name in Cfunctions is mnemonic).
+use the @code{--include-c-ex} (@code{-I}) command line option.  In
+this case Cfunctions will never copy the file into the current
+directory, since that would be useless: instruct the C compiler where
+to find the file (this may be with the @code{-I} option, hence the
+short option name in Cfunctions is mnemonic).
 
 @cindex GNU GPL, and @file{c-extensions.h}
 @cindex @file{c-extensions.h}, licence for
@@ -938,9 +914,10 @@ files.
 @cindex make, fooling
 The disadvantage of the rule method is that it might fool @code{make}
 into making a header file when not required, or even overwriting a
-non-Cfunctions header file.  You definitely should not use this unless
-all your header files are generated by Cfunctions, and if you do use it,
-I recommend you to use @code{--backup} as well.
+non-Cfunctions header file.  This definitely should not be used unless
+all of a project's header files are generated by Cfunctions; users who
+do use it are recommended to use @code{--backup} in conjunction with
+it.
 
 When using this kind of rule, a harmless but odd thing will occur.  If
 Cfunctions sees that it has generated a new header file identical to an
