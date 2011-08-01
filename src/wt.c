@@ -2164,7 +2164,7 @@ do_backup (char * file_name)
    Extract function names from a C file.
 */
 
-void
+static void
 extract (char * c_file_name)
 {
   char * h_file_name = NULL, * h_file_guard;
