@@ -21,7 +21,7 @@ NO_SIDE_FX int jubbins ()
 
 void PRINT_FORMAT ( 1, 2 ) print_msg ( char * msg, ... )
 {
-  printf ( msg );
+    printf ("%s", msg);
 }
 
 INLINE void hubajub ()
