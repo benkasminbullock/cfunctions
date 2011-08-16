@@ -142,7 +142,8 @@ BOOL keep_empty_files;          /* -k */
 BOOL write_comments;            /* -m */
 BOOL write_line_numbers;        /* -n */
 BOOL save_static_funcs;         /* -s */
-char * wrap;                    /* -w */
+/* -w */
+static char * wrap;             
 BOOL extensions = TRUE;         /* -x */
 
 static const char * local_macro = "LOCAL_H"; /* -L */
@@ -2224,8 +2225,9 @@ extract (char * c_file_name)
         {
           localfile = stdout;
           outfile = localfile;
-          if (wrap)
+          if (wrap) {
             wrapper_top (wrap, & h_file_guard);
+          }
         }
     }
   outfile = localfile;

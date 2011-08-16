@@ -701,7 +701,7 @@ void parser_pop_state ()
 const char * 
 state_message (void)
 {
-    printf ("Line number: %d\n", state_starts[state_depth - 1].line_number);
+//    printf ("Line number: %d\n", state_starts[state_depth - 1].line_number);
   switch (YY_START)
     {
     case comment:
