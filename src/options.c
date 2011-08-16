@@ -1,7 +1,7 @@
 /* Command line options for Cfunctions.  Also writes documentation. */
 
 /* 
-   Copyright (C) 1998,2009  Ben K. Bullock
+   Copyright (C) 1998,2009,2011  Ben K. Bullock
 
    Manual page parts contributed by Egil Kvaleberg.
 
@@ -44,6 +44,7 @@ struct option long_options [] =
   #endif                                            
   {"etags",           no_argument,       NULL, 'e'},
   {"extensions",      no_argument,       NULL, 'x'},
+  {"file",            required_argument, NULL, 'f'},
   {"global",          required_argument, NULL, 'g'},
   {"global-macro",    required_argument, NULL, 'G'},
   {"individual",      no_argument,       NULL, 'i'},
@@ -90,6 +91,7 @@ const char * usage [ N_OPTIONS ] =
   #endif
   "Create an Emacs tag table",
   "Don't copy the `c-extensions.h' file",
+  "Use "arg" as the file name in #line directives (with -n option)",
   "Write one global header for all C files",
   "Give global header macro the name "arg,
   "Write an individual header for each C file",
@@ -180,6 +182,7 @@ other_stuff [ N_OPTIONS ] =
   {"Extra header information", "global macro"},
   {"Individual headers"},
   {"C extensions", "include c ex"},
+  {"C compiler", "line numbers"},
   {NULL},
   {NULL},
   {"C compiler", "line numbers"},

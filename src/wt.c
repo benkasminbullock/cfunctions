@@ -65,6 +65,10 @@ enum bool { FALSE, TRUE };
 
 static char * command_line;
 
+/* The name of the source file, specified by the -f option. */
+
+static char * override_source_name;
+
 /* Maximum number of brackets '(' to expect in function arguments. */
 
 #define MAX_ARG_BR_DEPTH 3
@@ -2199,7 +2203,12 @@ extract (char * c_file_name)
     }
   else
     {
-      source_name = "STDIN";
+        if (override_source_name) {
+            source_name = override_source_name;
+        }
+        else {
+            source_name = "STDIN";
+        }
       reading_from_stdin = TRUE;
 #ifndef DISABLE_CPP
       if (c_preprocess)
@@ -2584,6 +2593,9 @@ main (int argc, char ** argv)
         case 'e':
           warning ( "-e/--emacs-tags option doesn't work yet" );
           break;
+        case 'f':
+            override_source_name = optarg;
+            break;
         case 'g':
           global.name = optarg;
           if ( is_c_file ( global.name ))
