@@ -140,7 +140,8 @@ BOOL individual;                /* -i */
 BOOL c_ex_std_include;          /* -I */
 BOOL keep_empty_files;          /* -k */
 BOOL write_comments;            /* -m */
-BOOL write_line_numbers;        /* -n */
+/* -n */
+static BOOL write_line_numbers;
 BOOL save_static_funcs;         /* -s */
 /* -w */
 static char * wrap;             
