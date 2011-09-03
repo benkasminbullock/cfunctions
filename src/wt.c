@@ -73,6 +73,9 @@ static char * override_source_name;
 
 #define MAX_ARG_BR_DEPTH 3
 
+/* Are we in a typedef? */
+
+static int in_typedef;
 
 #include "config.h"
 #include "error_msg.h"
@@ -275,6 +278,7 @@ struct
   unsigned fptr  : 1;
   /* Comments. */
   unsigned comm  : 1;
+    unsigned print : 1;
 }
 cfunctions_dbug;
 
@@ -626,12 +630,12 @@ do_function_pointer (const char * text)
         bug (HERE, "null pointer for current arg");
     }
     current_arg->is_function_pointer = TRUE;
-    inline_print (text);
 #ifdef CFUNCTIONS_DEBUG
     if (cfunctions_dbug.fptr) {
         DBMSG ("pointer to function '%s'\n", text);
     }
 #endif
+    inline_print (text);
     current_arg->function_pointer = strdup (text);
 }
 
@@ -686,11 +690,18 @@ do_typedef (const char * text, int leng)
 void
 inline_print (const char * x) 
 {
+#ifdef CFUNCTIONS_DEBUG
+    if (cfunctions_dbug.print) {
+        DBMSG ("Printing '%s'.\n", x); 
+    }
+#endif
     if (inlining) {
         fprintf (outfile, "%s", x); 
     }
     else if (verbatiming) {
-        fprintf (verbatim_file, "%s", x);
+        if (! in_typedef) {
+            fprintf (verbatim_file, "%s", x);
+        }
     }
 }
 
@@ -1864,6 +1875,7 @@ function_reset (void)
   traditional_reset ();
   argument_reset ();
   comment_reset ();
+  in_typedef = 0;
 }
 
 /* Save a function type or name in the current list. */
@@ -1887,6 +1899,12 @@ function_save (const char * text, unsigned yylength )
 #endif
         if (strcmp (text, "typedef") == 0) {
             current_arg->is_typedef = 1;
+            in_typedef = 1;
+#ifdef CFUNCTIONS_DEBUG
+            if (cfunctions_dbug.func) {
+                DBMSG ("This is a typedef.\n");
+            }
+#endif
         }
     }
     arg_add (current_arg, text, yylineno);
@@ -2358,6 +2376,8 @@ set_debug_flag ( char * flag_name )
     cfunctions_dbug.arg = 1;
   else if (strcmp(flag_name, "fptr")==0)
     cfunctions_dbug.fptr = 1;
+  else if (strcmp(flag_name, "print")==0)
+    cfunctions_dbug.print = 1;
   else if (strcmp(flag_name, "string")==0)
     string_debug_on = 1;
   else if (strcmp(flag_name, "flex")==0)

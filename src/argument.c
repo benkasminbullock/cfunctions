@@ -1,7 +1,7 @@
 /* Functions to help parse a C declaration. */
 
 /* 
-   Copyright (C) 1998  Ben K. Bullock
+   Copyright (C) 1998, 2011  Ben K. Bullock
 
    Cfunctions is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -451,7 +451,9 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
     }
 #ifdef CFUNCTIONS_DEBUG
     else {
-        DBMSG ("No types.\n");
+        if (a->debug) {
+            DBMSG ("No types.\n");
+        }
     }
 #endif
     /* Kludge. */
