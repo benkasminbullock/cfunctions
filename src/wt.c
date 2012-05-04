@@ -688,6 +688,14 @@ do_typedef (const char * text, int leng)
 }
 
 void
+do_copy_typedef (const char * text, int leng)
+{
+    if (verbatiming) {
+        fprintf (outfile, "%s\n", text);
+    }
+}
+
+void
 inline_print (const char * x) 
 {
 #ifdef CFUNCTIONS_DEBUG
@@ -1881,7 +1889,7 @@ function_reset (void)
 /* Save a function type or name in the current list. */
 
 void 
-function_save (const char * text, unsigned yylength )
+function_save (const char * text, unsigned yylength)
 {
 
 #ifdef CFUNCTIONS_DEBUG

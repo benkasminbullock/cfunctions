@@ -170,6 +170,7 @@ c_array       \[[^\][]*\]
 c_var         (\*{c_opt_space})*{c_word}({c_opt_space}{c_array})*
 c_var_no_pointer         {c_word}({c_opt_space}{c_array})*
 c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
+braces \{[^{}]*\}
 
 %%
 
@@ -234,6 +235,10 @@ c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
                       /* This could foul up on some cases.  For example,
                        "a // * comment * /b" (a space was added between
                        * and / here for obvious reasons).  */;
+                  }
+
+typedef(\{(\{(\{({braces}|[^}{])*\}|{braces}|[^}{])*\}|{braces}|[^}{])*\}|{braces}|[^}{;])*;   {
+                      do_copy_typedef (yytext, yyleng);
                   }
 
   /* Type definitions. */
