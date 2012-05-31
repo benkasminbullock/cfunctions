@@ -397,7 +397,7 @@ Then for the traditional case @code{PROTO} is defined as
 #define PROTO(x) ()
 @end example
 @noindent
-and for the @sc{ANSI} C case @code{PROTO} is defined
+and for the ANSI C case @code{PROTO} is defined
 as 
 @example
 #define PROTO(x) x

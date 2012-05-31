@@ -8,7 +8,9 @@ AC_CONFIG_HEADER(src/defines.h)
 
 AC_PROG_MAKE_SET
 
-. $srcdir/VERSION
+# Get the version variables from the following file:
+
+. $srcdir/doc/VERSION
 
 AC_CHECK_PROG(FLEX, flex, flex)
 CWD=`pwd`
