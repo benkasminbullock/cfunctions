@@ -7,11 +7,11 @@
 #include "wt.h"
 #include "sys_or_exit.h"
 #include "error-msg.h"
+#include "tags.h"
 #include "argument.h"
 
-#ifdef HEADER
 
-#include "tags.h"
+#ifdef HEADER
 
 /* This structure can store the information about the type of an
    argument, for example "int", "void", etc. It is also used to store
@@ -461,18 +461,6 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
     }
 }
 
-/* Make all the tags for a particular argument. */
-
-void
-arg_tag (struct arg * a, enum tag_type t)
-{
-  while (a->prev)
-    a = a->prev;
-  for (; a; a = a->next)
-    if (a->name)
-      tag_make (a->name->name, t, a->name->line);
-}
-
 /* If there is anything tagable in the type field of `a' then make it
    a tag.  This is for struct, union and enum name tagging only. */
 
@@ -490,5 +478,4 @@ arg_tagable (struct arg * a)
     return;
   if (strcmp ((char *) t->name, "typedef") == 0)
     return;
-  tag_make (t->name, TAG_STRUCT_UNION_ENUM, t->line);
 }

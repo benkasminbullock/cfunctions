@@ -28,6 +28,7 @@
 #include "wt.h"
 #include "error-msg.h"
 #include "sys_or_exit.h"
+#include "tags.h"
 #include "argument.h"
 #include "traditional.h"
 #include "c-word.h"

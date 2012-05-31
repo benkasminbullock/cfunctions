@@ -1,23 +1,5 @@
 /* Main program of Cfunctions. */
 
-/* 
-   Copyright (C) 1998, 2004, 2009, 2011  Ben K. Bullock
-
-   Cfunctions is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-
-   Cfunctions is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Cfunctions; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
 #include <stdio.h>
 #include <time.h>
 #include <sys/stat.h>
@@ -754,7 +736,6 @@ line_change (const char * text)
 
   yylineno = atoi (line_at) - 1;
   source_name = line_source_name;
-  tag_new_file (source_name);
   push_in_cpp ();
 }
 
@@ -1533,7 +1514,7 @@ do_define (const char * text)
     macro_name++;
   push_in_cpp ();
   inline_print (text);
-  tag_make (macro_name, TAG_MACRO, yylineno);
+  //  tag_make (macro_name, TAG_MACRO, yylineno);
 }
 
 /* Nullify elements of the stack and release their memory. */
@@ -1824,9 +1805,6 @@ external_print (const char * semicolon, const char * why)
             cpp_external_print ();
             if (current_arg) {
                 arg_fprint_all (outfile, current_arg, ! verbatiming);
-                if (! s.seen_arguments) {
-                    arg_tag (current_arg, TAG_GLOBAL);
-                }
                 if (verbatiming) {
                     if (n_fargs) {
                         argument_print ();
@@ -1835,14 +1813,6 @@ external_print (const char * semicolon, const char * why)
             }
             fprintf (outfile, "%s", semicolon);
         }
-        else if (save_static_funcs) {
-            if (! s.seen_arguments) {
-                arg_tag (current_arg, TAG_GLOBAL);
-            }
-        }
-    }
-    else if (s.seen_typedef) {
-        arg_tag (current_arg, TAG_TYPEDEF);
     }
 
     function_reset ();
@@ -1975,7 +1945,6 @@ function_print (void)
       if (! n_fargs && ! s.void_arguments)
         check_extensions ();
       arg_fprint (outfile, current_arg);
-      arg_tag (current_arg, TAG_FUNCTION);
       argument_print ();
       if (! inlining && ! verbatiming)
         {
@@ -2205,7 +2174,6 @@ extract (char * c_file_name)
 
   if ( c_file_name )
     {
-      tag_new_file ( c_file_name );
       source_name = c_file_name;
       c_file_name_len = strlen (c_file_name);
       
@@ -2328,7 +2296,6 @@ open_library_output ( struct outfile * x )
           hin_copying = TRUE;
           verbatim_file = x->file;
           source_name = file_aux_name;
-          tag_new_file (file_aux_name);
 #ifndef DISABLE_CPP
           if (c_preprocess)
             yyin = cpp_start (file_aux_name);

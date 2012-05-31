@@ -243,7 +243,6 @@ enum              { RULE_LINE;
 
 <is_enum>{c_word}[^\},;]* { RULE_LINE;
                   inline_print (yytext);
-                  tag_make ((unsigned char *)yytext, TAG_ENUM_VAL, yylineno);
                   }
 
 <is_enum>(,|{c_space}) inline_print (yytext);
