@@ -17,7 +17,6 @@
 #include "sys_or_exit.h"
 #include "file.h"
 #include "file-name.h"
-#include "tags.h"
 #include "options.h"
 #include "traditional.h"
 #include "backup.h"

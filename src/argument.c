@@ -7,7 +7,6 @@
 #include "wt.h"
 #include "sys_or_exit.h"
 #include "error-msg.h"
-#include "tags.h"
 #include "argument.h"
 
 

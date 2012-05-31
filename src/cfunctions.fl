@@ -9,7 +9,6 @@
 %{
 
 #include "error-msg.h"
-#include "tags.h"
 #include "argument.h"
 #include "wt.h"
 #include "traditional.h"

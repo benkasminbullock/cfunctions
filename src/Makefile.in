@@ -36,7 +36,6 @@ options.c \
 print-usage.c \
 rc-rw.c \
 sys_or_exit.c \
-tags.c \
 traditional.c \
 wt.c
 
@@ -54,7 +53,6 @@ options.o \
 print-usage.o \
 rc-rw.o \
 sys_or_exit.o \
-tags.o \
 traditional.o \
 wt.o
 
@@ -72,7 +70,6 @@ options.h \
 print-usage.h \
 rc-rw.h \
 sys_or_exit.h \
-tags.h \
 traditional.h \
 wt.h
 
