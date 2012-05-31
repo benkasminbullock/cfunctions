@@ -1,23 +1,5 @@
 /* Various useful file functions */
 
-/* 
-   Copyright (C) 1998  Ben K. Bullock
-
-   Cfunctions is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-
-   Cfunctions is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Cfunctions; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -37,12 +19,12 @@
    Side effects: writes to `out', opens and closes `in_file_name'.
 */
 
-int fcopy ( FILE * out, const char * in_file_name )
+int fcopy (FILE * out, const char * in_file_name)
 {
   FILE * in_file;
 
-  in_file = fopen ( in_file_name, "r" );
-  if ( in_file )
+  in_file = fopen (in_file_name, "r");
+  if (in_file)
     {
       unsigned char copy[USUAL_BLOCKS];
       unsigned a, b;
@@ -51,8 +33,8 @@ int fcopy ( FILE * out, const char * in_file_name )
           a = fread (copy, 1, USUAL_BLOCKS, in_file);
           b = fwrite (copy, 1, a, out);
         }
-      while ( a == USUAL_BLOCKS );
-      fclose ( in_file );
+      while (a == USUAL_BLOCKS);
+      fclose (in_file);
       return 0;
     }
   return -1;
@@ -77,50 +59,50 @@ int fcopy ( FILE * out, const char * in_file_name )
 /* This might as well just exit on error rather than give all the
    different codes. */
 
-int fdiff ( const char * a_name, const char * b_name )
+int fdiff (const char * a_name, const char * b_name)
 {
   FILE * a, * b;
 
   char a_block[USUAL_BLOCKS], b_block[USUAL_BLOCKS];
   unsigned a_len, b_len, i, comp;
 
-  if ( strcmp ( a_name, b_name ) == 0 )
+  if (strcmp (a_name, b_name) == 0)
     return -5;
-  if ( ! (a = fopen ( a_name, "r" )))
+  if (! (a = fopen (a_name, "r")))
     return -2;
-  if ( ! (b = fopen ( b_name, "r" )))
+  if (! (b = fopen (b_name, "r")))
     {
-      fclose ( a );
+      fclose (a);
       return -1;
     }
-  while ( 1 )
+  while (1)
     {
       a_len = fread (a_block, 1, USUAL_BLOCKS, a);
-      if ( a_len == 0 )
-        if ( ! feof ( a ) )
+      if (a_len == 0)
+        if (! feof (a))
           {
             comp = -4;
             goto end;
           }
       b_len = fread (b_block, 1, USUAL_BLOCKS, b);
-      if ( b_len == 0 )
-        if ( ! feof ( b ) )
+      if (b_len == 0)
+        if (! feof (b))
           {
             comp = -3;
             goto end;
           }
-      if ( a_len != b_len )
+      if (a_len != b_len)
         {
           comp = 1;
           goto end;
         }
-      for ( i = 0; i < a_len; i++ )
-        if ( a_block[i] != b_block[i] )
+      for (i = 0; i < a_len; i++)
+        if (a_block[i] != b_block[i])
           {
             comp = 1;
             goto end;
           }
-      if ( a_len != USUAL_BLOCKS )
+      if (a_len != USUAL_BLOCKS)
         {
           comp = 0;
           goto end;
@@ -128,8 +110,8 @@ int fdiff ( const char * a_name, const char * b_name )
     }
  end:
 
-  fclose ( a );
-  fclose ( b );
+  fclose (a);
+  fclose (b);
  
   return comp;
 }
@@ -141,12 +123,12 @@ int fdiff ( const char * a_name, const char * b_name )
    Side effects: Calls `stat' for file. */
 
 int
-fexists ( const char * file_name )
+fexists (const char * file_name)
 {
   struct stat dummy;
   
   /* test for file before overwriting it */
-  if ( stat ( file_name, & dummy ))
+  if (stat (file_name, & dummy))
     {
       if (errno != ENOENT)
         error ("could not stat %s: %s", file_name, strerror(errno));
@@ -163,7 +145,7 @@ fsize (const char * file_name)
   struct stat dummy;
   
   /* test for file before overwriting it */
-  if ( stat ( file_name, & dummy ))
+  if (stat (file_name, & dummy))
     {
       if (errno != ENOENT)
         error ("could not stat %s: %s", file_name, strerror(errno));
@@ -175,18 +157,18 @@ fsize (const char * file_name)
 /* Reopen stdin to a new file.  Dies on failure. */
 
 void 
-freopen_stdin (const char * file_name )
+freopen_stdin (const char * file_name)
 {
-  if ( ! freopen (file_name, "r", stdin ))
-    error ( "could not open %s: %s", file_name, strerror(errno));
+  if (! freopen (file_name, "r", stdin))
+    error ("could not open %s: %s", file_name, strerror(errno));
 }
 
 /* Reopen stdout to a new file.  Dies on failure. */
 
 void 
-freopen_stdout (const char * file_name )
+freopen_stdout (const char * file_name)
 {
-  if ( ! freopen (file_name, "w", stdout ))
-    error ( "could not open %s: %s", file_name, strerror(errno));
+  if (! freopen (file_name, "w", stdout))
+    error ("could not open %s: %s", file_name, strerror(errno));
 }
 
