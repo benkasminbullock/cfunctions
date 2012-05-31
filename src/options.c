@@ -229,11 +229,11 @@ int
 main(int argc, char *argv[])
 {
     unsigned * order;
+    unsigned i;
 
     program_name = "options";
 
     while (1) {
-        unsigned i;
         i = getopt (argc, argv, "mtc");
         if (i == EOF) {
             break;
@@ -264,7 +264,6 @@ main(int argc, char *argv[])
     case man:
         printf ("%s", man_begin);
         break;
-    case cgi:
     default:
         error ("");
     }

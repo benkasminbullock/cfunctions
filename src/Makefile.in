@@ -33,7 +33,7 @@ file-name.c \
 file.c \
 name-convert.c \
 options.c \
-print_usage.c \
+print-usage.c \
 rc-rw.c \
 sys_or_exit.c \
 tags.c \
@@ -51,7 +51,7 @@ file-name.o \
 file.o \
 name-convert.o \
 options.o \
-print_usage.o \
+print-usage.o \
 rc-rw.o \
 sys_or_exit.o \
 tags.o \
@@ -69,7 +69,7 @@ file-name.h \
 file.h \
 name-convert.h \
 options.h \
-print_usage.h \
+print-usage.h \
 rc-rw.h \
 sys_or_exit.h \
 tags.h \

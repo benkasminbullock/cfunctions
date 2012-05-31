@@ -23,7 +23,7 @@ file-name.h
 file.h
 name-convert.h
 options.h
-print_usage.h
+print-usage.h
 rc-rw.h
 sys_or_exit.h
 tags.h

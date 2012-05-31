@@ -29,7 +29,7 @@
 #include "cfunctionsrc.h"
 #include "rc-rw.h"
 #include "wt.h"
-#include "print_usage.h"
+#include "print-usage.h"
 
 /* Declarations of Flex objects. */
 
