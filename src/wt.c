@@ -2337,9 +2337,7 @@ close_library_output (struct outfile * x)
 void
 set_debug_flag ( char * flag_name )
 {
-  if (strcmp(flag_name, "tag")==0)
-    tag_debug = 1;
-  else if (strcmp(flag_name, "func")==0)
+    if (strcmp(flag_name, "func")==0)
     cfunctions_dbug.func = 1;
   else if (strcmp(flag_name, "cpp")==0)
     cfunctions_dbug.cpp = 1;
@@ -2653,9 +2651,6 @@ main (int argc, char ** argv)
         case 'S':
           simple_backup_suffix = optarg;
           break;
-        case 't':
-          tag_init();
-          break;
         case 'v':
           printf (version_info);
           exit (EXIT_SUCCESS);
@@ -2741,6 +2736,5 @@ main (int argc, char ** argv)
   if (local.name)
     close_library_output (& local);
 
-  tag_exit ();
   exit (EXIT_SUCCESS);
 }
