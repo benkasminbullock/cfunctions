@@ -1,3 +1,7 @@
+/* This file is for printing a usage message about a program to stderr
+   or stdout, with formatting of the descriptive parts and long
+   options. */
+
 #include <stdio.h>
 #ifdef HEADER
 #include <getopt.h>
@@ -54,6 +58,10 @@ print_offset (FILE * f, const char * orig, int orig_len, unsigned indent,
 }
 
 
+/* I'm not sure what this is but it should be a macro. */
+
+#define THIRTY 30
+
 /* Print a usage message on stderr describing the options
    available. The arrays `long_options' and `usage' must have the same
    number of members, n_options. 
@@ -91,14 +99,16 @@ print_usage (unsigned n_options, struct option * long_options,
 
         l = strlen (usage[i]);
 
-        if ( l < error_msg_width - 30 ) {
-            if ( n_chars < 30 )
-                fprintf (stderr, "%*s%s\n", 30 - n_chars, " ", usage[i]);
-            else
-                fprintf (stderr, "\n%*s%s\n", 30, " ", usage[i]);
+        if (l < error_msg_width - THIRTY) {
+            if (n_chars < THIRTY) {
+                fprintf (stderr, "%*s%s\n", THIRTY - n_chars, " ", usage[i]);
+            }
+            else {
+                fprintf (stderr, "\n%*s%s\n", THIRTY, " ", usage[i]);
+            }
         }
         else {
-            print_offset (stderr, usage[i], l, 30, n_chars);
+            print_offset (stderr, usage[i], l, THIRTY, n_chars);
         }
     }
 }
