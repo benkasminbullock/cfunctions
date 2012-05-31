@@ -13,7 +13,8 @@
 #include <stdlib.h>
 #include "print-usage.h"
 
-/* The maximum number of characters printable on a line. */
+/* The maximum number of characters printable on a line. This is set
+   in wt.c so it has to be a global variable. */
 
 unsigned error_msg_width = 78;
 
