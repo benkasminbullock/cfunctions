@@ -28,40 +28,40 @@
    word.
 */
 
-unsigned c_word ( unsigned char * x )
+unsigned c_word (unsigned char * x)
 {
-  static unsigned char c_word_table [256] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 
-    0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 2, 
-    0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  };
-  unsigned i = 0;
+    static unsigned char c_word_table [256] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 
+        0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 2, 
+        0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+    unsigned i = 0;
 
-  while ( x[i] != '\0' )
-    switch ( c_word_table [ x[i] ] )
-      {
-      case 0: /* cannot be part of a c word */
-        return i;
-      case 1: /* digits */
-        if ( ! i )
-          return i;
-      case 2: /* letters and `_' */
-        i++;
-      }
-  return i;
+    while ( x[i] != '\0' ) {
+        switch ( c_word_table [ x[i] ] ) {
+        case 0: /* cannot be part of a c word */
+            return i;
+        case 1: /* digits */
+            if ( ! i )
+                return i;
+        case 2: /* letters and `_' */
+            i++;
+        }
+    }
+    return i;
 }
 
 /* This table of reserved words is taken from the file `c-parse.gperf'
@@ -138,7 +138,7 @@ const char * gnu_c_keywords[] =
   "while"
 };
 
-const unsigned n_gnu_c_keywords =sizeof ( gnu_c_keywords ) / sizeof ( char * );
+const unsigned n_gnu_c_keywords = sizeof (gnu_c_keywords) / sizeof (char *);
 
 /* 
    Given a string, see if it is a GNU C keyword.
@@ -151,25 +151,29 @@ const unsigned n_gnu_c_keywords =sizeof ( gnu_c_keywords ) / sizeof ( char * );
 */
 
 int
-is_keyword ( unsigned char * may_be_keyword )
+is_keyword (unsigned char * may_be_keyword)
 {
-  int c;
-  unsigned i;
-  unsigned i_min = 0, i_max = n_gnu_c_keywords;
+    int c;
+    unsigned i;
+    unsigned i_min = 0, i_max = n_gnu_c_keywords;
 
-  while ( 1 )
-    {
-      i = i_min + (i_max - i_min)/2;
-      if ( i == i_min || i == i_max )
-        return -1;
-      c = strcmp ( (char *) gnu_c_keywords [ i ], (char *) may_be_keyword );
-
-      if ( c < 0 )
-        i_min = i;
-      else if ( c > 0 )
-        i_max = i;
-      else /* matched */
-        return i;
+    while (1) {
+        i = i_min + (i_max - i_min)/2;
+        if ( i == i_min || i == i_max ) {
+            return -1;
+        }
+        c = strcmp ((char *) gnu_c_keywords[i],
+                    (char *) may_be_keyword);
+        if ( c < 0 ) {
+            i_min = i;
+        }
+        else if ( c > 0 ) {
+            i_max = i;
+        }
+        else {
+            /* matched */
+            return i;
+        }
     }
 }
 
