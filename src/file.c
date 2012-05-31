@@ -137,23 +137,6 @@ fexists (const char * file_name)
   return 1;
 }
 
-/* Get the size of a file. */
-
-unsigned
-fsize (const char * file_name)
-{
-  struct stat dummy;
-  
-  /* test for file before overwriting it */
-  if (stat (file_name, & dummy))
-    {
-      if (errno != ENOENT)
-        error ("could not stat %s: %s", file_name, strerror(errno));
-      return 0;
-    }
-  return dummy.st_size;
-}
-
 /* Reopen stdin to a new file.  Dies on failure. */
 
 void 
