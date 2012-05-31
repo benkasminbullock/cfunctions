@@ -30,6 +30,20 @@
 #include "rc-rw.h"
 #include "wt.h"
 #include "print-usage.h"
+#include "config.h"
+#include "error-msg.h"
+#include "sys_or_exit.h"
+#include "file.h"
+#include "file-name.h"
+#include "tags.h"
+#include "options.h"
+#include "traditional.h"
+#include "backup.h"
+#ifndef DISABLE_CPP
+#include "cpp.h"
+#endif
+#include "argument.h"
+
 
 /* Declarations of Flex objects. */
 
@@ -76,20 +90,6 @@ static char * override_source_name;
 /* Are we in a typedef? */
 
 static int in_typedef;
-
-#include "config.h"
-#include "error_msg.h"
-#include "sys_or_exit.h"
-#include "file.h"
-#include "file-name.h"
-#include "tags.h"
-#include "options.h"
-#include "traditional.h"
-#include "backup.h"
-#ifndef DISABLE_CPP
-#include "cpp.h"
-#endif
-#include "argument.h"
 
 /* The store of information about print format.  This is for the GNU C
    extension '__attribute__((format(printf,,)))' which tells the

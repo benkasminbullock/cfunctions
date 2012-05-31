@@ -24,7 +24,7 @@
 #include <errno.h>
 
 #include "file.h"
-#include "error_msg.h"
+#include "error-msg.h"
 
 #define USUAL_BLOCKS 0x1000
 

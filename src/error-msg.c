@@ -21,7 +21,7 @@
 
 #include <stdarg.h>
 
-#include "error_msg.h"
+#include "error-msg.h"
 
 #ifdef HEADER
 #include <stdio.h>

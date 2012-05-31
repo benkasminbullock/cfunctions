@@ -1,25 +1,25 @@
-argument.o: argument.c wt.h sys_or_exit.h error_msg.h c-extensions.h \
+argument.o: argument.c wt.h sys_or_exit.h error-msg.h c-extensions.h \
   argument.h tags.h
-backup.o: backup.c error_msg.h c-extensions.h backup.h sys_or_exit.h
+backup.o: backup.c error-msg.h c-extensions.h backup.h sys_or_exit.h
 c-word.o: c-word.c c-word.h
-cfunctions.o: cfunctions.c error_msg.h c-extensions.h tags.h argument.h \
+cfunctions.o: cfunctions.c error-msg.h c-extensions.h tags.h argument.h \
   wt.h traditional.h
-cpp.o: cpp.c config.h error_msg.h c-extensions.h sys_or_exit.h cpp.h
-error_msg.o: error_msg.c error_msg.h c-extensions.h
+cpp.o: cpp.c config.h error-msg.h c-extensions.h sys_or_exit.h cpp.h
+error-msg.o: error-msg.c error-msg.h c-extensions.h
 file-name.o: file-name.c file-name.h
-file.o: file.c file.h error_msg.h c-extensions.h
+file.o: file.c file.h error-msg.h c-extensions.h
 name-convert.o: name-convert.c sys_or_exit.h name-convert.h
-options.o: options.c sys_or_exit.h error_msg.h c-extensions.h options.h \
+options.o: options.c sys_or_exit.h error-msg.h c-extensions.h options.h \
   config.h file.h
-print-usage.o: print-usage.c error_msg.h c-extensions.h sys_or_exit.h \
+print-usage.o: print-usage.c error-msg.h c-extensions.h sys_or_exit.h \
   print-usage.h
-rc-rw.o: rc-rw.c error_msg.h c-extensions.h sys_or_exit.h name-convert.h \
+rc-rw.o: rc-rw.c error-msg.h c-extensions.h sys_or_exit.h name-convert.h \
   cfunctionsrc.h rc-rw.h
-sys_or_exit.o: sys_or_exit.c error_msg.h c-extensions.h sys_or_exit.h
-tags.o: tags.c error_msg.h c-extensions.h sys_or_exit.h tags.h c-word.h \
+sys_or_exit.o: sys_or_exit.c error-msg.h c-extensions.h sys_or_exit.h
+tags.o: tags.c error-msg.h c-extensions.h sys_or_exit.h tags.h c-word.h \
   wt.h
-traditional.o: traditional.c wt.h error_msg.h c-extensions.h \
+traditional.o: traditional.c wt.h error-msg.h c-extensions.h \
   sys_or_exit.h argument.h tags.h traditional.h c-word.h
-wt.o: wt.c cfunctionsrc.h rc-rw.h wt.h print-usage.h config.h error_msg.h \
+wt.o: wt.c cfunctionsrc.h rc-rw.h wt.h print-usage.h config.h error-msg.h \
   c-extensions.h sys_or_exit.h file.h file-name.h tags.h options.h \
   traditional.h backup.h cpp.h argument.h

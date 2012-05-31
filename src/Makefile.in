@@ -28,7 +28,7 @@ backup.c \
 c-word.c \
 cfunctions.c \
 cpp.c \
-error_msg.c \
+error-msg.c \
 file-name.c \
 file.c \
 name-convert.c \
@@ -46,7 +46,7 @@ backup.o \
 c-word.o \
 cfunctions.o \
 cpp.o \
-error_msg.o \
+error-msg.o \
 file-name.o \
 file.o \
 name-convert.o \
@@ -64,7 +64,7 @@ backup.h \
 c-word.h \
 cfunctions.h \
 cpp.h \
-error_msg.h \
+error-msg.h \
 file-name.h \
 file.h \
 name-convert.h \
@@ -92,8 +92,8 @@ cfunctions.c:	cfunctions.fl
 rc-rw.c:	cfunctionsrc.h
 	$(RC) cfunctionsrc.h
 
-OPTIONS_FILES = sys_or_exit.o error_msg.o file.o
-OPTIONS_INCLUDES = sys_or_exit.h error_msg.h c-extensions.h \
+OPTIONS_FILES = sys_or_exit.o error-msg.o file.o
+OPTIONS_INCLUDES = sys_or_exit.h error-msg.h c-extensions.h \
 		 options.h config.h file.h
 
 options:        options.c $(OPTIONS_FILES) $(OPTIONS_INCLUDES)

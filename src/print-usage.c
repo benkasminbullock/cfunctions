@@ -7,7 +7,7 @@
 #include <getopt.h>
 #endif /* HEADER */
 #include <errno.h>
-#include "error_msg.h"
+#include "error-msg.h"
 #include "sys_or_exit.h"
 #include <string.h>
 #include <stdlib.h>

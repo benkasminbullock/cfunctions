@@ -9,7 +9,7 @@
 #endif /* MANUAL */
 
 #include "sys_or_exit.h"
-#include "error_msg.h"
+#include "error-msg.h"
 #include "options.h"
 #include "config.h"
 #include "file.h"

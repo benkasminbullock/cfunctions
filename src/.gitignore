@@ -18,7 +18,7 @@ cfunctionsrc.h
 config.h
 cpp.h
 defines.h
-error_msg.h
+error-msg.h
 file-name.h
 file.h
 name-convert.h

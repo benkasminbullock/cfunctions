@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include "error_msg.h"
+#include "error-msg.h"
 #include "backup.h"
 #include "sys_or_exit.h"
 

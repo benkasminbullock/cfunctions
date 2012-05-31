@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "error_msg.h"
+#include "error-msg.h"
 #include "sys_or_exit.h"
 #include "name-convert.h"
 #include "cfunctionsrc.h"

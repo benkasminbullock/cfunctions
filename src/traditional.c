@@ -26,7 +26,7 @@
 #include <stdlib.h>
 
 #include "wt.h"
-#include "error_msg.h"
+#include "error-msg.h"
 #include "sys_or_exit.h"
 #include "argument.h"
 #include "traditional.h"

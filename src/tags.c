@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "error_msg.h"
+#include "error-msg.h"
 #include "sys_or_exit.h"
 #include "tags.h"
 #include "c-word.h"
