@@ -12,18 +12,19 @@
 */
 
 char *
-strip_dir ( char * file_name )
+strip_dir (char * file_name)
 {
-  char * last_dir;
+    char * last_dir;
 
-  last_dir = strrchr ( file_name, '/' );
+    last_dir = strrchr (file_name, '/');
 
-  if ( ! last_dir )
-    last_dir = file_name;
-  else
-    last_dir++;
-
-  return last_dir;
+    if (! last_dir) {
+        last_dir = file_name;
+    }
+    else {
+        last_dir++;
+    }
+    return last_dir;
 }
 
 /* 
