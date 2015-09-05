@@ -139,6 +139,8 @@ short_options (struct option * long_options, unsigned n_options)
 
 #ifdef MANUAL
 
+#if 0
+
 /* Most of the options are cross-referenced to somewhere else in the
    manual.  The following strings point to a node in the Cfunctions
    manual.  */
@@ -153,20 +155,20 @@ other_stuff [ N_OPTIONS ] =
 //  {"Advertisement", "advert"}, 
   {"Backups", "backup"},
 //  {"C extensions", "copy c ex"},
-  {"CPP"},
+//  {"CPP"},
 #ifdef CFUNCTIONS_DEBUG
   {NULL},
 #endif
   {NULL},
   {"Input file format"},
   {"One header"},
-  {"Extra header information", "global macro"},
+//  {"Extra header information", "global macro"},
 //  {"Individual headers"},
-  {"C extensions", "include c ex"},
+//  {"C extensions", "include c ex"},
 //  {"C compiler", "line numbers"},
   {NULL},
   {NULL},
-  {"C compiler", "line numbers"},
+//  {"C compiler", "line numbers"},
   {"Extra local header information"},
   {"Extra local header information", "local macro"},
   {"Output files"},
@@ -181,6 +183,8 @@ other_stuff [ N_OPTIONS ] =
   {"Comments", "write comments"},
   {"Warnings", "warn"}
 };
+
+#endif /* 0 */
 
 static const char * texi_begin = 
 "@c This texinfo file is generated from `"__FILE__"'.\n"
@@ -294,6 +298,7 @@ main(int argc, char *argv[])
                 printf (" @var{argument}");
             }
             printf ("\n%s.\n", usage[j]);
+/*
             if (other_stuff[j].cross_ref) {
                 printf ("@xref{%s}.\n", other_stuff[j].cross_ref);
             }
@@ -303,6 +308,7 @@ main(int argc, char *argv[])
                         other_stuff[j].rc_name);
             }
             printf ("\n");
+*/
             break;
         case man:
             printf (".TP\n\\fB-%c\\fP", long_options [j].val);
@@ -314,6 +320,7 @@ main(int argc, char *argv[])
                 printf (" \\fIargument\\fP");
             }
             printf ("\n%s.\n", usage[j]);
+/*
             if (other_stuff[j].cross_ref) {
                 printf ("See node `%s' in the info documentation.\n", 
                         other_stuff[j].cross_ref);
@@ -323,6 +330,7 @@ main(int argc, char *argv[])
                         "in $HOME/.cfunctionsrc\n", 
                         other_stuff[j].rc_name);
             }
+*/
             break;
         default:
             error ("");

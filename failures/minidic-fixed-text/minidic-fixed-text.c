@@ -1,4 +1,4 @@
-#line 1 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
+//#line 1 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
 #include "minidic-fixed-text.h"
 const char * minidic_kanji_menu =
 "\n"
@@ -92,10 +92,10 @@ const char * minidic_contact =
 "or use the\n"
 "<a href=\"http://groups.google.com/group/sljfaqorg\">discussion forum</a>.\n"
 "</p>";
-#line 7 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
+//#line 7 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
 
 
-#line 25 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
+//#line 25 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
 
 const char * minidic_kanji_code_table =
 "\n"
@@ -132,10 +132,10 @@ const char * minidic_kanji_code_table =
 "</td>\n"
 "<td>%4X</td>\n"
 "</table>";
-#line 29 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
+//#line 29 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
 
 
-#line 47 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
+//#line 47 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
 
 const char * minidic_table_headings =
 "\n"
@@ -154,7 +154,7 @@ const char * minidic_table_headings =
 "</th>\n"
 "</tr>\n"
 ;
-#line 51 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
+//#line 51 "/usr/home/ben/projects/kanji/c/build/minidic-fixed-text.c.tmpl"
 
 #ifdef HEADER
 

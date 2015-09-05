@@ -1,34 +1,14 @@
-# This file is part of Cfunctions.
-#
-# Copyright (C) 1998 Ben K. Bullock
-#
-# Cfunctions is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# Cfunctions is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Cfunctions; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-# See the file `COPYING' for copying conditions.
+# Cfunctions makefile template for autotools.
 
 SHELL=/bin/sh
 VERSION = @VERSION@
-BZIP2 = @BZIP2@
+BZIP2 = bzip2
 
 all: 
 	cd src;make;cd ../doc;make
 
-test:	check
-
-check: 	all
-	cd tests/;./test.perl
+test:	all
+	cd tests/; prove --nocolor test.pl
 
 
 thisdir_clean:
@@ -88,4 +68,3 @@ install:
 
 uninstall: 
 	cd src; make uninstall; cd ../doc; make uninstall
-

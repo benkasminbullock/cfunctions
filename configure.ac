@@ -125,5 +125,3 @@ AC_SUBST(COPYRIGHT_YEAR)
 AC_CONFIG_FILES([Makefile doc/version.texi doc/index.html 
           src/config.h doc/man.head doc/man.tail src/Makefile doc/Makefile])
 AC_OUTPUT
-
-chmod 0555 tests/test.perl

@@ -12,3 +12,4 @@ Changes for cfunctions
   line numbers any more.
 * Most of the other options have been removed.
 * Support for making prototypes for traditional C has been removed.
+* The tests now use Perl's "Test::More" and "prove" and TAP format.

@@ -8,6 +8,11 @@ options
 config.h
 Makefile
 
+# Made by makedepend or similar
+
+Makefile.bak
+dependencies
+
 # Made by cfunctions itself.
 
 argument.h

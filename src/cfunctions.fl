@@ -489,8 +489,10 @@ extern            { RULE_LINE; do_extern (yytext, yyleng); }
                   }
 
 \,                { RULE_LINE;
-                    arg_put_name (current_arg);
-                    current_arg = arg_share (current_arg);
+                    if (current_arg) {                   
+ 		        arg_put_name (current_arg);
+         		current_arg = arg_share (current_arg);
+	            }			
                   }
 
 main{c_opt_space}\([^\{]+\{ { /*EK*/

@@ -1,25 +1,25 @@
 # contains code contributed by Egil Kvaleberg.
 
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-bindir = @bindir@
+prefix = /home/ben/software/install
+exec_prefix = ${prefix}
+bindir = ${exec_prefix}/bin
 sharedir = ${prefix}/share/cfunctions
 
 SHELL=/bin/sh
-FLEX = @FLEX@
-CC = @CC@
-CPPFLAGS = -I. @CPPFLAGS@
-CFLAGS = @CFLAGS@ -Wall @CPPFLAGS@
-VERSION = @VERSION@
-GCOV = @GCOV@
-INSTALL = @INSTALL@
+FLEX = flex
+CC = cc
+CPPFLAGS = -I.  -DCFUNCTIONS_DEBUG
+CFLAGS = -g -O2 -Wall  -DCFUNCTIONS_DEBUG
+VERSION = 1.0
+GCOV = 
+INSTALL = /usr/bin/install -c
 CWD = $(shell pwd)
-srcdir = @srcdir@
+srcdir = /usr/home/ben/projects/cfunctions/src
 LIB_DIR = $(srcdir)/missing
-FLEX_CFLAGS = @FLEX_CFLAGS@
+FLEX_CFLAGS = 
 MKDEP = gcc $(CPPFLAGS) -MM
 RC = rc
-CFUNCTIONS = @CFUNCTIONS@
+CFUNCTIONS = cfunctions
 SOURCES =  \
 argument.c \
 backup.c \
@@ -115,21 +115,7 @@ uninstall:
 	rm -rf ${sharedir}
 	rm -f ${bindir}/cfunctions
 
-argument.o:  argument.h
+dependencies:	$(SOURCES) $(HEADERS)
+	$(MKDEP) $(SOURCES) > $@
 
-backup.o:  backup.h sys_or_exit.h
-
-c-word.o: c-word.h 
-
-cfunctions.o: argument.h wt.h 
-
-error-msg.o: error-msg.h file-name.h
-
-file.o: file.h error-msg.h 
-
-options.o: sys_or_exit.h  options.h config.h file.h
-
-print-usage.o: error-msg.h sys_or_exit.h
-
-wt.o: config.h error-msg.h  sys_or_exit.h file.h file-name.h \
-	options.h backup.h argument.h
+include dependencies
