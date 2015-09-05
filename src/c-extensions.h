@@ -22,8 +22,7 @@
    both of these failure cases are being lumped together here for the
    sake of brevity. */
 
-#if defined (__GNUC__) && ( __GNUC__ >= 2 ) && ( __GNUC_MINOR__ > 4 ) && \
-   ! defined (__STRICT_ANSI__)
+#if defined (__GNUC__) && ! defined (__STRICT_ANSI__)
 
 /* Macro definitions for Gnu C extensions to C. */
 

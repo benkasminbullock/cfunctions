@@ -1,0 +1,12 @@
+Changes for cfunctions
+
+0.29 2015-09-05
+
+* Remove GNU autoconf tools from build process, use "make" to build.
+* "c-extensions.h" is no longer produced.
+* The default is to make a header file for a C file, so the -i option
+  is on automatically. There is no option to turn this off or get
+  stdout output any more.
+* The default is to add line numbers, so the -n option is on
+  automatically. there is no option to turn this off or get it without
+  line numbers any more.

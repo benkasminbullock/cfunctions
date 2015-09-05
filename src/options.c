@@ -330,10 +330,10 @@ main(int argc, char *argv[])
     }
     switch (mode) {
     case texi:
-        printf (texi_end);
+        printf ("%s", texi_end);
         break;
     case man:
-        printf (man_end);
+        printf ("%s", man_end);
         fcopy (stdout, "man.tail");
         break;
     default:
