@@ -24,7 +24,7 @@ void PRINT_FORMAT ( 1, 2 ) print_msg ( char * msg, ... )
     printf ("%s", msg);
 }
 
-INLINE void hubajub ()
+void hubajub ()
 {
   return;
 }

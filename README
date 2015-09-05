@@ -7,4 +7,10 @@ basic operation is now
 which creates a file "file.h". Documentation and source code are
 currently being updated.
 
+WHY?
 
+I still use cfunctions, but every time I used the old version I was running it as 
+
+    cfunctions -inc file.c
+
+and did not use any other functionality. Nobody else seems to be interested in this old program any more, and there is much maintenance work for me to do if I want to keep on using it. Thus, to simplify the maintenance work, I've stripped out all the old stuff.

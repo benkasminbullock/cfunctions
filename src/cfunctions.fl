@@ -9,7 +9,6 @@
 #include "error-msg.h"
 #include "argument.h"
 #include "wt.h"
-#include "traditional.h"
 
 /* Sometimes people doing debugging need to know what rule the flex
    scanner matched without turning on the verbose Flex debugging.
@@ -120,10 +119,6 @@ void parser_pop_state ();
    `int x' in `char * func (x) int x {'. */
 
 %x traditional
-
-/* Tentatively in state `traditional'. */
-
-%x maybe_traditional
 
 /* Macros for C preprocessor. */
 
@@ -392,61 +387,9 @@ enum              { RULE_LINE;
                   line_error ("nasty macro: use -C option");
                   }
 
-  /* Looking for `traditional' C function declarations. */
-
-<maybe_traditional>{c_word} { RULE_LINE;
-                  inline_print (yytext); 
-                  BEGIN (traditional); 
-                  check_extensions ();
-                  traditional_save (yytext, yyleng);
-                  }
-
-<maybe_traditional>;   {
-                  external_print (";\n", "semicolon (maybe traditional state)");
-                  BEGIN (INITIAL);
-                  }
-
-<maybe_traditional>,   {
-                  external_print (",\n", "comma (maybe traditional state)");
-                  BEGIN (INITIAL);
-                  }
-
-<maybe_traditional>\{  { RULE_LINE;
-
-                       /* This state occurs rather rarely, in traditional
-                          functions where all the arguments are implicit
-                          integer ones. */
-
-                  function_print ();
-                  BEGIN (INITIAL);
-                  parser_push_state (function);
-                  brace_open ();
-                  }
-
-<maybe_traditional>{c_space} ;
-
-<traditional>{c_var_no_pointer}  { RULE_LINE;
-                  traditional_save (yytext, yyleng);
-                  }
-
-<traditional>,    traditional_comma ();
-
-<traditional>\*+  traditional_save (yytext, yyleng);
-
-<traditional>;    traditional_next ();
-
-<traditional>{c_space} ;
-
-<traditional>\{   { RULE_LINE;
-                  function_print ();
-                  BEGIN (INITIAL);
-                  parser_push_state (function);
-                  brace_open ();
-                  }
-
   /* At the moment `traditional' does not handle function pointers. */
 
-<INITIAL,maybe_traditional>\{  {
+<INITIAL>\{  {
                   /* All functions must start like this. */
                   function_print();
                   parser_push_state (function);
@@ -640,12 +583,6 @@ start_initial (void)
 }
 
 void
-start_maybe_traditional (void)
-{
-  BEGIN (maybe_traditional);
-}
-
-void
 pop_state (void)
 {
   parser_pop_state (); 
@@ -716,8 +653,6 @@ state_message (void)
       return "enum declaration";
     case traditional:
       return "traditional C function argument declaration";
-    case maybe_traditional:
-      return "tentative traditional C function argument declaration";
     case INITIAL:
       return "initial";
     default:

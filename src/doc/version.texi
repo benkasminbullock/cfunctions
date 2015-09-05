@@ -1,5 +1,5 @@
 @macro version 
-0.29 
+1.0 
 @end macro
 
 @macro maintainer

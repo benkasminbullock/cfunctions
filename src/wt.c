@@ -16,7 +16,6 @@
 #include "file.h"
 #include "file-name.h"
 #include "options.h"
-#include "traditional.h"
 #include "backup.h"
 #include "argument.h"
 
@@ -1384,12 +1383,6 @@ do_arguments_close_bracket (const char * text, int leng)
   arg_br_depth--;
   if ( ! arg_br_depth )
     {
-      if (no_prototype ())
-        {
-          s.is_trad = TRUE;
-          start_maybe_traditional ();
-        }
-      else
         start_initial ();
     }
   else
@@ -1708,9 +1701,6 @@ argument_print (void)
       
       for ( i = 0; i < n_fargs; i++ )
         {
-          if (trad)
-            traditional_print_type (outfile, (char *) fargs[i]->types->t->name);
-          else
             arg_fprint (outfile, fargs[i]);
           
           if (i < n_fargs - 1)
@@ -1838,7 +1828,6 @@ function_reset (void)
     outfile = verbatim_file;
   else
     outfile = localfile;
-  traditional_reset ();
   argument_reset ();
   comment_reset ();
   in_typedef = 0;
@@ -2345,8 +2334,6 @@ set_debug_flag ( char * flag_name )
     string_debug_on = 1;
   else if (strcmp(flag_name, "flex")==0)
     yy_flex_debug = 1;
-  else if (strcmp(flag_name, "trad")==0)
-    trad_debug = 1;
   else if (strcmp (flag_name, "help") == 0) {
       int i;
       const struct debug_argument {

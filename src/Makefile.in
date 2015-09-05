@@ -13,8 +13,6 @@ CFLAGS = @CFLAGS@ -Wall @CPPFLAGS@
 VERSION = @VERSION@
 GCOV = @GCOV@
 INSTALL = @INSTALL@
-LIBOBJS = @LIBOBJS@
-LIBOBJS := $(patsubst %.o,../missing/%.o,$(LIBOBJS))
 CWD = $(shell pwd)
 srcdir = @srcdir@
 LIB_DIR = $(srcdir)/missing
@@ -34,7 +32,6 @@ file.c \
 options.c \
 print-usage.c \
 sys_or_exit.c \
-traditional.c \
 wt.c
 
 OBJS =  \
@@ -48,7 +45,6 @@ file.o \
 options.o \
 print-usage.o \
 sys_or_exit.o \
-traditional.o \
 wt.o
 
 HEADERS =  \
@@ -62,18 +58,17 @@ file.h \
 options.h \
 print-usage.h \
 sys_or_exit.h \
-traditional.h \
 wt.h
 
 # if you get into trouble, just delete the following rule.
 
 all: cfunctions 
 
-cfunctions:	$(OBJS) $(LIBOBJS)
-	$(CC) $(CFLAGS) -o $(srcdir)/cfunctions $(OBJS) $(LIBOBJS) 
+cfunctions:	$(OBJS)
+	$(CC) $(CFLAGS) -o cfunctions $(OBJS)
 
 cfunctions.c:	cfunctions.fl
-	$(FLEX) -o$(srcdir)/cfunctions.c $(srcdir)/cfunctions.fl
+	$(FLEX) -o cfunctions.c cfunctions.fl
 
 OPTIONS_FILES = sys_or_exit.o error-msg.o file.o
 OPTIONS_INCLUDES = sys_or_exit.h error-msg.h c-extensions.h \
@@ -81,7 +76,7 @@ OPTIONS_INCLUDES = sys_or_exit.h error-msg.h c-extensions.h \
 
 options:        options.c $(OPTIONS_FILES) $(OPTIONS_INCLUDES)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o options -DMANUAL \
-	options.c $(OPTIONS_FILES) $(LIBOBJS)
+	options.c $(OPTIONS_FILES)
 
 .c.gcov:
 	$(GCOV)	-b $<
@@ -94,7 +89,7 @@ check-clean:
 	rm -f 	*.da *.bb *.bbg *.gcov coverage
 
 clean:	
-	rm -f cfunctions $(OBJS) $(LIBOBJS) options TAGS
+	rm -f cfunctions $(OBJS) options TAGS
 
 distclean:	clean
 	rm -f defines.h man.head Makefile config.h
