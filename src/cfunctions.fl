@@ -42,8 +42,7 @@ void parser_pop_state ();
 %option yylineno
 
 /* The following options save us from getting some warning messages
-   from compiling with `gcc -Wall'.  However it still warns about the
-   unused `find_rule' label. */
+   from compiling with `gcc -Wall'. */
 
 %option nounput noyy_top_state
 
@@ -253,7 +252,7 @@ enum              { RULE_LINE;
                   
   /* Structures and unions. */
 
-(struct|union)    { RULE_LINE; /* Fortunately a `struct' is just the same 
+(struct|union)    { RULE_LINE; /* A `struct' is just the same 
                                   syntactically as a `union'. */
                   function_save (yytext, yyleng);
                   parser_push_state (in_struct);
@@ -267,7 +266,7 @@ enum              { RULE_LINE;
                   }
 
 <in_struct>;      {
-                  /* This rare state occurs in incomplete forward
+                  /* This state occurs in incomplete forward
                      declaration of a struct. */
                   forward_print (";\n");
                   BEGIN (INITIAL);
@@ -281,8 +280,8 @@ enum              { RULE_LINE;
                    BEGIN (function);
                    }
 
-  /* Initialisers (these begin with `=').  Cfunctions just skips over
-     initialisers. */
+  /* Initialisers (these begin with `=').  Cfunctions skips over
+     initialisers, because they don't need to be copied into header files. */
 
 <initialiser>;    {
                     external_print (";\n", "end initializer");
