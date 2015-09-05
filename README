@@ -1,0 +1,10 @@
+This is a new version of cfunctions, which is greatly simplified from
+the old version. Almost all the command-line options are gone and the
+basic operation is now
+
+    cfunctions file.c
+
+which creates a file "file.h". Documentation and source code are
+currently being updated.
+
+

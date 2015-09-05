@@ -6,8 +6,6 @@ use strict;
 # looking at the C files in the src subdirectory.
 
 my $top_part=<<'EOF';
-# contains code contributed by Egil Kvaleberg.
-
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 bindir = @bindir@

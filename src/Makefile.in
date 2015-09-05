@@ -67,9 +67,6 @@ wt.h
 
 # if you get into trouble, just delete the following rule.
 
-.c.h:
-	$(CFUNCTIONS) -inmb $<
-
 all: cfunctions 
 
 cfunctions:	$(OBJS) $(LIBOBJS)

@@ -362,10 +362,6 @@ s, z;
 
 BOOL reading_from_stdin;
 
-/* Are we writing to standard output? */
-
-BOOL writing_to_stdout;
-
 /* Line number of rule matched. */
 
 unsigned rule_line;
@@ -811,8 +807,7 @@ copy_c_extensions (void)
 
       if ( c_ex_file_name 
            && ( ! fexists ( C_EX_FILE_NAME ) 
-                || fdiff ( C_EX_FILE_NAME, c_ex_file_name ))
-           && ! writing_to_stdout )
+                || fdiff ( C_EX_FILE_NAME, c_ex_file_name )))
         {
           FILE * c_ex;
 
@@ -2634,20 +2629,6 @@ main (int argc, char ** argv)
 
   if ( local.name && individual )
     error ("option '--local' is incompatible with option '--individual'");
-
-  if ( individual || global.name || local.name )
-    {
-      if (save_static_funcs)
-        warning ("static functions will be written to header files");
-    }
-  else
-    writing_to_stdout = TRUE;
-
-  if (( individual || ( local.name && global.name)) && wrap)
-    warning ( "'--wrap %s' will be ignored because output files "
-              "were specified", wrap );
-  if (c_preprocess && (copy_c_ex || global.name || local.name))
-    warning ("-c, -x, -g, -l options are useless when C preprocessing");
 
   if ( copy_c_ex )
     extensions = TRUE;
