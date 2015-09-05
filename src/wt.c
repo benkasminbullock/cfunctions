@@ -8,8 +8,6 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "cfunctionsrc.h"
-#include "rc-rw.h"
 #include "wt.h"
 #include "print-usage.h"
 #include "config.h"
@@ -20,11 +18,9 @@
 #include "options.h"
 #include "traditional.h"
 #include "backup.h"
-#ifndef DISABLE_CPP
-#include "cpp.h"
-#endif
 #include "argument.h"
 
+#define DISABLE_CPP
 
 /* Declarations of Flex objects. */
 
@@ -133,8 +129,6 @@ BOOL extensions = TRUE;         /* -x */
 
 static const char * local_macro = "LOCAL_H"; /* -L */
 static const char * global_macro = "HEADER"; /* -G */
-
-static struct cfunctionsrc rc;
 
 struct outfile
 {
@@ -2503,51 +2497,9 @@ main (int argc, char ** argv)
 
   /* Get user defaults values from the run command file. */
 
-  read_rc_file (& rc);
-
   preserve_command_line (argc, argv);
 
-  if (rc.advert)
-    {
-      advert_arg = TRUE;
-      advert = rc.advert;
-      if ( strcmp ( advert, "off" ) == 0 )
-        advert = NULL;
-    }
-  backup                = rc.backup;
-  copy_c_ex             = rc.copy_c_ex;
-  if (rc.global_macro)
-    global_macro          = rc.global_macro;
-  c_ex_std_include      = rc.include_c_ex;
-  keep_empty_files      = rc.keep;
-  if (rc.local_macro)
-    local_macro           = rc.local_macro;
-  write_comments        = rc.write_comments;
   write_line_numbers    = TRUE;//rc.line_numbers;
-  if (rc.proto_macro)
-    prototype_macro       = rc.proto_macro;
-  if (rc.backup_suffix)
-    simple_backup_suffix  = rc.backup_suffix;
-  if (rc.warn)
-    {
-      char * warn = rc.warn;
-      char * space;
-      while (* warn)
-        {
-          space = strchr (warn, ' ');
-          if (space)
-            {
-              * space = '\0';
-              do space++; while (* space == ' ');
-            }
-          process_warning (warn);
-          if (space)
-            warn = space;
-          else
-            break;
-        }
-    }
-
   /* parse the command line options. */
 
   option_string = short_options (long_options, n_options);
@@ -2713,8 +2665,7 @@ main (int argc, char ** argv)
       /* Cfunctions will read from stdin. */
 
       if (individual)
-        error ( "bad option -i / --individual: "
-                "Cfunctions cannot write individual .h files for stdin" );
+        error ( "specify a C file on the command line");
       extract (NULL);
     }
   else

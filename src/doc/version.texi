@@ -1,0 +1,12 @@
+@macro version 
+0.29 
+@end macro
+
+@macro maintainer
+@code{benkasminbullock@@gmail.com}
+@end macro
+
+@macro URL
+@code{https://github.com/benkasminbullock/cfunctions}
+@end macro
+

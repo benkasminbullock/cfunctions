@@ -10,6 +10,7 @@
 #define C_EX_LOCAL "@CWD@/src/"C_EX_FILE_NAME
 
 #define CPP "@CPP@"
+#define DISABLE_CPP
 
 #ifdef __GNUC__
 #define HAS_WARNING

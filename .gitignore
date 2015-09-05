@@ -15,3 +15,5 @@ cfunctions-*.tar.bz2
 cfunctions-0.*
 # Things are in here which I haven't decided what to do with yet.
 junk/*
+# This is the output of make in src/
+cfunctions

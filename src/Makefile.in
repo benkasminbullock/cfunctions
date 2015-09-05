@@ -31,10 +31,8 @@ cpp.c \
 error-msg.c \
 file-name.c \
 file.c \
-name-convert.c \
 options.c \
 print-usage.c \
-rc-rw.c \
 sys_or_exit.c \
 traditional.c \
 wt.c
@@ -44,14 +42,11 @@ argument.o \
 backup.o \
 c-word.o \
 cfunctions.o \
-cpp.o \
 error-msg.o \
 file-name.o \
 file.o \
-name-convert.o \
 options.o \
 print-usage.o \
-rc-rw.o \
 sys_or_exit.o \
 traditional.o \
 wt.o
@@ -61,14 +56,11 @@ argument.h \
 backup.h \
 c-word.h \
 cfunctions.h \
-cpp.h \
 error-msg.h \
 file-name.h \
 file.h \
-name-convert.h \
 options.h \
 print-usage.h \
-rc-rw.h \
 sys_or_exit.h \
 traditional.h \
 wt.h
@@ -85,9 +77,6 @@ cfunctions:	$(OBJS) $(LIBOBJS)
 
 cfunctions.c:	cfunctions.fl
 	$(FLEX) -o$(srcdir)/cfunctions.c $(srcdir)/cfunctions.fl
-
-rc-rw.c:	cfunctionsrc.h
-	$(RC) cfunctionsrc.h
 
 OPTIONS_FILES = sys_or_exit.o error-msg.o file.o
 OPTIONS_INCLUDES = sys_or_exit.h error-msg.h c-extensions.h \
