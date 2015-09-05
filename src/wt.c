@@ -118,14 +118,14 @@ char line_source_name[MAX_LINE_NAME];
 const char * advert = CFUNCTIONS_AD;  /* -a */
 BOOL advert_arg;                /* -a */
 BOOL backup;                    /* -b */
-BOOL copy_c_ex;                 /* -c */
+BOOL copy_c_ex = TRUE;                 /* -c */
 BOOL c_preprocess;              /* -C */
-BOOL individual;                /* -i */
+BOOL individual = TRUE;                /* -i */
 BOOL c_ex_std_include;          /* -I */
 BOOL keep_empty_files;          /* -k */
 BOOL write_comments;            /* -m */
 /* -n */
-static BOOL write_line_numbers;
+static BOOL write_line_numbers = TRUE;
 BOOL save_static_funcs;         /* -s */
 /* -w */
 static char * wrap;             
@@ -279,12 +279,12 @@ BOOL verbatiming;
 
 /* Is Cfunctions copying a '.hin' file into the header file? */
 
-BOOL hin_copying;
+static BOOL hin_copying;
 
 /* The parsing state information.  'function_reset' resets this to all
    zeros. */
 
-struct cfunctions_parse_state
+static struct cfunctions_parse_state
 {
   /* The number of function arguments seen so far. */
 
@@ -1967,7 +1967,7 @@ function_print (void)
 
 /* Print the name of the current source file to the standard output. */
 
-void
+static void
 print_name_stamp (const char * name)
 {
   if ( name )
@@ -1994,6 +1994,7 @@ global_name_stamp (const char * file_name, struct outfile * x)
 void
 print_advert (void)
 {
+#if 0
   if (advert)
     {
       if (! advert_arg)
@@ -2009,6 +2010,7 @@ print_advert (void)
             warning ("cannot find -a argument '%s'", advert);
         }
     }
+#endif /* 0 */
 }
 
 /* Print a guard wrapper for a header file.  A guard wrapper is the
@@ -2521,7 +2523,7 @@ main (int argc, char ** argv)
   if (rc.local_macro)
     local_macro           = rc.local_macro;
   write_comments        = rc.write_comments;
-  write_line_numbers    = rc.line_numbers;
+  write_line_numbers    = TRUE;//rc.line_numbers;
   if (rc.proto_macro)
     prototype_macro       = rc.proto_macro;
   if (rc.backup_suffix)

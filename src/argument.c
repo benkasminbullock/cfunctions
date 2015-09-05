@@ -61,9 +61,6 @@ struct arg
 
 #endif /* HEADER */
 
-static const struct type type_null;
-static const struct arg  arg_null;
-
 /* Create a completely new "arg" structure. */
 
 struct arg * 
