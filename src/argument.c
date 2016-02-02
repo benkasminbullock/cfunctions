@@ -39,14 +39,14 @@ struct shared_type
 
 struct arg
 {
-  enum {TYPE, POINTER, SUFFIX, CPP_MUDDLE} parse_state; 
-                              /* For clarity. */
-  struct type * name;         /* Name of this argument. */
-  struct shared_type * types; /* Type. */
-  struct type * pointers;     /* Pointer prefixes. */
-  struct type * suffixes;     /* Array suffixes. */
-  unsigned line;              /* Line number of the name. */
-  struct arg * prev, * next;  /* For shared arguments. */
+    enum {TYPE, POINTER, SUFFIX, CPP_MUDDLE} parse_state; 
+    /* For clarity. */
+    struct type * name;         /* Name of this argument. */
+    struct shared_type * types; /* Type. */
+    struct type * pointers;     /* Pointer prefixes. */
+    struct type * suffixes;     /* Array suffixes. */
+    unsigned line;              /* Line number of the name. */
+    struct arg * prev, * next;  /* For shared arguments. */
     
     /* Stopgaps. */
     char * function_pointer;
@@ -66,13 +66,13 @@ struct arg
 struct arg * 
 arg_start (int debug)
 {
-  struct arg * a;
+    struct arg * a;
 
-  a = calloc_or_exit (1, sizeof (struct arg));
-  a->types = calloc_or_exit (1, sizeof (struct shared_type));
-  a->types->ref_count++;
-  a->debug = debug;
-  return a;
+    a = calloc_or_exit (1, sizeof (struct arg));
+    a->types = calloc_or_exit (1, sizeof (struct shared_type));
+    a->types->ref_count++;
+    a->debug = debug;
+    return a;
 }
 
 /* Create a new "arg" with the same type as "a". */
@@ -80,15 +80,15 @@ arg_start (int debug)
 struct arg * 
 arg_share (struct arg * a)
 {
-  struct arg * b;
+    struct arg * b;
 
-  b = calloc_or_exit (1, sizeof (struct arg));
-  b->types = a->types;
-  b->types->ref_count++;
-  b->parse_state = POINTER;
-  b->prev = a;
-  a->next = b;
-  return b;
+    b = calloc_or_exit (1, sizeof (struct arg));
+    b->types = a->types;
+    b->types->ref_count++;
+    b->parse_state = POINTER;
+    b->prev = a;
+    a->next = b;
+    return b;
 }
 
 /* Add type "b" to a linked list of types "a". */
@@ -110,17 +110,16 @@ extern unsigned yylineno;
 static void
 check_cpp_muddle (struct arg * a, const char * t, unsigned line)
 {
-  char * at;
-  int cpp_stack_no;
-  char * end;
+    char * at;
+    int cpp_stack_no;
+    char * end;
 
-  at = strchr (t, '@');
-  if (at)
-    {
-      a->parse_state = CPP_MUDDLE;
-      cpp_stack_no = strtol (t+4, & end, 10);
-      line_warning ("cfunctions was unable to adequately cope with "
-                    "some complex C preprocessor instructions");
+    at = strchr (t, '@');
+    if (at) {
+	a->parse_state = CPP_MUDDLE;
+	cpp_stack_no = strtol (t+4, & end, 10);
+	line_warning ("cfunctions was unable to adequately cope with "
+		      "some complex C preprocessor instructions");
     }
 }
 
@@ -191,10 +190,11 @@ arg_add (struct arg * a, const char * t, unsigned line)
 static void
 type_list_move (struct arg * a, struct type ** t)
 {
-  a->name = * t;
-  if ((* t)->prev)
-    (* t)->prev->next = NULL;
-  * t = (* t)->prev;
+    a->name = * t;
+    if ((* t)->prev) {
+	(* t)->prev->next = NULL;
+    }
+    * t = (* t)->prev;
 }
 
 /* For a particular argument, make the last-seen word the name
@@ -217,32 +217,34 @@ arg_put_name (struct arg * a)
     if (a->name) {
         return;
     }
-  switch (a->parse_state)
-    {
+    switch (a->parse_state) {
     case POINTER:
-      if (! a->pointers)
-        bug (HERE, "attempt to move non-existent name from pointer list");
-      type_list_move (a, & a->pointers);
-      break;
+	if (! a->pointers) {
+	    bug (HERE, "attempt to move non-existent name from pointer list");
+	}
+	type_list_move (a, & a->pointers);
+	break;
 
     case TYPE:
-      if (! a->types->t)
-        return;
-      if (a->types->ref_count > 1)
-        bug (HERE, "attempt to move a shared type to arg name");
-      type_list_move (a, & a->types->t);
-      break;
+	if (! a->types->t) {
+	    return;
+	}
+	if (a->types->ref_count > 1) {
+	    bug (HERE, "attempt to move a shared type to arg name");
+	}
+	type_list_move (a, & a->types->t);
+	break;
 
     case CPP_MUDDLE:
-      break;
+	break;
 
     case SUFFIX:
-      bug (HERE, "attempt to move a suffix to arg name");
+	bug (HERE, "attempt to move a suffix to arg name");
     }
 
-  /* Anything which comes now must be a suffix. */
+    /* Anything which comes now must be a suffix. */
 
-  a->parse_state = SUFFIX;
+    a->parse_state = SUFFIX;
 }
 
 /* Free a list of types.  Things are arranged so that the string which
@@ -252,28 +254,30 @@ arg_put_name (struct arg * a)
 static void
 type_free (struct type * t)
 {
-  if (! t)
-    return;
-  while (t->prev)
-    t = t->prev;
-#if 0
-  while ((t = t->next))
-    free (t->prev);
-#else
-  while (t->next)
-    {
-#if 0
-      printf ("Freeing %s\n", t->name);
-#endif
-      free (t->name);
-      t = t->next;
-      free (t->prev);
+    if (! t) {
+	return;
+    }
+    while (t->prev) {
+	t = t->prev;
     }
 #if 0
-  printf ("Freeing %s\n", t->name);
+    while ((t = t->next)) {
+	free (t->prev);
+    }
+#else
+    while (t->next) {
+#if 0
+	printf ("Freeing %s\n", t->name);
 #endif
-  free (t->name);
-  free (t);
+	free (t->name);
+	t = t->next;
+	free (t->prev);
+    }
+#if 0
+    printf ("Freeing %s\n", t->name);
+#endif
+    free (t->name);
+    free (t);
 #endif
 }
 
@@ -282,30 +286,30 @@ type_free (struct type * t)
 void
 arg_free (struct arg * a)
 {
-  a->types->ref_count--;
-  if (a->types->ref_count == 0)
-    {
+    a->types->ref_count--;
+    if (a->types->ref_count == 0) {
 #if 0
-      printf ("zero refs\n");
+	printf ("zero refs\n");
 #endif
-      type_free (a->types->t);
-      free (a->types);
+	type_free (a->types->t);
+	free (a->types);
     }
-  if (a->name)
-    {
+    if (a->name) {
 #if 0
-      printf ("Freeing `%s'\n", a->name->name);
+	printf ("Freeing `%s'\n", a->name->name);
 #endif
-      free (a->name->name);
-      free (a->name);
+	free (a->name->name);
+	free (a->name);
     }
-  type_free (a->pointers);
-  type_free (a->suffixes);
-  if (a->next)
-    a->next->prev = NULL;
-  if (a->prev)
-    arg_free (a->prev);
-  free (a);
+    type_free (a->pointers);
+    type_free (a->suffixes);
+    if (a->next) {
+	a->next->prev = NULL;
+    }
+    if (a->prev) {
+	arg_free (a->prev);
+    }
+    free (a);
 }
 
 extern void cpp_eject (unsigned);
@@ -315,23 +319,24 @@ extern void cpp_eject (unsigned);
 static void
 suffix_fprint (FILE * f, struct arg * a)
 {
-  struct type * t;
-  t = a->suffixes;
-  if (! t)
-    return;
-  while (t->prev)
-    t = t->prev;
-  if (a->is_typedef) {
-      fprintf (f, "%s", t->name);
-  }
-  else {
-      fprintf (f, "[]");
-  }
-  t = t->next;
-  while (t)
-    {
-      fprintf (f, "%s", t->name);
-      t = t->next;
+    struct type * t;
+    t = a->suffixes;
+    if (! t) {
+	return;
+    }
+    while (t->prev) {
+	t = t->prev;
+    }
+    if (a->is_typedef) {
+	fprintf (f, "%s", t->name);
+    }
+    else {
+	fprintf (f, "[]");
+    }
+    t = t->next;
+    while (t) {
+	fprintf (f, "%s", t->name);
+	t = t->next;
     }
 }
 
@@ -341,39 +346,36 @@ suffix_fprint (FILE * f, struct arg * a)
 static void
 type_fprint (FILE * f, struct type * t, int do_extern)
 {
-  int did_extern = 0;
-  if (! t)
-    return;
-  while (t->prev)
-    t = t->prev;
-  do 
-    {
-      if (t->name[0] == '@')
-        {
-          unsigned cpp_id;
-          if (strncmp ((char *) t->name + 1, "CPP", 3) == 0)
-            {
-              cpp_id = atoi ((char *)t->name + 4);
-
-              /* I removed the `extern' printing bit. */
-
-              cpp_eject (cpp_id);
-            }
-          else
-            bug (HERE, "unknown @ escape `%s'", t->name);
-        }
-      else
-        {
-          if (do_extern && ! did_extern)
-            {
-              fprintf (f, "extern ");
-              did_extern = 1;
-            }
-          fprintf (f, "%s ", t->name);
-        }
-      t = t->next;
+    int did_extern = 0;
+    if (! t) {
+	return;
     }
-  while (t);
+    while (t->prev) {
+	t = t->prev;
+    }
+    do {
+	if (t->name[0] == '@') {
+	    unsigned cpp_id;
+	    if (strncmp ((char *) t->name + 1, "CPP", 3) == 0) {
+		cpp_id = atoi ((char *)t->name + 4);
+
+		/* I removed the `extern' printing bit. */
+
+		cpp_eject (cpp_id);
+	    }
+	    else
+		bug (HERE, "unknown @ escape `%s'", t->name);
+	}
+	else {
+	    if (do_extern && ! did_extern) {
+		fprintf (f, "extern ");
+		did_extern = 1;
+	    }
+	    fprintf (f, "%s ", t->name);
+	}
+	t = t->next;
+    }
+    while (t);
 }
 
 /* Print just one argument. */
@@ -441,19 +443,19 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
                  a->function_pointer_arguments);
     }
     else {
-    while (a->prev) {
-        a = a->prev;
-    }
-    for (; a; a = a->next) {
-        type_fprint (f, a->pointers, 0);
-        if (a->name) {
-            fprintf (f, "%s", a->name->name);
-        }
-        suffix_fprint (f, a);
-        if (a->next) {
-            fprintf (f, ", ");
-        }
-    }
+	while (a->prev) {
+	    a = a->prev;
+	}
+	for (; a; a = a->next) {
+	    type_fprint (f, a->pointers, 0);
+	    if (a->name) {
+		fprintf (f, "%s", a->name->name);
+	    }
+	    suffix_fprint (f, a);
+	    if (a->next) {
+		fprintf (f, ", ");
+	    }
+	}
     }
 }
 
@@ -463,15 +465,20 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 void
 arg_tagable (struct arg * a)
 {
-  struct type * t = a->types->t;
-  if (! t)
-    return;
-  if (strcmp ((char *) t->name, "union") == 0)
-    return;
-  if (strcmp ((char *) t->name, "struct") == 0)
-    return;
-  if (strcmp ((char *) t->name, "enum") == 0)
-    return;
-  if (strcmp ((char *) t->name, "typedef") == 0)
-    return;
+    struct type * t = a->types->t;
+    if (! t) {
+	return;
+    }
+    if (strcmp ((char *) t->name, "union") == 0) {
+	return;
+    }
+    if (strcmp ((char *) t->name, "struct") == 0) {
+	return;
+    }
+    if (strcmp ((char *) t->name, "enum") == 0) {
+	return;
+    }
+    if (strcmp ((char *) t->name, "typedef") == 0) {
+	return;
+    }
 }
