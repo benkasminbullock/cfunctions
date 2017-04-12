@@ -1,7 +1,7 @@
 #!/home/ben/software/install/bin/perl
 use warnings;
 use strict;
-use FindBin;
+use FindBin '$Bin';
 
 # Copyright (C) 1998-2011  Ben Bullock
  
@@ -24,7 +24,7 @@ use FindBin;
 
 # The output is a test script for Cfunctions written in Perl.
  
-my $cfunctions = "$FindBin::Bin/../src/cfunctions";
+my $cfunctions = "$Bin/../src/cfunctions";
 
 my $cc         = "cc";
 my $GNU_c      = "yes"; # are we using GNU C?
