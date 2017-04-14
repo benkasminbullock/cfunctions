@@ -13,28 +13,6 @@ Makefile
 Makefile.bak
 dependencies
 
-# Made by cfunctions itself.
-
-argument.h
-backup.h
-c-word.h
-cfunctions.h
-cfunctionsrc.h
-config.h
-cpp.h
-defines.h
-error-msg.h
-file-name.h
-file.h
-name-convert.h
-options.h
-print-usage.h
-rc-rw.h
-sys_or_exit.h
-tags.h
-traditional.h
-wt.h
-
 # Made by etags
 
 TAGS

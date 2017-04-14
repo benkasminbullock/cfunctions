@@ -111,13 +111,10 @@ static void
 check_cpp_muddle (struct arg * a, const char * t, unsigned line)
 {
     char * at;
-    int cpp_stack_no;
-    char * end;
 
     at = strchr (t, '@');
     if (at) {
 	a->parse_state = CPP_MUDDLE;
-	cpp_stack_no = strtol (t+4, & end, 10);
 	line_warning ("cfunctions was unable to adequately cope with "
 		      "some complex C preprocessor instructions");
     }

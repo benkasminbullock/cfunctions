@@ -269,7 +269,7 @@ main(int argc, char *argv[])
         printf ("%s", man_begin);
         break;
     default:
-        error ("");
+        error ("Unknown mode");
     }
 
     /* Sort things into the alphabetical order of the short options. */
@@ -333,7 +333,7 @@ main(int argc, char *argv[])
 */
             break;
         default:
-            error ("");
+            error ("Unknown mode");
         }
     }
     switch (mode) {
@@ -345,7 +345,7 @@ main(int argc, char *argv[])
         fcopy (stdout, "man.tail");
         break;
     default:
-        error ("");
+        error ("Unknown mode");
     }
     return 0;
 }

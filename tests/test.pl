@@ -1,10 +1,7 @@
-#!/home/ben/software/install/bin/perl
+#!/usr/bin/env perl
 
-# This (test.pl) is an input file for the script `configure' in the
-# top level directory.
+# This is the master test script for cfunctions.
 
-# The output is a test script for Cfunctions written in Perl.
- 
 use warnings;
 use strict;
 use FindBin '$Bin';

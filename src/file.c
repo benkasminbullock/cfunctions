@@ -26,12 +26,23 @@ int fcopy (FILE * out, const char * in_file_name)
     in_file = fopen (in_file_name, "r");
     if (in_file) {
 	unsigned char copy[USUAL_BLOCKS];
-	unsigned a, b;
+	size_t a;
+	size_t b;
 	do {
 	    a = fread (copy, 1, USUAL_BLOCKS, in_file);
 	    b = fwrite (copy, 1, a, out);
+	    if (b != a) {
+		fprintf (stderr, "Write error writing from '%s': %s.\n",
+			 in_file_name, strerror (errno));
+		return -1;
+	    }
 	}
 	while (a == USUAL_BLOCKS);
+	if (ferror (in_file)) {
+	    fprintf (stderr, "Read error reading from '%s': %s.\n",
+		     in_file_name, strerror (errno));
+	    return -1;
+	}
 	fclose (in_file);
 	return 0;
     }

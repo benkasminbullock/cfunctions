@@ -133,3 +133,6 @@ print-usage.o: error-msg.h sys_or_exit.h
 
 wt.o: config.h error-msg.h  sys_or_exit.h file.h file-name.h \
 	options.h backup.h argument.h
+
+test:
+	cd ..;make test
