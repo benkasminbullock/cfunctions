@@ -1,5 +1,5 @@
 #ifndef CFH_FILE_NAME_H
 #define CFH_FILE_NAME_H
-char * strip_dir (char * file_name);
-char * is_c_file (char * file_name);
+const char * strip_dir (const char * file_name);
+const char * is_c_file (const char * file_name);
 #endif 

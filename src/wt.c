@@ -1921,7 +1921,7 @@ wt_status_t;
 #define BSIZE 0x100
 
 static wt_status_t
-wrapper_top (char * h_file_name, char ** h_file_guard)
+wrapper_top (const char * h_file_name, char ** h_file_guard)
 {
     unsigned i, j = 0, l;
     struct tm now = {0};

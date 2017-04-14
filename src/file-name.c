@@ -11,10 +11,10 @@
    no directories in `file_name', a pointer to `file_name'.
 */
 
-char *
-strip_dir (char * file_name)
+const char *
+strip_dir (const char * file_name)
 {
-    char * last_dir;
+    const char * last_dir;
 
     last_dir = strrchr (file_name, '/');
 
@@ -34,8 +34,8 @@ strip_dir (char * file_name)
                  NULL if .c not at end.
 */
 
-char * 
-is_c_file ( char * file_name )
+const char * 
+is_c_file (const char * file_name)
 {
     char * s;
 
