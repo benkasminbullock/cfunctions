@@ -795,7 +795,7 @@ check_extensions (void)
 {
     if (! extensions || written_c_extensions) {
 	return;
-}
+    }
     copy_c_extensions ();
     written_c_extensions = 1;
 }
@@ -804,16 +804,16 @@ check_extensions (void)
    substrings in a Cpp statement. "ZAP" means mark for destruction. */
 
 static const char * cpp_if_names[N_CPP_IF_TYPES] =
-    {
-	"ZAP", "if", "else", "elif", "endif"
-    };
+{
+    "ZAP", "if", "else", "elif", "endif"
+};
 
 /* The string lengths of 'cpp_if_names'. */
 
 static unsigned cpp_if_len[N_CPP_IF_TYPES] =
-    {
-	3, 2, 4, 4, 5
-    };
+{
+    3, 2, 4, 4, 5
+};
 
 /*
   Given a '#endif', find the matching '#if'.
@@ -846,26 +846,26 @@ cpp_stack_find_if (int i) {
 	}
 #endif
 	switch (cpp_if_stack[depth].type) {
-	    case CPP_IF:
-		endif_level--;
-		if (! endif_level) {
-		    return depth;
-		}
-		break;
-	    case CPP_ENDIF:
-		endif_level++;
-		break;
-	    case CPP_ELSE:
-	    case CPP_ELIF:
-	    case CPP_ZAP:
-		break;
-	    default:
-#ifdef CFUNCTIONS_DEBUG
-		bug (HERE, "bad number %d in switch",
-		     cpp_if_stack[depth].type);
-#endif
-		;
+	case CPP_IF:
+	    endif_level--;
+	    if (! endif_level) {
+		return depth;
 	    }
+	    break;
+	case CPP_ENDIF:
+	    endif_level++;
+	    break;
+	case CPP_ELSE:
+	case CPP_ELIF:
+	case CPP_ZAP:
+	    break;
+	default:
+#ifdef CFUNCTIONS_DEBUG
+	    bug (HERE, "bad number %d in switch",
+		 cpp_if_stack[depth].type);
+#endif
+	    ;
+	}
 	depth--;
     }
 }
@@ -1027,7 +1027,7 @@ cpp_stack_tidy (void)
 				   cpp_if_stack[depth].text);
 			    if (! cpp_if_stack[depth].printed) {
 				DBMSG ("CPP debug: not printed\n");
-}
+			    }
 			}
 #endif
 		    }
@@ -1079,7 +1079,7 @@ cpp_add (char * text, Cpp_If_Type type)
 	DBMSG ("CPP debug: function \"cpp_add\":"
 	       "saving '%s' of type '%s' from line %u\n",
 	       text, cpp_if_names[type], yylineno);
-}
+    }
 #endif
 
     x = strstr (text, cpp_if_names[type]);
@@ -1168,7 +1168,7 @@ cpp_add (char * text, Cpp_If_Type type)
 #ifdef CFUNCTIONS_DEBUG
 	    if (cfunctions_dbug.func) {
 		DBMSG ("initial state\n");
-}
+	    }
 #endif
 
 	    function_save (cpp_word, leng);
@@ -1245,7 +1245,7 @@ cpp_eject (unsigned u)
 #ifdef CFUNCTIONS_DEBUG
 	    if (cfunctions_dbug.cpp) {
 		DBMSG ("CPP debug: '#endif' but matching '#if' not printed\n");
-}
+	    }
 #endif
 	    return;
 	}
@@ -1256,7 +1256,7 @@ cpp_eject (unsigned u)
 	if (cpp_if_stack[u].text) {
 	    fprintf (outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
 		     cpp_if_stack[u].text);
-}
+	}
 	else
 	    fprintf (outfile, "#%s\n", cpp_if_names[cpp_if_stack[u].type]);
     }
@@ -1284,7 +1284,7 @@ cpp_eject (unsigned u)
     cpp_if_stack[u].print_line = cpp_prints++;
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: print line %u\n", cpp_if_stack[u].print_line);
-}
+    }
 #endif
 }
 
@@ -1306,7 +1306,7 @@ do_escaped_brace (const char * text)
     if (cfunctions_dbug.brace) {
 	DBMSG ("%s:%u: matched escaped brace.\n",
 	       source_name, yylineno);
-}
+    }
 #endif
 }
 
@@ -1419,7 +1419,7 @@ do_brace_close (void)
 	pop_state ();
 	if (verbatiming && initial_state ()) {
 	    fprintf (verbatim_file, "\n");
-}
+	}
     }
     else
 	inline_print ("}");
@@ -1445,7 +1445,7 @@ do_define (const char * text)
     macro_name = (unsigned char *) strstr (text, "define") + 7;
     while (!(isalnum (macro_name[0]) || macro_name[0] == '_')) {
 	macro_name++;
-}
+    }
     push_in_cpp ();
     inline_print (text);
     //  tag_make (macro_name, TAG_MACRO, yylineno);
@@ -1518,7 +1518,7 @@ cpp_external_print (void)
 #ifdef CFUNCTIONS_DEBUG
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: doing external print\n");
-}
+    }
 #endif
 
     cpp_external_tidy ();
@@ -1527,7 +1527,7 @@ cpp_external_print (void)
 #ifdef CFUNCTIONS_DEBUG
 	if (cfunctions_dbug.cpp) {
 	    DBMSG ("CPP debug: external print of %u\n", i);
-}
+	}
 #endif
 
 	if (cpp_if_stack[i].external && ! cpp_if_stack[i].printed) {
@@ -1536,7 +1536,7 @@ cpp_external_print (void)
 #ifdef CFUNCTIONS_DEBUG
 	else if (cfunctions_dbug.cpp) {
 	    DBMSG ("CPP debug: not external so rejected\n");
-}
+	}
 #endif
     }
 }
@@ -1569,7 +1569,7 @@ argument_reset (void)
 #endif
     for (i = 0; i < n_fargs; i++) {
 	arg_free (fargs[i]);
-}
+    }
     n_fargs = 0;
 }
 
@@ -1839,8 +1839,8 @@ write_gnu_c_x (void)
 	fprintf (outfile, " X_NO_RETURN");
     }
     if (s.seen_print_format) {
-       fprintf (outfile,  " X_PRINT_FORMAT(%d, %d)",
-                pf.value[0], pf.value[1]);
+	fprintf (outfile,  " X_PRINT_FORMAT(%d, %d)",
+		 pf.value[0], pf.value[1]);
     }
 
     if (s.no_side_effects) {
@@ -1866,7 +1866,7 @@ function_print (void)
 #endif
     if (! s.seen_arguments) {
 	return;
-}
+    }
 
     printable = (! s.seen_static || save_static_funcs);
 
@@ -1894,44 +1894,18 @@ function_print (void)
 	    fprintf (outfile,  ";\n");
 	}
 	else {/* inlining or verbatiming */
-		fprintf (outfile,  "\n{");
+	    fprintf (outfile,  "\n{");
 
-		/* Return from the function here so that 'function_reset' is
-		   not called, because we will need to call 'function_print'
-		   again for the non-inline case. */
+	    /* Return from the function here so that 'function_reset' is
+	       not called, because we will need to call 'function_print'
+	       again for the non-inline case. */
 
-		if (inlining) {
-		    return;
-		}
+	    if (inlining) {
+		return;
 	    }
+	}
     }
     function_reset ();
-}
-
-/* Print the name of the current source file to the standard output. */
-
-static void
-print_name_stamp (const char * name)
-{
-    if (name) {
-	fprintf (outfile, "/* From '%s': */\n", name);
-}
-}
-
-/* Print the name of the current source file into the library (user)
-   header file. */
-
-static void
-global_name_stamp (const char * file_name, struct outfile * x)
-{
-    FILE * prev;
-
-    prev = outfile;
-    if (x->file) {
-	outfile = x->file;
-    }
-    print_name_stamp (file_name);
-    outfile = prev;
 }
 
 typedef enum {
@@ -2046,7 +2020,7 @@ unbackup (char * backup_name, char * file_name)
 	if (unlink (backup_name)) {
 	    error ("removal of backup %s failed: %s", backup_name,
 		   strerror (errno));
-}
+	}
     }
     free (backup_name);
 }
@@ -2060,7 +2034,7 @@ read_file (void)
 
     while (yylex ()) {
 	;
-}
+    }
 
     function_reset ();
 
@@ -2166,8 +2140,6 @@ extract (char * c_file_name)
     }
     outfile = localfile;
 
-    global_name_stamp (c_file_name, & global);
-
     read_file ();
 
     if (individual) {
@@ -2241,13 +2213,12 @@ open_library_output (struct outfile * x)
 	    else
 #endif
 		yyin = fopen_or_exit (file_aux_name, "r");
-	    global_name_stamp (file_aux_name, x);
 	    read_file ();
 #ifdef CFUNCTIONS_DEBUG
 	    if (! verbatiming) {
 		bug (HERE, "verbatiming was turned off while reading %s",
 		     file_aux_name);
-}
+	    }
 #endif
 	    verbatiming = FALSE;
 	    hin_copying = FALSE;
