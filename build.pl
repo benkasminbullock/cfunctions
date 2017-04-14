@@ -2,7 +2,8 @@
 use warnings;
 use strict;
 use Perl::Build;
+use FindBin '$Bin';
 perl_build (
-    pre => './bkbconfig.pl',
-    clean => './clean.pl',
+    pre => "$Bin/bkbconfig.pl",
+    clean => "$Bin/clean.pl",
 );
