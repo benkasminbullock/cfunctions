@@ -54,6 +54,12 @@ void parser_pop_state ();
 
 %option debug
 
+/* Can switch these sillinesses off according to
+"https://en.wikipedia.org/wiki/Flex_lexical_analyser#Usage_under_non-Unix_environments". */
+
+%option nounistd
+%option never-interactive
+
 /* state "in a C comment" */
 
 %x comment   
