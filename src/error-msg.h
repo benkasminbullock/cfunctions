@@ -1,8 +1,5 @@
 #ifndef CFH_ERROR_MSG_H
 #define CFH_ERROR_MSG_H
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
 #define HERE __FILE__, __LINE__
 extern const char * program_name;
 extern const char * source_name;

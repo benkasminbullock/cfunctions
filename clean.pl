@@ -4,9 +4,9 @@ use strict;
 use FindBin '$Bin';
 use Deploy 'do_system';
 if (-f "$Bin/src/Makefile") {
-    do_system ("make -C $Bin/src clean");
+    do_system ("make -C $Bin/src clean > /dev/null");
 }
 if (-f "$Bin/Makefile" && -f "$Bin/src/Makefile") {
-    do_system ("make -C $Bin clean");
+    do_system ("make -C $Bin distclean > /dev/null");
 }
 

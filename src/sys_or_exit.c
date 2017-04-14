@@ -5,9 +5,11 @@
    arguments.  They are not documented here since they are almost
    identical to the system call. */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include "error-msg.h"
 #include "sys_or_exit.h"

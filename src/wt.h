@@ -1,38 +1,16 @@
 #ifndef CFH_WT_H
 #define CFH_WT_H
-#undef BOOL
-#define BOOL int
-enum bool { FALSE, TRUE };
-#define DBMSG(format,msg...) do {                               \
-        printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);	\
-        printf (format, ## msg);                                \
-    } while (0)
-struct {
-    unsigned index;
-    unsigned value[2];
-} 
-pf;
 extern FILE * outfile;
 extern FILE * localfile;
 extern FILE * verbatim_file;
 extern char line_source_name[];
-extern BOOL backup;
-extern BOOL copy_c_ex;
-extern BOOL c_preprocess;
-extern BOOL individual;
-extern BOOL c_ex_std_include;
-extern BOOL keep_empty_files;
-extern BOOL write_comments;
-extern BOOL save_static_funcs;
-extern BOOL extensions;
 extern const char * prototype_macro;
 extern const char * inline_macro;
 extern unsigned curly_braces_depth;
-typedef enum
-    {
-	CPP_ZAP, 
-	CPP_IF, CPP_ELSE, CPP_ELIF, CPP_ENDIF, N_CPP_IF_TYPES
-    }
+typedef enum {
+    CPP_ZAP, 
+    CPP_IF, CPP_ELSE, CPP_ELIF, CPP_ENDIF, N_CPP_IF_TYPES
+}
 Cpp_If_Type;
 #ifdef CFUNCTIONS_DEBUG
 extern unsigned cpp_prints;
@@ -44,9 +22,6 @@ extern unsigned n_local_writes;
 #ifdef CFUNCTIONS_DEBUG
 extern unsigned string_debug_on;
 #endif 
-extern BOOL inlining;
-extern BOOL verbatiming;
-extern BOOL reading_from_stdin;
 extern unsigned rule_line;
 struct warning {
     unsigned implicit_int      : 1;
@@ -114,4 +89,12 @@ char * do_backup (char * file_name);
 void set_debug_flag (char * flag_name);
 #endif 
 extern const char * const version_info;
+
+struct pf
+{
+    unsigned index;
+    unsigned value[2];
+};
+
+extern struct pf pf;
 #endif 

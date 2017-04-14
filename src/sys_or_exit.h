@@ -1,7 +1,5 @@
 #ifndef CFH_SYS_OR_EXIT_H
 #define CFH_SYS_OR_EXIT_H
-#include <stdio.h>
-#include <sys/stat.h>
 void * malloc_or_exit (size_t s);
 void * calloc_or_exit (size_t s, size_t size);
 void * realloc_or_exit (void * v, size_t s);

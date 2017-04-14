@@ -1,23 +1,24 @@
 /* Main program of Cfunctions. */
 
+#include <ctype.h>
+#include <errno.h>
+#include <getopt.h>
 #include <stdio.h>
-#include <time.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <ctype.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
-#include "wt.h"
-#include "print-usage.h"
+
+#include "argument.h"
+#include "backup.h"
 #include "config.h"
 #include "error-msg.h"
-#include "sys_or_exit.h"
-#include "file.h"
 #include "file-name.h"
+#include "file.h"
 #include "options.h"
-#include "backup.h"
-#include "argument.h"
+#include "print-usage.h"
+#include "sys_or_exit.h"
+#include "wt.h"
 
 #define DISABLE_CPP
 
@@ -38,18 +39,16 @@ void start_maybe_traditional (void);
 void pop_state (void);
 const char * state_message (void);
 
-#ifdef HEADER
-#undef BOOL
-#define BOOL int
-enum bool { FALSE, TRUE };
+/* Macro for printing debugging statements. */
+
 #define DBMSG(format,msg...) do {                               \
         printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);	\
         printf (format, ## msg);                                \
     } while (0)
 
-#endif /* HEADER */
-
-/* Macro for printing debugging statements. */
+#undef BOOL
+#define BOOL int
+enum bool { FALSE, TRUE };
 
 /* The whole command line. */
 
@@ -71,17 +70,6 @@ static int in_typedef;
    extension '__attribute__((format(printf,,)))' which tells the
    compiler that the arguments to a function are in 'printf' format
    and asks it to check them for errors.  */
-
-#ifdef HEADER
-/* Temporarily, this is a 'tentative definition'.  The fix I will make
-   is to make PRINT_FORMAT just one rule. */
-struct
-{
-    unsigned index;
-    unsigned value[2];
-}
-pf;
-#endif /* HEADER */
 
 /* Files to write output to.  The file 'outfile' is the usual output
    file.  The file 'localfile' is the file for outputting things which
@@ -1872,9 +1860,10 @@ write_gnu_c_x (void)
 	fprintf (outfile, " X_NO_RETURN");
     }
     if (s.seen_print_format) {
-	fprintf (outfile,  " X_PRINT_FORMAT(%d, %d)",
-		 pf.value[0], pf.value[1]);
+       fprintf (outfile,  " X_PRINT_FORMAT(%d, %d)",
+                pf.value[0], pf.value[1]);
     }
+
     if (s.no_side_effects) {
 	if (s.c_return_value == VOID) {
 	    line_warning ("function with no side effects and void return value");

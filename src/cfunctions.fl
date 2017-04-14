@@ -10,6 +10,9 @@
 #include "argument.h"
 #include "wt.h"
 
+struct pf pf;
+
+
 /* Sometimes people doing debugging need to know what rule the flex
    scanner matched without turning on the verbose Flex debugging.
    That is what the following macro RULE_LINE is for. */
@@ -483,8 +486,6 @@ extern            { RULE_LINE; do_extern (yytext, yyleng); }
                     else
                       /* Function pointer trips here. */;
                     parser_push_state (initialiser);
-                    if (verbatiming)
-                      external_print ("=", "equals (initial state)");
                   }
 
 \,                { RULE_LINE;

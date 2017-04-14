@@ -3,14 +3,13 @@
    options. */
 
 #include <stdio.h>
-#ifdef HEADER
 #include <getopt.h>
-#endif /* HEADER */
-#include <errno.h>
-#include "error-msg.h"
-#include "sys_or_exit.h"
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+
+#include "error-msg.h"
+#include "sys_or_exit.h"
 #include "print-usage.h"
 
 /* The maximum number of characters printable on a line. This is set

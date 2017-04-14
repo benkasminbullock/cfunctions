@@ -1,18 +1,13 @@
 /* Command line options for Cfunctions.  Also writes documentation. */
 
-#ifdef HEADER
 #include <getopt.h>
-#endif /* HEADER */
-#ifdef MANUAL
+#include <stdio.h>
+#include <sys/stat.h>
 #include <ctype.h>
-#include <stdlib.h>
-#endif /* MANUAL */
 
 #include "sys_or_exit.h"
 #include "error-msg.h"
 #include "options.h"
-#include "config.h"
-#include "file.h"
 
 struct option long_options [] = {
 //    {"advert",          required_argument, NULL, 'a'},

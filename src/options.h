@@ -1,6 +1,5 @@
 #ifndef CFH_OPTIONS_H
 #define CFH_OPTIONS_H
-#include <getopt.h>
 extern struct option long_options[];
 extern int n_options;
 extern const char * usage[];

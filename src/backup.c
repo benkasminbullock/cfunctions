@@ -5,9 +5,9 @@
 #include <string.h>
 #include <dirent.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <ctype.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include "error-msg.h"
 #include "backup.h"
