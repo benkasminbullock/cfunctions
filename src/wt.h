@@ -7,11 +7,16 @@ extern char line_source_name[];
 extern const char * prototype_macro;
 extern const char * inline_macro;
 extern unsigned curly_braces_depth;
+
+/* Different kinds of preprocessor conditional statements */
+
 typedef enum {
-    CPP_ZAP, 
+    CPP_ZAP, /* CPP_ZAP must be equal to zero, because it is used in
+		tidying up 'retired' stack elements. */
     CPP_IF, CPP_ELSE, CPP_ELIF, CPP_ENDIF, N_CPP_IF_TYPES
 }
 Cpp_If_Type;
+
 #ifdef CFUNCTIONS_DEBUG
 extern unsigned cpp_prints;
 #endif 

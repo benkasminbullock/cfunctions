@@ -14,11 +14,6 @@
 #include "error-msg.h"
 #include "sys_or_exit.h"
 
-#ifdef HEADER
-#include <stdio.h>
-#include <sys/stat.h>
-#endif /* HEADER */
-
 void * 
 malloc_or_exit ( size_t s )
 {

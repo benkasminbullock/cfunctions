@@ -3,6 +3,7 @@ use warnings;
 use strict;
 use FindBin '$Bin';
 use Deploy 'do_system';
+chdir $Bin or die $!;
 # Hasten the day we are rid of autotools.
 do_system ("cd $Bin;autoconf-2.62");
 do_system ("$Bin/configure --prefix=/home/ben/software/install > /dev/null");

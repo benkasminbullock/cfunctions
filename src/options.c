@@ -4,10 +4,13 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "sys_or_exit.h"
 #include "error-msg.h"
 #include "options.h"
+#include "file.h"
 
 struct option long_options [] = {
 //    {"advert",          required_argument, NULL, 'a'},
@@ -218,11 +221,13 @@ compare_letter_options (const void * a, const void * b)
     return av - bv;
 }
 
-enum {
+enum
+{
     none,
     texi,
     man,
-} mode;
+}
+mode;
 
 int
 main(int argc, char *argv[])

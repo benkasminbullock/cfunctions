@@ -141,18 +141,6 @@ unsigned curly_braces_depth;
 
 #define MAX_CPP_IFS 200
 
-#ifdef HEADER
-/* Different kinds of preprocessor conditional statements */
-
-typedef enum
-    {
-	CPP_ZAP, /* CPP_ZAP must be equal to zero, because it is used in
-		    tidying up 'retired' stack elements. */
-	CPP_IF, CPP_ELSE, CPP_ELIF, CPP_ENDIF, N_CPP_IF_TYPES
-    }
-Cpp_If_Type;
-#endif /* HEADER */
-
 struct cpp_if
 {
     Cpp_If_Type type;
@@ -343,16 +331,7 @@ BOOL reading_from_stdin;
 
 unsigned rule_line;
 
-/* Warnings. */
-
-#ifdef HEADER
-struct warning
-{
-    unsigned implicit_int      : 1;
-    unsigned strict_prototypes : 1;
-    unsigned reserved_words    : 1;
-};
-#endif /* HEADER */
+/* Shared with "argument.c". */
 
 struct warning warns;
 
