@@ -115,23 +115,23 @@ uninstall:
 	rm -rf ${sharedir}
 	rm -f ${bindir}/cfunctions
 
-argument.o:  argument.h
+argument.o: argument.c argument.h wt.h sys_or_exit.h error-msg.h
 
-backup.o:  backup.h sys_or_exit.h
+backup.o: backup.c backup.h sys_or_exit.h error-msg.h
 
-c-word.o: c-word.h 
+c-word.o: c-word.c c-word.h 
 
-cfunctions.o: argument.h wt.h 
+cfunctions.o: cfunctions.c argument.h wt.h error-msg.h
 
-error-msg.o: error-msg.h file-name.h
+error-msg.o: error-msg.c error-msg.h
 
-file.o: file.h error-msg.h 
+file.o: file.c file.h error-msg.h 
 
-options.o: sys_or_exit.h  options.h config.h file.h
+options.o: options.c options.h sys_or_exit.h  options.h config.h file.h
 
-print-usage.o: error-msg.h sys_or_exit.h
+print-usage.o: print-usage.c print-usage.h error-msg.h sys_or_exit.h 
 
-wt.o: config.h error-msg.h  sys_or_exit.h file.h file-name.h \
+wt.o: wt.c config.h error-msg.h  sys_or_exit.h file.h file-name.h \
 	options.h backup.h argument.h
 
 test:

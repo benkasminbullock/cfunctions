@@ -1,6 +1,5 @@
-dnl Copyright (C) 2003,2009 Ben K. Bullock
-dnl This file is part of Cfunctions.
-dnl It generates the configure script for Cfunctions with GNU autoconf.
+dnl This file generates the configure script for Cfunctions with GNU
+dnl autoconf.
 
 AC_INIT
 AC_CONFIG_SRCDIR([src/cfunctions.fl])
