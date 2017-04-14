@@ -17,9 +17,9 @@ struct option long_options [] = {
 //    {"backup",          no_argument,       NULL, 'b'},
 //    {"copy-c-ex",       no_argument,       NULL, 'c'},
 //    {"cpp",             no_argument,       NULL, 'C'},
-#ifdef CFUNCTIONS_DEBUG                       
+                       
     {"debug",           required_argument, NULL, 'D'},
-#endif                                            
+                                            
 //    {"etags",           no_argument,       NULL, 'e'},
 //    {"extensions",      no_argument,       NULL, 'x'},
 //    {"file",            required_argument, NULL, 'f'},
@@ -63,9 +63,9 @@ const char * usage [ N_OPTIONS ] = {
 //    "Back up `.h' files",
 //    "Copy the `c-extensions.h' into the header file",
 //    "Pass input through the C preprocessor",
-#ifdef CFUNCTIONS_DEBUG
+
     "Set debugging option "arg" (-D help for list)",
-#endif
+
 //    "Create an Emacs tag table",
 //    "Don't copy the `c-extensions.h' file",
 //    "Use "arg" as the file name in #line directives (with -n option)",
@@ -154,9 +154,9 @@ other_stuff [ N_OPTIONS ] =
   {"Backups", "backup"},
 //  {"C extensions", "copy c ex"},
 //  {"CPP"},
-#ifdef CFUNCTIONS_DEBUG
+
   {NULL},
-#endif
+
   {NULL},
   {"Input file format"},
   {"One header"},

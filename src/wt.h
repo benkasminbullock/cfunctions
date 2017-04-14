@@ -17,24 +17,31 @@ typedef enum {
 }
 Cpp_If_Type;
 
-#ifdef CFUNCTIONS_DEBUG
 extern unsigned cpp_prints;
-#endif 
 extern unsigned cpp_if_now;
 extern struct arg * current_arg;
 extern unsigned arg_br_depth;
 extern unsigned n_local_writes;
-#ifdef CFUNCTIONS_DEBUG
 extern unsigned string_debug_on;
-#endif 
 extern unsigned rule_line;
+extern struct arg * * fargs;
+extern unsigned n_fargs;
+extern unsigned max_fargs;
 struct warning {
     unsigned implicit_int      : 1;
     unsigned strict_prototypes : 1;
     unsigned reserved_words    : 1;
-} 
-;
+};
 extern struct warning warns;
+extern const char * const version_info;
+
+struct pf
+{
+    unsigned index;
+    unsigned value[2];
+};
+
+extern struct pf pf;
 void brace_open (void);
 void brace_close (void);
 void do_comment_start (void);
@@ -72,9 +79,6 @@ void do_define (const char * text);
 void cpp_stack_free (unsigned p);
 void cpp_external_tidy (void);
 void cpp_external_print (void);
-extern struct arg * * fargs;
-extern unsigned n_fargs;
-extern unsigned max_fargs;
 void argument_save (const char * text, unsigned text_length);
 int no_prototype (void);
 void argument_next (void);
@@ -90,16 +94,4 @@ void wrapper_bottom (char * h_file_guard);
 void unbackup (char * backup_name, char * file_name);
 void read_file (void);
 char * do_backup (char * file_name);
-#ifdef CFUNCTIONS_DEBUG
-void set_debug_flag (char * flag_name);
-#endif 
-extern const char * const version_info;
-
-struct pf
-{
-    unsigned index;
-    unsigned value[2];
-};
-
-extern struct pf pf;
 #endif 

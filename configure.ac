@@ -62,15 +62,6 @@ if test $TEXI2HTML; then
     DOC_TARGETS="$DOC_TARGETS html"
 fi
 
-AC_ARG_WITH(coverage,,coverage="yes")
-
-if test $GCOV && test $coverage; then
-   echo "Coverage testing turned on"
-   CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"
-   DOC_TARGETS=""
-else
-   CPPFLAGS="$CPPFLAGS -DCFUNCTIONS_DEBUG"
-fi
 AC_SUBST(CPPFLAGS)
 AC_SUBST(FLEX_CFLAGS)
 

@@ -17,11 +17,7 @@ struct pf pf;
    scanner matched without turning on the verbose Flex debugging.
    That is what the following macro RULE_LINE is for. */
 
-#ifdef CFUNCTIONS_DEBUG
 #define RULE_LINE rule_line = __LINE__
-#else
-#define RULE_LINE
-#endif
 
 const char * state_message (void);
 
@@ -549,10 +545,8 @@ void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (yytext); }
 {c_space}         ;
 
 <*>.              {
-                  #ifdef CFUNCTIONS_DEBUG
                   line_warning ("unknown char `%c' while in %s state", 
                                 yytext[0], state_message ());
-                  #endif /* CFUNCTIONS_DEBUG */
                   }
 
 %%

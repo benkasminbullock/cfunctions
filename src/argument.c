@@ -84,11 +84,11 @@ arg_add (struct arg * a, const char * t, unsigned line)
     unsigned t_len;
     struct type * x;
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (a->debug) {
         DBMSG ("Adding '%s' in state %d\n", t, a->parse_state);
     }
-#endif
+
 
 
     t_len = strlen (t);
@@ -119,11 +119,11 @@ arg_add (struct arg * a, const char * t, unsigned line)
             bug (HERE, "addition to a shared type list");
         }
         else {
-#ifdef CFUNCTIONS_DEBUG
+
             if (a->debug) {
                 DBMSG ("Adding '%s' to list of types\n", t);
             }
-#endif
+
             type_list_add (& a->types->t, x);
         }
         break;
@@ -156,11 +156,11 @@ type_list_move (struct arg * a, struct type ** t)
 void
 arg_put_name (struct arg * a)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (a->debug) {
         DBMSG ("putting name\n");
     }
-#endif
+
     /* Kludge. */
     if (a->is_function_pointer) {
         return;
@@ -336,12 +336,12 @@ type_fprint (FILE * f, struct type * t, int do_extern)
 void
 arg_fprint (FILE * f, struct arg * a)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (a->debug) {
         DBMSG ("Printing one argument.\n");
     }
 
-#endif
+
     if (a->types->t) {
         type_fprint (f, a->types->t, 0);
     }
@@ -365,7 +365,7 @@ arg_fprint (FILE * f, struct arg * a)
 void
 arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (a->debug) {
         DBMSG ("Printing all arguments: do extern is %d.\n", do_extern);
         if (a->is_function_pointer) {
@@ -373,22 +373,22 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
         }
     }
 
-#endif
+
     if (a->types->t) {
-#ifdef CFUNCTIONS_DEBUG
+
         if (a->debug) {
             DBMSG ("doing type_fprint.\n");
         }
-#endif
+
         type_fprint (f, a->types->t, do_extern);
     }
-#ifdef CFUNCTIONS_DEBUG
+
     else {
         if (a->debug) {
             DBMSG ("No types.\n");
         }
     }
-#endif
+
     /* Kludge. */
     if (a->is_function_pointer) {
         fprintf (f, "(* %s) (%s",

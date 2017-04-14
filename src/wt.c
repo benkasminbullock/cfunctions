@@ -153,9 +153,9 @@ struct cpp_if
        inside a function for example. */
 
     unsigned external : 1;
-#ifdef CFUNCTIONS_DEBUG
+
     unsigned print_line; /* For debugging: if printed, when was it printed ? */
-#endif
+
 }
 /* The stack of CPP '#if', '#else', '#elif' and '#endif'
    statements. */
@@ -167,14 +167,12 @@ cpp_if_stack[MAX_CPP_IFS],
 
 empty_cpp_if;
 
-#ifdef CFUNCTIONS_DEBUG
+
 
 /* This keeps track of how many lines have been printed by the CPP
    output part. */
 
 unsigned cpp_prints;
-
-#endif /* CFUNCTIONS_DEBUG */
 
 /* The top of the 'cpp_if_stack' stack. */
 
@@ -205,7 +203,7 @@ unsigned n_local_writes;
 
 #define MAX_STRUCT_CHARS 0x100
 
-#ifdef CFUNCTIONS_DEBUG
+
 
 /* Debugging flags. */
 
@@ -223,8 +221,6 @@ struct
 cfunctions_dbug;
 
 unsigned string_debug_on = 0;
-
-#endif /* CFUNCTIONS_DEBUG */
 
 /* Are we writing an inline function?  This is not part of the parsing
    state because it needs to survive through 'function_reset'. */
@@ -382,14 +378,13 @@ void
 brace_open (void)
 {
     curly_braces_depth++;
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.brace) {
 	DBMSG ("%s:%u: brace debug: '{' (%d deep) at %s:%u\n",
 	       source_name, yylineno, curly_braces_depth, __FILE__,
 	       __LINE__);
     }
     check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
-#endif /* CFUNCTIONS_DEBUG */
 }
 
 /* count a '}'. */
@@ -398,13 +393,12 @@ void
 brace_close (void)
 {
     curly_braces_depth--;
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.brace) {
 	printf ("%s:%u: brace debug: '}' (%d deep)\n",
 		source_name, yylineno, curly_braces_depth);
     }
     check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
-#endif /* CFUNCTIONS_DEBUG */
 }
 
 /* Comments. */
@@ -423,11 +417,11 @@ static unsigned comment_len;
 static void
 comment_add (const char * text, unsigned leng)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.comm) {
 	line_info ("comment add %s\n", text);
     }
-#endif
+
     if (! comment_buffer) {
 	comment_buffer = malloc_or_exit (INITIAL_LEN);
 	comment_buf_len = INITIAL_LEN;
@@ -449,11 +443,11 @@ void
 do_comment_start (void)
 {
     if (write_comments && initial_state ()) {
-#ifdef CFUNCTIONS_DEBUG
+
 	if (cfunctions_dbug.comm) {
 	    line_info ("comment start");
 	}
-#endif
+
 	comment_len = 0;
 	doing_comment = 1;
 	comment_add ("/*", 2);
@@ -464,11 +458,11 @@ void
 do_comment_end (void)
 {
     if (doing_comment) {
-#ifdef CFUNCTIONS_DEBUG
+
 	if (cfunctions_dbug.comm) {
 	    line_info ("comment end");
 	}
-#endif
+
 	comment_add ("*/\n", 3);
     }
     doing_comment = 0;
@@ -485,22 +479,22 @@ do_comment_print (const char * text, int leng)
 static void
 comment_reset (void)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.comm) {
 	line_info ("comment reset");
     }
-#endif
+
     comment_len = 0;
 }
 
 static void
 print_comment (void)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.comm) {
         line_info ("print comment");
     }
-#endif
+
     if (comment_len) {
 	fprintf (outfile, "%s", comment_buffer);
     }
@@ -530,11 +524,11 @@ do_void_pointer (const char * text)
 void
 do_start_arguments (void)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.arg) {
         DBMSG ("start arguments\n");
     }
-#endif
+
     argument_next ();
     arg_put_name (current_arg);
     s.seen_arguments = TRUE;
@@ -543,11 +537,11 @@ do_start_arguments (void)
 void
 do_arguments (void)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.arg) {
         DBMSG ("do arguments\n");
     }
-#endif
+
     arg_put_name (current_arg);
     s.seen_arguments = TRUE;
 }
@@ -561,11 +555,11 @@ do_function_pointer (const char * text)
         bug (HERE, "null pointer for current arg");
     }
     current_arg->is_function_pointer = TRUE;
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.fptr) {
         DBMSG ("pointer to function '%s'\n", text);
     }
-#endif
+
     inline_print (text);
     current_arg->function_pointer = strdup (text);
 }
@@ -574,11 +568,11 @@ void
 do_function_pointer_argument (const char * text)
 {
     inline_print (text);
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.fptr) {
         DBMSG ("argument to function pointer '%s'\n", text);
     }
-#endif
+
     if (current_arg->function_pointer_arguments) {
 
         /* Append "text" to the end of
@@ -632,11 +626,11 @@ do_copy_typedef (const char * text, int leng)
 void
 inline_print (const char * x)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.print) {
         DBMSG ("Printing '%s'.\n", x);
     }
-#endif
+
     if (inlining) {
         fprintf (outfile, "%s", x);
     }
@@ -657,7 +651,7 @@ line_change (const char * text)
     char * line_at;
     first_quote = strchr (text, '\"');
     name_length = strlen (first_quote);
-#ifdef CFUNCTIONS_DEBUG
+
     if (name_length > MAX_LINE_NAME) {
 	line_warning ("very long source name '%s': truncating",
 		      first_quote);
@@ -666,7 +660,7 @@ line_change (const char * text)
 	line_source_name[MAX_LINE_NAME-1] = '\0';
     }
     else
-#endif
+
 	{
 	    strcpy (line_source_name, first_quote + 1);
 	    line_source_name[name_length-2] = '\0';
@@ -674,12 +668,10 @@ line_change (const char * text)
     line_at = strstr (text, "line");
     if (! line_at) {
 	line_at = strstr (text, "#");
-#ifdef CFUNCTIONS_DEBUG
 	if (! line_at) {
 	    bug (HERE, "peculiar mismatch in strstr: "
 		 "no 'line' or '#' in '%s'", text);
 	}
-#endif
 	line_at += 1;
     }
     else
@@ -838,13 +830,13 @@ cpp_stack_find_if (int i) {
 	if (depth < 0) {
 	    line_error ("can't find matching #if");
 	}
-#ifdef CFUNCTIONS_DEBUG
+
 	if (cfunctions_dbug.cpp) {
 	    printf ("Looking at depth %d: type is '%s', string is '%s'\n", depth,
 		    cpp_if_names[cpp_if_stack[depth].type],
 		    cpp_if_stack[depth].text ? cpp_if_stack[depth].text : "empty");
 	}
-#endif
+
 	switch (cpp_if_stack[depth].type) {
 	case CPP_IF:
 	    endif_level--;
@@ -860,10 +852,10 @@ cpp_stack_find_if (int i) {
 	case CPP_ZAP:
 	    break;
 	default:
-#ifdef CFUNCTIONS_DEBUG
+
 	    bug (HERE, "bad number %d in switch",
 		 cpp_if_stack[depth].type);
-#endif
+
 	    ;
 	}
 	depth--;
@@ -875,8 +867,6 @@ cpp_stack_find_if (int i) {
 
 static unsigned verbatim_limit;
 
-#ifdef CFUNCTIONS_DEBUG
-
 /* Debugging function to show 'cpp_if_stack'.  */
 
 static void
@@ -886,8 +876,6 @@ show_cpp_if_stack (unsigned i)
 	   cpp_if_names[cpp_if_stack[i].type],
 	   cpp_if_stack[i].text);
 }
-
-#endif /* CFUNCTIONS_DEBUG */
 
 /* Pass through the CPP stack and move everything to fill in holes. */
 
@@ -909,12 +897,12 @@ cpp_fill_holes (void)
 	    if (i != j) {
 		cpp_if_stack[j] = cpp_if_stack[i];
 		if (verbatim_limit && i == verbatim_limit) {
-#ifdef CFUNCTIONS_DEBUG
+
 		    if (cfunctions_dbug.cpp) {
 			DBMSG ("CPP debug: lowering verbatim limit "
 			       "from %d to %d\n", i, j);
 		    }
-#endif
+
 		    verbatim_limit = j;
 		}
 	    }
@@ -932,11 +920,11 @@ cpp_fill_holes (void)
 
     cpp_if_now = j;
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: stack size after tidying %d\n", cpp_if_now);
     }
-#endif
+
 }
 
 /*
@@ -963,7 +951,6 @@ cpp_stack_tidy (void)
 
 	    depth = i - 1;
 
-#ifdef CFUNCTIONS_DEBUG
 	    if (cfunctions_dbug.cpp) {
 		DBMSG ("CPP debug: zapping #endif %s\n",
 		       cpp_if_stack[i].text);
@@ -975,16 +962,15 @@ cpp_stack_tidy (void)
 		    DBMSG ("CPP debug: not printed.\n");
 		}
 	    }
-#endif
 	    while (1) {
 		if (depth < 0) {
 		    line_error ("too many '#endif's");
 		}
-#ifdef CFUNCTIONS_DEBUG
+
 		if (cfunctions_dbug.cpp) {
 		    show_cpp_if_stack (depth);
 		}
-#endif
+
 		switch (cpp_if_stack[depth].type) {
 		case CPP_IF:
 		    endif_level--;
@@ -992,7 +978,6 @@ cpp_stack_tidy (void)
 			if (! printed && cpp_if_stack[depth].printed) {
 			    cpp_eject (i);
 			}
-#ifdef CFUNCTIONS_DEBUG
 			else if (printed && ! cpp_if_stack[depth].printed) {
 			    bug (HERE, "#endif printed but #if not printed");
 			}
@@ -1003,14 +988,11 @@ cpp_stack_tidy (void)
 				}
 			    }
 			}
-#endif
 			cpp_if_stack[depth].type = CPP_ZAP;
-#ifdef CFUNCTIONS_DEBUG
 			if (cfunctions_dbug.cpp) {
 			    DBMSG ("CPP debug: zapping '#if %s'\n",
 				   cpp_if_stack[depth].text);
 			}
-#endif
 			goto zapped;
 		    }
 		    break;
@@ -1021,7 +1003,6 @@ cpp_stack_tidy (void)
 		case CPP_ELSE:
 		    if (endif_level == 1) {
 			cpp_if_stack[depth].type = CPP_ZAP;
-#ifdef CFUNCTIONS_DEBUG
 			if (cfunctions_dbug.cpp) {
 			    DBMSG ("CPP debug: zapping #else/#elif \"%s\"\n",
 				   cpp_if_stack[depth].text);
@@ -1029,16 +1010,15 @@ cpp_stack_tidy (void)
 				DBMSG ("CPP debug: not printed\n");
 			    }
 			}
-#endif
 		    }
 		    break;
 		case CPP_ZAP:
 		    break;
 		default:
-#ifdef CFUNCTIONS_DEBUG
+
 		    bug (HERE, "bad number %d at depth %d in switch",
 			 cpp_if_stack[depth].type, depth);
-#endif
+
 		    ;
 		}
 		depth--;
@@ -1074,22 +1054,22 @@ cpp_add (char * text, Cpp_If_Type type)
     yylineno--;
 #endif
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: function \"cpp_add\":"
 	       "saving '%s' of type '%s' from line %u\n",
 	       text, cpp_if_names[type], yylineno);
     }
-#endif
+
 
     x = strstr (text, cpp_if_names[type]);
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (! x) {
 	bug (HERE, "bad string '%s' in cpp_add: should contain '%s'", text,
 	     cpp_if_names[type]);
     }
-#endif
+
 
     x += cpp_if_len[type];
     leng = strlen (x);
@@ -1127,7 +1107,7 @@ cpp_add (char * text, Cpp_If_Type type)
     }
 
     if (verbatiming) {
-#ifdef CFUNCTIONS_DEBUG
+
 	if (! hin_copying) {
 	    if (cfunctions_dbug.cpp) {
 		DBMSG ("CPP debug: looking for end of verbatim\n");
@@ -1135,16 +1115,14 @@ cpp_add (char * text, Cpp_If_Type type)
 		       verbatim_limit);
 	    }
 	}
-#endif
+
 	if (type == CPP_ENDIF && ! hin_copying &&
 	    cpp_stack_find_if (cpp_if_now) == verbatim_limit) {
 	    /* Cfunctions has hit the final '#endif' of a verbatim copying
 	       area. */
-#ifdef CFUNCTIONS_DEBUG
 	    if (cfunctions_dbug.cpp) {
 		DBMSG ("CPP debug: final '#endif' of a verbatim area\n");
 	    }
-#endif
 	    cpp_stack_top.printed = TRUE;
 	    cpp_stack_tidy ();
 	    verbatiming = FALSE;
@@ -1165,11 +1143,11 @@ cpp_add (char * text, Cpp_If_Type type)
 	leng = sprintf (cpp_word, "@CPP%u", cpp_if_now);
 
 	if (initial_state ()) {
-#ifdef CFUNCTIONS_DEBUG
+
 	    if (cfunctions_dbug.func) {
 		DBMSG ("initial state\n");
 	    }
-#endif
+
 
 	    function_save (cpp_word, leng);
 	}
@@ -1189,11 +1167,11 @@ cpp_add (char * text, Cpp_If_Type type)
 
     cpp_if_now++;
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: if stack now %u deep\n", cpp_if_now);
     }
-#endif
+
 
     /* Deficiency: there is no way to resize the stack */
 
@@ -1207,7 +1185,7 @@ cpp_add (char * text, Cpp_If_Type type)
 void
 cpp_eject (unsigned u)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cpp_if_stack[u].printed) {
 	unsigned j;
 	for (j = 0; j < cpp_if_now; j++) {
@@ -1216,7 +1194,7 @@ cpp_eject (unsigned u)
 	bug (HERE, "Attempt to eject already printed statement %d '%s'",
 	     u, cpp_if_stack[u].text);
     }
-#endif
+
 
     if (cpp_if_stack[u].type == CPP_ZAP) {
 	return;
@@ -1242,11 +1220,9 @@ cpp_eject (unsigned u)
 	   following is not executed. */
 
 	if (! cpp_if_stack [matching_if].printed) {
-#ifdef CFUNCTIONS_DEBUG
 	    if (cfunctions_dbug.cpp) {
 		DBMSG ("CPP debug: '#endif' but matching '#if' not printed\n");
 	    }
-#endif
 	    return;
 	}
 	/* Deficiency: depending on the previous statement, this sometimes
@@ -1265,18 +1241,18 @@ cpp_eject (unsigned u)
 		 cpp_if_stack[u].text);
     }
     else {
-#ifdef CFUNCTIONS_DEBUG
+
 	if (cpp_if_stack[u].type == CPP_IF ||
 	    cpp_if_stack[u].type == CPP_ELIF) {
 	    bug (HERE, "%s with no condition",
 		 cpp_if_names [cpp_if_stack[u].type]);
 	}
-#endif
+
 	fprintf (outfile, "#%s\n", cpp_if_names [cpp_if_stack[u].type]);
     }
     cpp_if_stack[u].printed = TRUE;
 
-#ifdef CFUNCTIONS_DEBUG
+
 
     /* Print a line number to indicate where a particular statement
        was printed. */
@@ -1285,7 +1261,7 @@ cpp_eject (unsigned u)
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: print line %u\n", cpp_if_stack[u].print_line);
     }
-#endif
+
 }
 
 void
@@ -1302,12 +1278,12 @@ void
 do_escaped_brace (const char * text)
 {
     inline_print (text);
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.brace) {
 	DBMSG ("%s:%u: matched escaped brace.\n",
 	       source_name, yylineno);
     }
-#endif
+
 }
 
 void
@@ -1515,29 +1491,29 @@ cpp_external_print (void)
 {
     unsigned i;
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: doing external print\n");
     }
-#endif
+
 
     cpp_external_tidy ();
 
     for (i = 0; i < cpp_if_now; i++) {
-#ifdef CFUNCTIONS_DEBUG
+
 	if (cfunctions_dbug.cpp) {
 	    DBMSG ("CPP debug: external print of %u\n", i);
 	}
-#endif
+
 
 	if (cpp_if_stack[i].external && ! cpp_if_stack[i].printed) {
 	    cpp_eject (i);
 	}
-#ifdef CFUNCTIONS_DEBUG
+
 	else if (cfunctions_dbug.cpp) {
 	    DBMSG ("CPP debug: not external so rejected\n");
 	}
-#endif
+
     }
 }
 
@@ -1562,11 +1538,11 @@ argument_reset (void)
 {
     unsigned i;
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.arg) {
 	DBMSG ("argument reset.\n");
     }
-#endif
+
     for (i = 0; i < n_fargs; i++) {
 	arg_free (fargs[i]);
     }
@@ -1579,12 +1555,11 @@ argument_reset (void)
 void
 argument_save (const char * text, unsigned text_length)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.arg) {
 	DBMSG ("%s:%u: saving argument '%s' to slot %d\n",
 	       source_name, yylineno, text, n_fargs - 1);
     }
-#endif /* CFUNCTIONS_DEBUG */
     arg_add (fargs[n_fargs - 1], text, 0);
 }
 
@@ -1636,11 +1611,11 @@ argument_print (void)
     int trad;
     trad = s.is_trad && ! (inlining || verbatiming);
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.arg) {
 	DBMSG ("printing argument\n");
     }
-#endif
+
 
     fprintf (outfile,  " ");
     if (trad) {
@@ -1772,11 +1747,11 @@ forward_print (const char * end)
 void
 function_reset (void)
 {
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.func) {
         DBMSG ("function reset\n");
     }
-#endif
+
 
     if (current_arg) {
 	arg_free (current_arg);
@@ -1800,28 +1775,28 @@ void
 function_save (const char * text, unsigned yylength)
 {
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.func) {
         DBMSG ("%s:%u: saving function word '%s'\n%s:%u: word appears here\n",
                "cfunctions.fl", rule_line, text, source_name, yylineno);
     }
-#endif
+
 
     if (! current_arg) {
         current_arg = arg_start (cfunctions_dbug.arg);
-#ifdef CFUNCTIONS_DEBUG
+
         if (cfunctions_dbug.func) {
             DBMSG ("new current_arg starting \"%s\" will be created\n", text);
         }
-#endif
+
         if (strcmp (text, "typedef") == 0) {
             current_arg->is_typedef = 1;
             in_typedef = 1;
-#ifdef CFUNCTIONS_DEBUG
+
             if (cfunctions_dbug.func) {
                 DBMSG ("This is a typedef.\n");
             }
-#endif
+
         }
     }
     arg_add (current_arg, text, yylineno);
@@ -1859,11 +1834,11 @@ function_print (void)
 {
     int printable;
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (cfunctions_dbug.func) {
 	DBMSG ("printing function\n");
     }
-#endif
+
     if (! s.seen_arguments) {
 	return;
     }
@@ -1968,11 +1943,11 @@ wrapper_top (const char * h_file_name, char ** h_file_guard)
     }
     i = fprintf (outfile, "#ifndef %s\n#define %s\n\n",
 		 * h_file_guard, * h_file_guard);
-#ifdef CFUNCTIONS_DEBUG
+
     if (! i) {
 	bug (HERE, "print failure for wrapper top: outfile not assigned?");
     }
-#endif
+
     return wt_status_ok;
 }
 
@@ -1997,12 +1972,12 @@ unbackup (char * backup_name, char * file_name)
 {
     int i;
 
-#ifdef CFUNCTIONS_DEBUG
+
     if (backup_name == file_name ||
 	strcmp (backup_name, file_name) == 0) {
 	bug (HERE, "backup name and file name the same");
     }
-#endif
+
 
     i = fdiff (backup_name, file_name);
     if (! i) {
@@ -2214,12 +2189,12 @@ open_library_output (struct outfile * x)
 #endif
 		yyin = fopen_or_exit (file_aux_name, "r");
 	    read_file ();
-#ifdef CFUNCTIONS_DEBUG
+
 	    if (! verbatiming) {
 		bug (HERE, "verbatiming was turned off while reading %s",
 		     file_aux_name);
 	    }
-#endif
+
 	    verbatiming = FALSE;
 	    hin_copying = FALSE;
 	}
@@ -2245,9 +2220,56 @@ close_library_output (struct outfile * x)
     free (x->file_name);
 }
 
-#ifdef CFUNCTIONS_DEBUG
 
-void
+
+static const struct debug_argument {
+    char * option;
+    char * explanation;
+}
+debug_options[] = {
+    {
+	"tag",
+	"tag creation"
+    },
+    {
+	"func",
+	"function and function argument"
+    },
+    {
+	"cpp",
+	"C preprocessor-like actions"
+    },
+    {
+	"comment",
+	"C comments",
+    },
+    {
+	"brace",
+	"handling of { and }"
+    },
+    {
+	"arg",
+	"function arguments"
+    },
+    {
+	"fptr",
+	"function pointers"
+    },
+    {
+	"string",
+	"C strings"
+    },
+    {
+	"flex",
+	"flex lexer"
+    },
+    {
+	"help",
+	"Print these messages"
+    }
+};
+
+static void
 set_debug_flag (char * flag_name)
 {
     if (strcmp (flag_name, "func")==0) {
@@ -2279,70 +2301,20 @@ set_debug_flag (char * flag_name)
     }
     else if (strcmp (flag_name, "help") == 0) {
 	int i;
-	const struct debug_argument {
-	    char * option;
-	    char * explanation;
-	}
-	debug_options[] = {
-	    {
-		"tag",
-		"tag creation"
-	    },
-	    {
-		"func",
-		"function and function argument"
-	    },
-	    {
-		"cpp",
-		"C preprocessor-like actions"
-	    },
-	    {
-		"comment",
-		"C comments",
-	    },
-	    {
-		"brace",
-		"handling of { and }"
-	    },
-	    {
-		"arg",
-		"function arguments"
-	    },
-	    {
-		"fptr",
-		"function pointers"
-	    },
-	    {
-		"string",
-		"C strings"
-	    },
-	    {
-		"flex",
-		"flex lexer"
-	    },
-	    {
-		"trad",
-		"pre-ANSI (traditional C) handling"
-	    },
-	    {
-		"help",
-		"Print these messages"
-	    }
-	};
 	printf ("The following flags may be passed after -D:\n");
 	for (i = 0; i < sizeof (debug_options) / sizeof (struct debug_argument); i++) {
 	    printf ("%10s: debug %-60s\n",
 		    debug_options[i].option,
 		    debug_options[i].explanation);
 	}
+	// exit ok
 	exit (0);
     }
-    else
+    else {
 	warning ("unknown debug flag '%s': see the Cfunctions manual for a list "
 		 "of possible debugging flags", flag_name);
+    }
 }
-
-#endif /* def CFUNCTIONS_DEBUG */
 
 static void
 overwrite_check (char * c_file_name, struct outfile * x)
@@ -2395,7 +2367,7 @@ preserve_command_line (int argc, char ** argv)
 
 const char * const version_info =
     "Cfunctions version "VERSION", Copyright "
-    "(C) "COPYRIGHT_YEAR" Ben K. Bullock.\n"
+    "(C) "COPYRIGHT_YEAR" Ben Bullock (benkasminbullock@gmail.com).\n"
     "Cfunctions comes with NO WARRANTY, to the extent permitted by law.\n"
     "You may redistribute Cfunctions under the terms of the GNU General\n"
     "Public Licence.  For more information see the file named COPYING.\n";
@@ -2411,9 +2383,9 @@ main (int argc, char ** argv)
     program_name = "cfunctions";
     source_line = & yylineno;
     yy_flex_debug = 0;
-#ifdef CFUNCTIONS_DEBUG
+
     yy_flex_debug = 0;
-#endif
+
 
     version = getenv ("SIMPLE_BACKUP_SUFFIX");
     if (version) {
@@ -2454,9 +2426,9 @@ main (int argc, char ** argv)
 #endif
 	    break;
 	case 'D':
-#ifdef CFUNCTIONS_DEBUG
+
 	    set_debug_flag (optarg);
-#endif
+
 	    break;
 	case 'e':
 	    warning ("-e/--emacs-tags option doesn't work yet");
@@ -2477,7 +2449,7 @@ main (int argc, char ** argv)
 	    break;
 	case 'h':
 	    print_usage (n_options, long_options, usage);
-	    exit (EXIT_SUCCESS);
+	    return EXIT_SUCCESS;
 	case 'i':
 	    individual = TRUE;
 	    break;
@@ -2528,7 +2500,7 @@ main (int argc, char ** argv)
 	    break;
 	case 'v':
 	    printf (version_info);
-	    exit (EXIT_SUCCESS);
+	    return EXIT_SUCCESS;
 	case 'V':
 	    version = optarg;
 	    break;
@@ -2543,7 +2515,7 @@ main (int argc, char ** argv)
 	    break;
 	default:
 	    print_usage (n_options, long_options, usage);
-	    exit (EXIT_FAILURE);
+	    return EXIT_FAILURE;
 	}
     }
 
@@ -2598,6 +2570,5 @@ main (int argc, char ** argv)
     if (local.name) {
 	close_library_output (& local);
     }
-
-    exit (EXIT_SUCCESS);
+    return 0;
 }
