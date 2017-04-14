@@ -1,4 +1,5 @@
-/* Backups for Cfunctions. */
+/* This file contains code which makes backups for Cfunctions using an
+   Emacs-like numbered version system. */
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -53,15 +54,24 @@ argmatch (const char *arg, const char *const *optlist)
     }
 }
 
-static const enum backup_type backup_types[] =
-    {
-	simple, simple, numbered_existing, numbered_existing, numbered, numbered
-    };
+static const enum backup_type backup_types[] = {
+    simple,
+    simple,
+    numbered_existing,
+    numbered_existing,
+    numbered,
+    numbered
+};
 
-static const char *const backup_args [] =
-    {
-	"never", "simple", "nil", "existing", "t", "numbered", 0
-    };
+static const char *const backup_args [] = {
+    "never",
+    "simple",
+    "nil",
+    "existing",
+    "t",
+    "numbered",
+    0
+};
 
 /* Which type of backup file names are generated. */
 
@@ -150,7 +160,7 @@ concat (const char *str1, const char *str2)
 }
 
 /* Return a string, allocated with malloc, containing
-   "FILE.~VERSION~".  Return 0 if out of memory. */
+   "FILE.~VERSION~". */
 
 static char *
 make_version_name (const char * file, int version)
