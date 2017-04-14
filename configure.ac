@@ -14,8 +14,6 @@ AC_PROG_MAKE_SET
 
 AC_CHECK_PROG(FLEX, flex, flex)
 CWD=`pwd`
-AC_CHECK_PROG(CFUNCTIONS, cfunctions, cfunctions,
-              "$CWD/fake-cfunctions")
 AC_CHECK_PROG(BZIP2, bzip2, bzip2)
 AC_PATH_PROG(PERL, perl, perl)
 AC_PROG_INSTALL
@@ -88,12 +86,6 @@ AC_REPLACE_FUNCS(strdup)
 
 TEXIMAINTAINER=`echo $MAINTAINER | sed -e s/@/@@/`
 AC_SUBST(TEXIMAINTAINER)
-
-# Perl needs \@ to mean @.
-# Somehow sed cannot put a backslash in the substitution pattern.
-
-PERL_MAINTAINER=`echo $MAINTAINER | sed -e s/@/^/`
-AC_SUBST(PERL_MAINTAINER)
 
 # The following are for `cfunctions.lsm'
 
