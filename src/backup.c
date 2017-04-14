@@ -53,28 +53,6 @@ argmatch (const char *arg, const char *const *optlist)
     }
 }
 
-#ifdef HEADER
-
-/* When to make backup files. */
-
-enum backup_type
-    {
-	/* Never make backups. */
-	none,
-
-	/* Make simple backups of every file. */
-	simple,
-
-	/* Make numbered backups of files that already have numbered backups,
-	   and simple backups of the others. */
-	numbered_existing,
-
-	/* Make numbered backups of every file. */
-	numbered
-    };
-
-#endif /* HEADER */
-
 static const enum backup_type backup_types[] =
     {
 	simple, simple, numbered_existing, numbered_existing, numbered, numbered
