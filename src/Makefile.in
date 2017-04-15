@@ -68,7 +68,9 @@ cfunctions:	$(OBJS)
 	$(CC) $(CFLAGS) -o cfunctions $(OBJS)
 
 cfunctions.c:	cfunctions.fl
+	if [ -f $@ ]; then chmod 0644 $@; fi
 	$(FLEX) -o cfunctions.c cfunctions.fl
+	chmod 0444 $@
 
 OPTIONS_FILES = sys_or_exit.o error-msg.o file.o
 OPTIONS_INCLUDES = sys_or_exit.h error-msg.h c-extensions.h \
