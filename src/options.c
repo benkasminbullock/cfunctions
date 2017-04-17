@@ -212,7 +212,8 @@ compare_letter_options (const void * a, const void * b)
 {
     unsigned ia = * (unsigned *) a;
     unsigned ib = * (unsigned *) b;
-    int av, bv;
+    int av;
+int bv;
     av = tolower (long_options[ia].val);
     bv = tolower (long_options[ib].val);
     if (av == bv) {
@@ -230,7 +231,7 @@ enum
 mode;
 
 int
-main(int argc, char *argv[])
+main (int argc, char *argv[])
 {
     unsigned * order;
     unsigned i;
@@ -255,12 +256,12 @@ main(int argc, char *argv[])
             error ("unknown option: '%c'", i);
         }
     }
-    if (optind < argc) 
+    if (optind < argc) {
         error ("can't have arguments");
-
-    if (mode == man)
+    }
+    if (mode == man) {
         fcopy (stdout, "man.head");
-
+    }
     switch (mode) {
     case texi:
         printf ("%s", texi_begin);
@@ -278,7 +279,7 @@ main(int argc, char *argv[])
     for (i = 0; i < n_options; i++) {
         order [i] = i;
     }
-    qsort (order, n_options, sizeof (unsigned), compare_letter_options);
+    qsort (order, n_options, sizeof (* (order)), compare_letter_options);
     
     for (i = 0; i < n_options; i++) {
         unsigned j = order[i];

@@ -22,37 +22,39 @@
 int fcopy (FILE * out, const char * in_file_name)
 {
     FILE * in_file;
+    unsigned char copy[USUAL_BLOCKS];
+    size_t a;
+    size_t b;
 
     in_file = fopen (in_file_name, "r");
-    if (in_file) {
-	unsigned char copy[USUAL_BLOCKS];
-	size_t a;
-	size_t b;
-	do {
-	    a = fread (copy, 1, USUAL_BLOCKS, in_file);
-	    b = fwrite (copy, 1, a, out);
-	    if (b != a) {
-		fprintf (stderr, "Write error writing from '%s': %s.\n",
-			 in_file_name, strerror (errno));
-		return -1;
-	    }
-	}
-	while (a == USUAL_BLOCKS);
-	if (ferror (in_file)) {
-	    fprintf (stderr, "Read error reading from '%s': %s.\n",
+    if (! in_file) {
+	fprintf (stderr, "Open '%s' failed: %s\n",
+		 in_file_name, strerror (errno));
+	return -1;
+    }
+    do {
+	a = fread (copy, 1, USUAL_BLOCKS, in_file);
+	b = fwrite (copy, 1, a, out);
+	if (b != a) {
+	    fprintf (stderr, "Write error writing from '%s': %s.\n",
 		     in_file_name, strerror (errno));
 	    return -1;
 	}
-	fclose (in_file);
-	return 0;
     }
-    return -1;
+    while (a == USUAL_BLOCKS);
+    if (ferror (in_file)) {
+	fprintf (stderr, "Read error reading from '%s': %s.\n",
+		 in_file_name, strerror (errno));
+	return -1;
+    }
+    fclose (in_file);
+    return 0;
 }
 
 /*
-  Compares files a and b with names a_name, b_name.
+    Compares files a and b with names a_name, b_name.
 
-  Return value:
+    Return value:
                 negative         failure
                 -5               both filenames are the same
                 -4               if cannot read a
@@ -62,38 +64,42 @@ int fcopy (FILE * out, const char * in_file_name)
                 0                if a is identical to b
                 positive integer if a and b are different
                 
-  Side effects: opens & closes files with names a_name and b_name.
- */
-
-/* This might as well just exit on error rather than give all the
-   different codes. */
+    Side effects: opens & closes files with names a_name and b_name.
+*/
 
 int fdiff (const char * a_name, const char * b_name)
 {
-    FILE * a, * b;
+    FILE * a;
+    FILE * b;
 
-    char a_block[USUAL_BLOCKS], b_block[USUAL_BLOCKS];
-    unsigned a_len, b_len, i, comp;
+    char a_block[USUAL_BLOCKS];
+    char b_block[USUAL_BLOCKS];
+    unsigned a_len;
+    unsigned b_len;
+    unsigned i;
+    unsigned comp;
 
     if (strcmp (a_name, b_name) == 0) {
 	return -5;
     }
-    if (! (a = fopen (a_name, "r"))) {
+    a = fopen (a_name, "r");
+    if (! a) {
 	return -2;
     }
-    if (! (b = fopen (b_name, "r"))) {
+    b = fopen (b_name, "r");
+    if (! b) {
 	fclose (a);
 	return -1;
     }
     while (1) {
-	a_len = fread (a_block, 1, USUAL_BLOCKS, a);
+	a_len = fread (a_block, sizeof (char), USUAL_BLOCKS, a);
 	if (a_len == 0) {
 	    if (! feof (a)) {
 		comp = -4;
 		goto end;
 	    }
 	}
-	b_len = fread (b_block, 1, USUAL_BLOCKS, b);
+	b_len = fread (b_block, sizeof (char), USUAL_BLOCKS, b);
 	if (b_len == 0) {
 	    if (! feof (b)) {
 		comp = -3;
@@ -142,25 +148,5 @@ fexists (const char * file_name)
 	return 0;
     }
     return 1;
-}
-
-/* Reopen stdin to a new file.  Dies on failure. */
-
-void 
-freopen_stdin (const char * file_name)
-{
-    if (! freopen (file_name, "r", stdin)) {
-	error ("could not open %s: %s", file_name, strerror (errno));
-    }
-}
-
-/* Reopen stdout to a new file.  Dies on failure. */
-
-void 
-freopen_stdout (const char * file_name)
-{
-    if (! freopen (file_name, "w", stdout)) {
-	error ("could not open %s: %s", file_name, strerror (errno));
-    }
 }
 

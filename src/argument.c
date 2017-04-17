@@ -213,25 +213,13 @@ type_free (struct type * t)
     while (t->prev) {
 	t = t->prev;
     }
-#if 0
-    while ((t = t->next)) {
-	free (t->prev);
-    }
-#else
     while (t->next) {
-#if 0
-	printf ("Freeing %s\n", t->name);
-#endif
 	free (t->name);
 	t = t->next;
 	free (t->prev);
     }
-#if 0
-    printf ("Freeing %s\n", t->name);
-#endif
     free (t->name);
     free (t);
-#endif
 }
 
 /* Free the memory associated with an argument. */
@@ -241,16 +229,10 @@ arg_free (struct arg * a)
 {
     a->types->ref_count--;
     if (a->types->ref_count == 0) {
-#if 0
-	printf ("zero refs\n");
-#endif
 	type_free (a->types->t);
 	free (a->types);
     }
     if (a->name) {
-#if 0
-	printf ("Freeing `%s'\n", a->name->name);
-#endif
 	free (a->name->name);
 	free (a->name);
     }

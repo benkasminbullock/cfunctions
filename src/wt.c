@@ -39,10 +39,9 @@ const char * state_message (void);
 
 /* Macro for printing debugging statements. */
 
-#define DBMSG(format,msg...) do {                               \
-        printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);	\
-        printf (format, ## msg);                                \
-    } while (0)
+#define DBMSG(format,msg...)					\
+    printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);	\
+    printf (format, ## msg)
 
 #undef BOOL
 #define BOOL int
@@ -89,14 +88,9 @@ char line_source_name[MAX_LINE_NAME];
    'usage' and 'long_options' in 'options.c' for explanation. */
 
 BOOL backup;                    /* -b */
-BOOL copy_c_ex = TRUE;                 /* -c */
-BOOL c_preprocess;              /* -C */
-BOOL individual = TRUE;                /* -i */
 BOOL c_ex_std_include;          /* -I */
 BOOL keep_empty_files;          /* -k */
-BOOL write_comments;            /* -m */
 /* -n */
-static BOOL write_line_numbers = TRUE;
 BOOL save_static_funcs;         /* -s */
 /* -w */
 static char * wrap;
@@ -306,7 +300,6 @@ typedef struct cfunctions_parse_state
     /* True if this is a function pointer. */
 
     unsigned function_pointer : 1;
-
 }
 parse_state_t;
 
@@ -318,10 +311,6 @@ parse_state_t;
 
 static parse_state_t s;
 static parse_state_t z;
-
-/* Are we reading from standard input? */
-
-BOOL reading_from_stdin;
 
 /* Line number of rule matched. */
 
@@ -355,9 +344,7 @@ process_warning (const char * warning_arg)
 static void
 print_line_number (void)
 {
-    if (write_line_numbers) {
-	fprintf (outfile, "\n#line %u \"%s\"\n", yylineno, source_name);
-    }
+    fprintf (outfile, "\n#line %u \"%s\"\n", yylineno, source_name);
 }
 
 /* Check whether a particular quantity has overflowed a maximum, and if
@@ -399,107 +386,6 @@ brace_close (void)
 		source_name, yylineno, curly_braces_depth);
     }
     check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
-}
-
-/* Comments. */
-
-static BOOL doing_comment;
-static char * comment_buffer;
-static unsigned comment_buf_len;
-static unsigned comment_len;
-
-/* Initial length of the comment buffer. */
-
-#define INITIAL_LEN 0x100
-
-/* Add some more comment to the comment buffer. */
-
-static void
-comment_add (const char * text, unsigned leng)
-{
-    int remaining;
-    if (cfunctions_dbug.comm) {
-	line_info ("comment add %s\n", text);
-    }
-    if (! comment_buffer) {
-	comment_buffer = malloc_or_exit (INITIAL_LEN);
-	comment_buf_len = INITIAL_LEN;
-    }
-    if (comment_buf_len <= comment_len + leng) {
-	comment_buf_len = comment_len + leng + 1;
-	comment_buffer = realloc_or_exit (comment_buffer, comment_buf_len);
-    }
-    remaining = comment_buf_len - comment_len;
-    if (remaining < 0) {
-	fprintf (stderr, "%s:%d: underflow %d = %d - %d.\n",
-		 __FILE__, __LINE__,
-		 remaining, comment_buf_len, comment_len);
-	return;
-    }
-    strncpy (comment_buffer + comment_len, text, remaining);
-    comment_len += leng;
-}
-
-void
-do_comment_start (void)
-{
-    if (write_comments && initial_state ()) {
-
-	if (cfunctions_dbug.comm) {
-	    line_info ("comment start");
-	}
-
-	comment_len = 0;
-	doing_comment = 1;
-	comment_add ("/*", 2);
-    }
-}
-
-void
-do_comment_end (void)
-{
-    if (doing_comment) {
-
-	if (cfunctions_dbug.comm) {
-	    line_info ("comment end");
-	}
-
-	comment_add ("*/\n", 3);
-    }
-    doing_comment = 0;
-}
-
-void
-do_comment_print (const char * text, int leng)
-{
-    if (doing_comment) {
-	comment_add (text, leng);
-    }
-}
-
-static void
-comment_reset (void)
-{
-
-    if (cfunctions_dbug.comm) {
-	line_info ("comment reset");
-    }
-
-    comment_len = 0;
-}
-
-static void
-print_comment (void)
-{
-
-    if (cfunctions_dbug.comm) {
-        line_info ("print comment");
-    }
-
-    if (comment_len) {
-	fprintf (outfile, "%s", comment_buffer);
-    }
-    comment_reset ();
 }
 
 /* The name do_PRINT_FORMAT is misleading: this is a temporary fix. */
@@ -684,34 +570,6 @@ line_change (const char * text)
 }
 
 
-/* Fix for Flex bug which causes wrong line numbers.  The problem is
-   the '$' in the rule for matching C preprocessor stuff.  These rules
-   have a dollar to match end of line.  The problem arises because
-   Flex actually counts the '\n' which comes after the dollar when it
-   is calculating yylineno, and then it 'rejects' the '\n', then
-   because it was rejected it counts it again.  I have sent the full
-   description of the bug to Vern Paxson, the author of Flex, who said
-   it is on the 'to do' list. */
-
-/* I am hoping that the bug will be fixed by version 2.6 of Flex. */
-
-#if YY_FLEX_MAJOR_VERSION <= 2 && YY_FLEX_MINOR_VERSION <= 5
-#define FIX_FOR_FLEX_BUG
-#else
-#ifndef FLEX_BUG_WARNING_OFF
-#ifdef HAS_WARNING
-#warning "This file contains a fix for a bug in"
-#warning "Flex.  The fix has been turned off"
-#warning "for Flex version > 2.5.  If you still"
-#warning "find Cfunctions gets line numbers"
-#warning "wrong, please report the bug to the "
-#warning "Cfunctions maintainer and the Flex "
-#warning "maintainer.  Use"
-#warning "'#define FLEX_BUG_WARNING_OFF' to stop"
-#warning "seeing this message next time."
-#endif /* HAS_WARNING */
-#endif /* FLEX_BUG_WARNING_OFF */
-#endif /* new version of Flex */
 
 /* Cfunctions sometimes needs to include 'c-extensions.h' because it
    defines all the information about C extensions. */
@@ -738,38 +596,11 @@ copy_c_extensions (void)
 	}
     }
 
-    if (copy_c_ex) {
-	if (c_ex_file_name) {
-	    fprintf (outfile, "#line 1 \"%s\"\n", c_ex_file_name);
-	    if (fcopy (outfile, c_ex_file_name)) {
-		warning ("could not copy '%s': %s", c_ex_file_name,
-			 strerror (errno));
-	    }
-	}
-    }
-    else {
-	if (c_ex_std_include) {
-	    fprintf (outfile, "#include <"C_EX_FILE_NAME">\n");
-	    return;
-	}
-	else {
-	    fprintf (outfile, "#include \""C_EX_FILE_NAME"\"\n");
-	}
-	if (! extensions) {
-	    return;
-	}
-
-	if (c_ex_file_name
-	    && (! fexists (C_EX_FILE_NAME)
-		|| fdiff (C_EX_FILE_NAME, c_ex_file_name))) {
-	    FILE * c_ex;
-
-	    c_ex = fopen_or_exit (C_EX_FILE_NAME, "w");
-	    if (fcopy (c_ex, c_ex_file_name)) {
-		warning ("could not copy '%s': %s", c_ex_file_name,
-			 strerror (errno));
-	    }
-	    fclose (c_ex);
+    if (c_ex_file_name) {
+	fprintf (outfile, "#line 1 \"%s\"\n", c_ex_file_name);
+	if (fcopy (outfile, c_ex_file_name)) {
+	    warning ("could not copy '%s': %s", c_ex_file_name,
+		     strerror (errno));
 	}
     }
 }
@@ -821,7 +652,8 @@ static unsigned cpp_if_len[N_CPP_IF_TYPES] =
 */
 
 static int
-cpp_stack_find_if (int i) {
+cpp_stack_find_if (int i)
+{
     unsigned endif_level = 1;
     int depth;
 
@@ -853,11 +685,8 @@ cpp_stack_find_if (int i) {
 	case CPP_ZAP:
 	    break;
 	default:
-
 	    bug (HERE, "bad number %d in switch",
 		 cpp_if_stack[depth].type);
-
-	    ;
 	}
 	depth--;
     }
@@ -885,14 +714,6 @@ cpp_fill_holes (void)
 {
     unsigned i, j = 0;
 
-#if 0
-    printf ("HOLES BEFORE: ");
-
-    for (i = 0; i < cpp_if_now; i++) {
-	printf ("%s ", cpp_if_names[cpp_if_stack[i].type]);
-    }
-    printf ("\n");
-#endif /* 0 */
     for (i = 0; i < cpp_if_now; i++) {
 	if (cpp_if_stack[i].type != CPP_ZAP) {
 	    if (i != j) {
@@ -909,8 +730,9 @@ cpp_fill_holes (void)
 	    }
 	    j++;
 	}
-	else
+	else {
 	    free (cpp_if_stack [ i ].text);
+	}
     }
 
     /* Reset the top of the stack. */
@@ -921,11 +743,9 @@ cpp_fill_holes (void)
 
     cpp_if_now = j;
 
-
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: stack size after tidying %d\n", cpp_if_now);
     }
-
 }
 
 /*
@@ -1051,9 +871,15 @@ cpp_add (char * text, Cpp_If_Type type)
     unsigned leng;
     char cpp_word[9];
 
-#ifdef FIX_FOR_FLEX_BUG
+/* Fix for Flex bug which causes wrong line numbers.  The problem is
+   the '$' in the rule for matching C preprocessor stuff.  These rules
+   have a dollar to match end of line.  The problem arises because
+   Flex actually counts the '\n' which comes after the dollar when it
+   is calculating yylineno, and then it 'rejects' the '\n', then
+   because it was rejected it counts it again.  I have sent the full
+   description of the bug to Vern Paxson, the author of Flex, who said
+   it is on the 'to do' list. */
     yylineno--;
-#endif
 
 
     if (cfunctions_dbug.cpp) {
@@ -1420,12 +1246,11 @@ do_define (const char * text)
 	function_reset ();
     }
     macro_name = (unsigned char *) strstr (text, "define") + 7;
-    while (!(isalnum (macro_name[0]) || macro_name[0] == '_')) {
+    while (! (isalnum (macro_name[0]) || macro_name[0] == '_')) {
 	macro_name++;
     }
     push_in_cpp ();
     inline_print (text);
-    //  tag_make (macro_name, TAG_MACRO, yylineno);
 }
 
 /* Nullify elements of the stack and release their memory. */
@@ -1711,7 +1536,6 @@ external_print (const char * semicolon, const char * why)
             }
         }
         if (verbatiming || printable) {
-            print_comment ();
             print_line_number ();
             cpp_external_print ();
             if (current_arg) {
@@ -1766,7 +1590,6 @@ function_reset (void)
     else
 	outfile = localfile;
     argument_reset ();
-    comment_reset ();
     in_typedef = 0;
 }
 
@@ -1856,7 +1679,6 @@ function_print (void)
 	fprintf (outfile, "extern inline ");
     }
     if (printable || verbatiming) {
-	print_comment ();
 	print_line_number ();
 	cpp_external_print ();
 	/* Check for the case PROTO ((void)). */
@@ -2059,156 +1881,37 @@ do_backup (char * file_name)
 static void
 extract (char * c_file_name)
 {
-    char * h_file_name = NULL, * h_file_guard;
+    char * h_file_name = NULL;
+    char * h_file_guard;
     unsigned c_file_name_len;
-    char * backup_name = NULL;
 
-    if (c_file_name) {
-	source_name = c_file_name;
-	c_file_name_len = strlen (c_file_name);
-
-	yyin = fopen_or_exit (c_file_name, "r");
-
-	if (individual) {
-	    h_file_name = malloc_or_exit (c_file_name_len + 1);
-	    strcpy (h_file_name, c_file_name);
-	    h_file_name[c_file_name_len - 1] = 'h';
-	    backup_name = do_backup (h_file_name);
-	    localfile = fopen_or_exit (h_file_name, "w");
-	    outfile = localfile;
-	    n_local_writes = 0;
-	    wrapper_top (h_file_name, & h_file_guard);
-	    written_c_extensions = 0;
-	}
+    if (! c_file_name) {
+	fprintf (stderr, "%s:%d: no file name.\n", __FILE__, __LINE__);
+	return;
     }
-    else {
-	if (override_source_name) {
-	    source_name = override_source_name;
-	}
-	else {
-	    source_name = "STDIN";
-	}
-	reading_from_stdin = TRUE;
-    }
+    source_name = c_file_name;
+    c_file_name_len = strlen (c_file_name);
 
-    if (! individual) {
-	if (local.file) {
-	    localfile = local.file;
-	}
-	else {
-	    localfile = stdout;
-	    outfile = localfile;
-	    if (wrap) {
-		wrapper_top (wrap, & h_file_guard);
-	    }
-	}
-    }
+    yyin = fopen_or_exit (c_file_name, "r");
+
+    h_file_name = malloc_or_exit (c_file_name_len + 1);
+    strcpy (h_file_name, c_file_name);
+    h_file_name[c_file_name_len - 1] = 'h';
+    do_backup (h_file_name);
+    localfile = fopen_or_exit (h_file_name, "w");
+    outfile = localfile;
+    n_local_writes = 0;
+    wrapper_top (h_file_name, & h_file_guard);
+    written_c_extensions = 0;
     outfile = localfile;
 
     read_file ();
 
-    if (individual) {
-	wrapper_bottom (h_file_guard);
-	fclose (localfile);
+    wrapper_bottom (h_file_guard);
+    fclose (localfile);
 
-	/* check whether anything was written to the 'individual' file */
-
-	if (global.file && ! n_local_writes && ! keep_empty_files) {
-	    if (backup_name) {
-		if (rename (backup_name, h_file_name)) {
-		    error ("could not rename '%s' to '%s': %s", backup_name,
-			   h_file_name, strerror (errno));
-		}
-		free (backup_name);
-	    }
-	    else
-		unlink (h_file_name);
-	}
-	else if (backup_name) {
-	    unbackup (backup_name, h_file_name);
-	}
-    }
-    else
-	if (wrap) {
-	    wrapper_bottom (h_file_guard);
-	}
-
-    if (h_file_name) {
-	free (h_file_name);
-    }
+    free (h_file_name);
 }
-
-/* Start writing a general header which covers more than one input
-   file. */
-
-static void
-open_library_output (struct outfile * x)
-{
-    if (x->name) {
-	char * file_aux_name;
-	/* File name length. */
-	int fnlen;
-	/* Auxiliary file name length. */
-	int auxlen;
-
-	/* Make the '.h' file name. */
-
-	x->name_len = strlen (x->name);
-	fnlen = x->name_len + 3;
-	x->file_name = malloc_or_exit (fnlen);
-	auxlen = x->name_len + 5;
-	file_aux_name = malloc_or_exit (auxlen);
-	snprintf (x->file_name, fnlen, "%s.h", x->name);
-
-	/* Back up any old file */
-
-	x->backup_name = do_backup (x->file_name);
-
-	/* Write the top wrapper and '.hin' header information */
-
-	x->file = fopen_or_exit (x->file_name, "w");
-	outfile = x->file;
-	wrapper_top (x->file_name, & x->guard_name);
-	snprintf (file_aux_name, auxlen, "%sin", x->file_name);
-	if (fexists (file_aux_name)) {
-	    verbatiming = TRUE;
-	    hin_copying = TRUE;
-	    verbatim_file = x->file;
-	    source_name = file_aux_name;
-	    yyin = fopen_or_exit (file_aux_name, "r");
-	    read_file ();
-
-	    if (! verbatiming) {
-		bug (HERE, "verbatiming was turned off while reading %s",
-		     file_aux_name);
-	    }
-
-	    verbatiming = FALSE;
-	    hin_copying = FALSE;
-	}
-	free (file_aux_name);
-    }
-    outfile = localfile;
-}
-
-/* finish off the library (user) header file */
-
-static void
-close_library_output (struct outfile * x)
-{
-    if (! x->file) {
-	return;
-    }
-    outfile = x->file;
-    wrapper_bottom (x->guard_name);
-    fclose (x->file);
-    if (x->backup_name) {
-	unbackup (x->backup_name, x->file_name);
-    }
-    free (x->file_name);
-}
-
-
 
 static const struct debug_argument {
     char * option;
@@ -2260,31 +1963,31 @@ debug_options[] = {
 static void
 set_debug_flag (char * flag_name)
 {
-    if (strcmp (flag_name, "func")==0) {
+    if (strcmp (flag_name, "func") == 0) {
 	cfunctions_dbug.func = 1;
     }
-    else if (strcmp (flag_name, "cpp")==0) {
+    else if (strcmp (flag_name, "cpp") == 0) {
 	cfunctions_dbug.cpp = 1;
     }
-    else if (strcmp (flag_name, "comment")==0) {
+    else if (strcmp (flag_name, "comment") == 0) {
 	cfunctions_dbug.comm = 1;
     }
-    else if (strcmp (flag_name, "brace")==0) {
+    else if (strcmp (flag_name, "brace") == 0) {
 	cfunctions_dbug.brace = 1;
     }
-    else if (strcmp (flag_name, "arg")==0) {
+    else if (strcmp (flag_name, "arg") == 0) {
 	cfunctions_dbug.arg = 1;
     }
-    else if (strcmp (flag_name, "fptr")==0) {
+    else if (strcmp (flag_name, "fptr") == 0) {
 	cfunctions_dbug.fptr = 1;
     }
-    else if (strcmp (flag_name, "print")==0) {
+    else if (strcmp (flag_name, "print") == 0) {
 	cfunctions_dbug.print = 1;
     }
-    else if (strcmp (flag_name, "string")==0) {
+    else if (strcmp (flag_name, "string") == 0) {
 	string_debug_on = 1;
     }
-    else if (strcmp (flag_name, "flex")==0) {
+    else if (strcmp (flag_name, "flex") == 0) {
 	yy_flex_debug = 1;
     }
     else if (strcmp (flag_name, "help") == 0) {
@@ -2304,19 +2007,6 @@ set_debug_flag (char * flag_name)
     }
 }
 
-static void
-overwrite_check (char * c_file_name, struct outfile * x)
-{
-    if (x->name_len &&
-	strlen (c_file_name) == x->name_len + 2 &&
-	strncmp (x->name, c_file_name, x->name_len) == 0 &&
-	individual) {
-
-	error ("global header '%s.h' will be overwritten by "
-	       "individual header of '%s'", x->name, c_file_name);
-    }
-}
-
 int
 main (int argc, char ** argv)
 {
@@ -2328,17 +2018,12 @@ main (int argc, char ** argv)
     program_name = "cfunctions";
     source_line = & yylineno;
     yy_flex_debug = 0;
-
-    yy_flex_debug = 0;
-
-
     version = getenv ("SIMPLE_BACKUP_SUFFIX");
     if (version) {
 	simple_backup_suffix = version;
     }
     version = getenv ("VERSION_CONTROL");
 
-    write_line_numbers    = TRUE;//rc.line_numbers;
     /* parse the command line options. */
 
     option_string = short_options (long_options, n_options);
@@ -2355,30 +2040,11 @@ main (int argc, char ** argv)
 	case 'b':
 	    backup = TRUE;
 	    break;
-	case 'c':
-	    copy_c_ex = TRUE;
-	    break;
-	case 'C':
-	    warning ("C preprocessor support is now disabled.");
-	    break;
 	case 'D':
-
 	    set_debug_flag (optarg);
-
-	    break;
-	case 'e':
-	    warning ("-e/--emacs-tags option doesn't work yet");
 	    break;
 	case 'f':
 	    override_source_name = optarg;
-	    break;
-	case 'g':
-	    global.name = optarg;
-	    if (is_c_file (global.name)) {
-		warning ("global header name '%s' looks like a C file name",
-			 global.name);
-	    }
-	    global.name_len = strlen (global.name);
 	    break;
 	case 'G':
 	    global_macro = optarg;
@@ -2386,9 +2052,6 @@ main (int argc, char ** argv)
 	case 'h':
 	    print_usage (n_options, long_options, usage);
 	    return EXIT_SUCCESS;
-	case 'i':
-	    individual = TRUE;
-	    break;
 	case 'I':
 	    c_ex_std_include = TRUE;
 	    break;
@@ -2405,15 +2068,6 @@ main (int argc, char ** argv)
 	    break;
 	case 'L':
 	    local_macro = optarg;
-	    break;
-	case 'm':
-	    write_comments = TRUE;
-	    break;
-	case 'n':
-	    write_line_numbers = TRUE;
-	    break;
-	case 'o':
-	    freopen_stdout (optarg);
 	    break;
 	case 'p':
 	    prototype_macro = optarg;
@@ -2452,48 +2106,14 @@ main (int argc, char ** argv)
 
     /* sanity checks for arguments */
 
-    if (local.name && individual) {
-	error ("option '--local' is incompatible with option '--individual'");
-    }
-    if (copy_c_ex) {
-	extensions = TRUE;
-    }
-    if (local.name && global.name && strcmp (local.name, global.name) == 0) {
-	error ("local name '%s' is the same as the global name.", local.name);
-    }
-    open_library_output (& global);
+    extensions = TRUE;
 
-    if (local.name) {
-	open_library_output (& local);
-    }
-
-    if (optind == argc) {
-	/* Cfunctions will read from stdin. */
-
-	if (individual) {
-	    error ("specify a C file on the command line");
+    while (optind < argc) {
+	c_file_name = argv[optind++];
+	if (! is_c_file (c_file_name)) {
+	    warning ("'%s' does not look like a C file", c_file_name);
 	}
-	extract (NULL);
-    }
-    else {
-
-	/* Everything else on the command line is a C file */
-
-	while (optind < argc) {
-	    c_file_name = argv[optind++];
-	    if (! is_c_file (c_file_name)) {
-		warning ("'%s' does not look like a C file", c_file_name);
-	    }
-	    overwrite_check (c_file_name, & global);
-	    overwrite_check (c_file_name, & local);
-
-	    extract (c_file_name);
-	}
-    }
-    close_library_output (& global);
-
-    if (local.name) {
-	close_library_output (& local);
+	extract (c_file_name);
     }
     return 0;
 }

@@ -189,7 +189,6 @@ braces \{[^{}]*\}
 
                   if (YY_START != c_string)
                     {
-                      do_comment_start ();
                       parser_push_state (comment);
                     }
                   else {
@@ -205,11 +204,10 @@ braces \{[^{}]*\}
                   }
 
 <comment>\*+\/    { 
-                      do_comment_end ();
-                      parser_pop_state();
+                      parser_pop_state ();
                   }
 
-<comment>(([^\*]|\n)*|\*+([^/\*]|\n))  do_comment_print (yytext, yyleng);
+<comment>(([^\*]|\n)*|\*+([^/\*]|\n))  ;
 
 <INITIAL,function>"/"(\\{endline})?"/".*  { 
                     
