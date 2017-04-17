@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 
 #include "error-msg.h"
-#include "sys_or_exit.h"
+#include "sys-or-exit.h"
 
 void * 
 malloc_or_exit ( size_t s )

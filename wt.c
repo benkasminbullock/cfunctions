@@ -16,7 +16,7 @@
 #include "file-name.h"
 #include "file.h"
 #include "options.h"
-#include "sys_or_exit.h"
+#include "sys-or-exit.h"
 #include "wt.h"
 
 /* Declarations of Flex objects. */

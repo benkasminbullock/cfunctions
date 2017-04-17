@@ -12,7 +12,7 @@
 
 #include "error-msg.h"
 #include "backup.h"
-#include "sys_or_exit.h"
+#include "sys-or-exit.h"
 
 /* If ARG is an unambiguous match for an element of the
    null-terminated array OPTLIST, return the index in OPTLIST

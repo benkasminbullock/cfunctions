@@ -1,25 +1,11 @@
-# contains code contributed by Egil Kvaleberg.
-
 prefix = /home/ben/software/install
 exec_prefix = ${prefix}
 bindir = ${exec_prefix}/bin
 sharedir = ${prefix}/share/cfunctions
 
-SHELL=/bin/sh
 FLEX = flex
-CC = gcc
-CPPFLAGS = -I. 
 CFLAGS = -g -Wall -O
-VERSION = 1.0
-GCOV = 
 INSTALL = /usr/bin/install -c
-CWD = $(shell pwd)
-srcdir = .
-LIB_DIR = $(srcdir)/missing
-FLEX_CFLAGS = -Wno-unused
-MKDEP = gcc $(CPPFLAGS) -MM
-RC = rc
-CFUNCTIONS = @CFUNCTIONS@
 SOURCES =  \
 argument.c \
 backup.c \
@@ -30,7 +16,7 @@ error-msg.c \
 file-name.c \
 file.c \
 options.c \
-sys_or_exit.c \
+sys-or-exit.c \
 wt.c
 
 OBJS =  \
@@ -42,7 +28,7 @@ error-msg.o \
 file-name.o \
 file.o \
 options.o \
-sys_or_exit.o \
+sys-or-exit.o \
 wt.o
 
 HEADERS =  \
@@ -54,7 +40,7 @@ error-msg.h \
 file-name.h \
 file.h \
 options.h \
-sys_or_exit.h \
+sys-or-exit.h \
 wt.h
 
 all: cfunctions 
@@ -81,9 +67,9 @@ uninstall:
 	rm -rf ${sharedir}
 	rm -f ${bindir}/cfunctions
 
-argument.o: argument.c argument.h wt.h sys_or_exit.h error-msg.h
+argument.o: argument.c argument.h wt.h sys-or-exit.h error-msg.h
 
-backup.o: backup.c backup.h sys_or_exit.h error-msg.h
+backup.o: backup.c backup.h sys-or-exit.h error-msg.h
 
 c-word.o: c-word.c c-word.h 
 
@@ -93,9 +79,9 @@ error-msg.o: error-msg.c error-msg.h
 
 file.o: file.c file.h error-msg.h 
 
-options.o: options.c options.h sys_or_exit.h  options.h config.h file.h
+options.o: options.c options.h sys-or-exit.h  options.h config.h file.h
 
-wt.o: wt.c config.h error-msg.h  sys_or_exit.h file.h file-name.h \
+wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h file-name.h \
 	options.h backup.h argument.h
 
 test:

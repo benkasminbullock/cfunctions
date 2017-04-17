@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-#include "sys_or_exit.h"
+#include "sys-or-exit.h"
 #include "error-msg.h"
 #include "options.h"
 #include "file.h"

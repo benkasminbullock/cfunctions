@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 
 #include "wt.h"
-#include "sys_or_exit.h"
+#include "sys-or-exit.h"
 #include "error-msg.h"
 #include "argument.h"
 
