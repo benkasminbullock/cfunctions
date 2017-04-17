@@ -4,46 +4,16 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include <stdlib.h>
 #include <string.h>
-
+#include <stdlib.h>
 #include "sys_or_exit.h"
 #include "error-msg.h"
 #include "options.h"
 #include "file.h"
 
 struct option long_options [] = {
-//    {"advert",          required_argument, NULL, 'a'},
-//    {"backup",          no_argument,       NULL, 'b'},
-//    {"copy-c-ex",       no_argument,       NULL, 'c'},
-//    {"cpp",             no_argument,       NULL, 'C'},
-                       
     {"debug",           required_argument, NULL, 'D'},
-                                            
-//    {"etags",           no_argument,       NULL, 'e'},
-//    {"extensions",      no_argument,       NULL, 'x'},
-//    {"file",            required_argument, NULL, 'f'},
-//    {"global",          required_argument, NULL, 'g'},
-//    {"global-macro",    required_argument, NULL, 'G'},
-//    {"individual",      no_argument,       NULL, 'i'},
-//    {"include-c-ex",    no_argument,       NULL, 'I'},
     {"help",            no_argument,       NULL, 'h'},
-//    {"keep",            no_argument,       NULL, 'k'},
-//    {"line-numbers",    no_argument,       NULL, 'n'},
-//    {"local",           required_argument, NULL, 'l'},
-//    {"local-macro",     required_argument, NULL, 'L'},
-//    {"output",          required_argument, NULL, 'o'},
-//    {"proto-macro",     required_argument, NULL, 'p'},
-//    {"cpp-arg",         required_argument, NULL, 'P'},
-//    {"static",          no_argument,       NULL, 's'},
-//    {"suffix",          required_argument, NULL, 'S'},
-//    {"tags",            no_argument,       NULL, 't'},
-//    {"no-upgrade",      no_argument,       NULL, 'u'},
-    {"version",         no_argument,       NULL, 'v'},
-//    {"version-control", required_argument, NULL, 'V'},
-//    {"wrap",            required_argument, NULL, 'w'},
-//    {"write-comments",  no_argument,       NULL, 'm'},
-//    {"warn",            required_argument, NULL, 'W'},
     {0, 0, 0, 0}
 };
 
@@ -58,38 +28,8 @@ int n_options = N_OPTIONS;
 #endif /* MANUAL */
 
 const char * usage [ N_OPTIONS ] = {
-//    "If "arg" is `off', don't print an advert.  If "arg" is a file name, "
-//    "print the file instead",
-//    "Back up `.h' files",
-//    "Copy the `c-extensions.h' into the header file",
-//    "Pass input through the C preprocessor",
-
     "Set debugging option "arg" (-D help for list)",
-
-//    "Create an Emacs tag table",
-//    "Don't copy the `c-extensions.h' file",
-//    "Use "arg" as the file name in #line directives (with -n option)",
-//    "Write one global header for all C files",
-//    "Give global header macro the name "arg,
-//    "Write an individual header for each C file",
-//    "Write #include <c-extensions.h>",
     "Print a help message and exit",
-//    "Don't delete generated .h files which are empty",
-//    "Write #line information in the .h files",
-//    "Write one local header file for all C files",
-//    "Give local header macro the name "arg,
-//    "Redirect standard output to "arg,
-//    "Give prototype macro the name "arg,
-//    "Pass "arg" to the C preprocessor",
-//    "Don't ignore things declared `static'",
-//    "Use suffix `"arg"' for simple backups",
-//    "Create a tag table",
-//    "Don't upgrade traditional C",
-    "Write version information and exit",
-//    "Use version control style "arg,
-//    "Write a wrapper when writing to stdout",
-//    "Write comments to header file",
-//    "Warn about malpractices"
 };
 
 /* 
@@ -137,53 +77,6 @@ short_options (struct option * long_options, unsigned n_options)
 
 #ifdef MANUAL
 
-#if 0
-
-/* Most of the options are cross-referenced to somewhere else in the
-   manual.  The following strings point to a node in the Cfunctions
-   manual.  */
-
-static struct
-{
-    const char * cross_ref;
-    const char * rc_name;
-}
-other_stuff [ N_OPTIONS ] =
-{
-//  {"Advertisement", "advert"}, 
-  {"Backups", "backup"},
-//  {"C extensions", "copy c ex"},
-//  {"CPP"},
-
-  {NULL},
-
-  {NULL},
-  {"Input file format"},
-  {"One header"},
-//  {"Extra header information", "global macro"},
-//  {"Individual headers"},
-//  {"C extensions", "include c ex"},
-//  {"C compiler", "line numbers"},
-  {NULL},
-  {NULL},
-//  {"C compiler", "line numbers"},
-  {"Extra local header information"},
-  {"Extra local header information", "local macro"},
-  {"Output files"},
-  {"Traditional C", "proto macro"},
-  {"CPP"},
-  {"Ignoring static"},
-  {"Backups", "backup suffix"},
-//  {"Making tag tables"},
-  {NULL},
-  {"Backups", "version control"},
-  {"Wrappers"},
-  {"Comments", "write comments"},
-  {"Warnings", "warn"}
-};
-
-#endif /* 0 */
-
 static const char * texi_begin = 
 "@c This texinfo file is generated from `"__FILE__"'.\n"
 "@noindent\n"
@@ -213,7 +106,7 @@ compare_letter_options (const void * a, const void * b)
     unsigned ia = * (unsigned *) a;
     unsigned ib = * (unsigned *) b;
     int av;
-int bv;
+    int bv;
     av = tolower (long_options[ia].val);
     bv = tolower (long_options[ib].val);
     if (av == bv) {
