@@ -51,10 +51,6 @@ enum bool { FALSE, TRUE };
 
 static char * command_line;
 
-/* The name of the source file, specified by the -f option. */
-
-static char * override_source_name;
-
 /* Maximum number of brackets '(' to expect in function arguments. */
 
 #define MAX_ARG_BR_DEPTH 3
@@ -92,8 +88,6 @@ BOOL c_ex_std_include;          /* -I */
 BOOL keep_empty_files;          /* -k */
 /* -n */
 BOOL save_static_funcs;         /* -s */
-/* -w */
-static char * wrap;
 BOOL extensions = TRUE;         /* -x */
 
 static const char * local_macro = "LOCAL_H"; /* -L */
@@ -320,27 +314,6 @@ unsigned rule_line;
 
 struct warning warns;
 
-/* Process the command line argument. */
-
-static void
-process_warning (const char * warning_arg)
-{
-    if (strcmp (warning_arg, "implicit-int") == 0
-	|| strcmp (warning_arg, "implicit") == 0) {
-	warns.implicit_int = 1;
-	return;
-    }
-    if (strcmp (warning_arg, "strict-prototypes") == 0) {
-	warns.strict_prototypes = 1;
-	return;
-    }
-    if (strcmp (warning_arg, "reserved") == 0) {
-	warns.reserved_words = 1;
-	return;
-    }
-    warning ("unknown argument '%s' to -W", warning_arg);
-}
-
 static void
 print_line_number (void)
 {
@@ -411,11 +384,9 @@ do_void_pointer (const char * text)
 void
 do_start_arguments (void)
 {
-
     if (cfunctions_dbug.arg) {
         DBMSG ("start arguments\n");
     }
-
     argument_next ();
     arg_put_name (current_arg);
     s.seen_arguments = TRUE;
@@ -424,16 +395,12 @@ do_start_arguments (void)
 void
 do_arguments (void)
 {
-
     if (cfunctions_dbug.arg) {
         DBMSG ("do arguments\n");
     }
-
     arg_put_name (current_arg);
     s.seen_arguments = TRUE;
 }
-
-/* */
 
 void
 do_function_pointer (const char * text)
@@ -479,7 +446,6 @@ do_function_pointer_argument (const char * text)
         current_arg->function_pointer_arguments = strdup (text);
     }
 }
-
 
 void
 do_word (const char * text, int leng)
@@ -546,12 +512,10 @@ line_change (const char * text)
 		 MAX_LINE_NAME);
 	line_source_name[MAX_LINE_NAME-1] = '\0';
     }
-    else
-
-	{
-	    strcpy (line_source_name, first_quote + 1);
-	    line_source_name[name_length-2] = '\0';
-	}
+    else {
+	strcpy (line_source_name, first_quote + 1);
+	line_source_name[name_length-2] = '\0';
+    }
     line_at = strstr (text, "line");
     if (! line_at) {
 	line_at = strstr (text, "#");
