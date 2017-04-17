@@ -1,21 +1,6 @@
 # compiler output
 
 cfunctions
-options
-
-# Made by configure script
-
-config.h
-Makefile
-
-# Made by makedepend or similar
-
-Makefile.bak
-dependencies
-
-# Made by etags
-
-TAGS
 
 # Made by flex
 
