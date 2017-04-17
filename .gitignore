@@ -1,19 +1,22 @@
-# GNU Configure output
-autom4te.cache
-configure
-Makefile
-src/Makefile
-doc/Makefile
-tests/test.perl
+# compiler output
 
-config.log
-config.status
-# Distribution files
-dists
-cfunctions-*.tar.gz
-cfunctions-*.tar.bz2
-cfunctions-0.*
-# Things are in here which I haven't decided what to do with yet.
-junk/*
-# This is the output of make in src/
 cfunctions
+options
+
+# Made by configure script
+
+config.h
+Makefile
+
+# Made by makedepend or similar
+
+Makefile.bak
+dependencies
+
+# Made by etags
+
+TAGS
+
+# Made by flex
+
+cfunctions.c
