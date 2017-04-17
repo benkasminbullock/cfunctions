@@ -54,7 +54,7 @@ cfunctions.c:	cfunctions.fl
 	chmod 0444 $@
 
 clean:	
-	rm -f cfunctions $(OBJS) options TAGS
+	rm -f cfunctions $(OBJS)
 
 install:	all
 	$(INSTALL) cfunctions $(bindir)
