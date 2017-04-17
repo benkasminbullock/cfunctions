@@ -2037,63 +2037,10 @@ main (int argc, char ** argv)
 	    break;
 	}
 	switch (c) {
-	case 'b':
-	    backup = TRUE;
-	    break;
 	case 'D':
 	    set_debug_flag (optarg);
 	    break;
-	case 'f':
-	    override_source_name = optarg;
-	    break;
-	case 'G':
-	    global_macro = optarg;
-	    break;
-	case 'h':
-	    print_usage (n_options, long_options, usage);
-	    return EXIT_SUCCESS;
-	case 'I':
-	    c_ex_std_include = TRUE;
-	    break;
-	case 'k':
-	    keep_empty_files = TRUE;
-	    break;
-	case 'l':
-	    local.name = optarg;
-	    if (is_c_file (local.name)) {
-		warning ("local header name '%s' looks like a C file name",
-			 local.name);
-	    }
-	    local.name_len = strlen (local.name);
-	    break;
-	case 'L':
-	    local_macro = optarg;
-	    break;
-	case 'p':
-	    prototype_macro = optarg;
-	    break;
-	case 'P':
-	    break;
-	case 's':
-	    save_static_funcs = TRUE;
-	    break;
-	case 'S':
-	    simple_backup_suffix = optarg;
-	    break;
-	case 'V':
-	    version = optarg;
-	    break;
-	case 'w':
-	    wrap = optarg;
-	    break;
-	case 'W':
-	    process_warning (optarg);
-	    break;
-	case 'x':
-	    extensions = FALSE;
-	    break;
 	default:
-	    print_usage (n_options, long_options, usage);
 	    return EXIT_FAILURE;
 	}
     }

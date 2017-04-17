@@ -13,7 +13,6 @@
 
 struct option long_options [] = {
     {"debug",           required_argument, NULL, 'D'},
-    {"help",            no_argument,       NULL, 'h'},
     {0, 0, 0, 0}
 };
 
@@ -29,7 +28,6 @@ int n_options = N_OPTIONS;
 
 const char * usage [ N_OPTIONS ] = {
     "Set debugging option "arg" (-D help for list)",
-    "Print a help message and exit",
 };
 
 /* 
