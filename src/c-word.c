@@ -37,8 +37,11 @@ unsigned c_word (unsigned char * x)
         case 0: /* cannot be part of a c word */
             return i;
         case 1: /* digits */
-            if ( ! i )
-                return i;
+            if (i == 0) {
+		/* A digit in the first position cannot be part of a C
+		   word. */
+                return 0;
+	    }
         case 2: /* letters and `_' */
             i++;
         }

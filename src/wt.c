@@ -20,8 +20,6 @@
 #include "sys_or_exit.h"
 #include "wt.h"
 
-#define DISABLE_CPP
-
 /* Declarations of Flex objects. */
 
 extern int yylex ();
@@ -2066,13 +2064,7 @@ extract (char * c_file_name)
 	source_name = c_file_name;
 	c_file_name_len = strlen (c_file_name);
 
-#ifndef DISABLE_CPP
-	if (c_preprocess) {
-	    yyin = cpp_start (c_file_name);
-	}
-	else
-#endif
-	    yyin = fopen_or_exit (c_file_name, "r");
+	yyin = fopen_or_exit (c_file_name, "r");
 
 	if (individual) {
 	    h_file_name = malloc_or_exit (c_file_name_len + 1);
@@ -2094,11 +2086,6 @@ extract (char * c_file_name)
 	    source_name = "STDIN";
 	}
 	reading_from_stdin = TRUE;
-#ifndef DISABLE_CPP
-	if (c_preprocess) {
-	    yyin = cpp_start (NULL);
-	}
-#endif
     }
 
     if (! individual) {
@@ -2181,13 +2168,7 @@ open_library_output (struct outfile * x)
 	    hin_copying = TRUE;
 	    verbatim_file = x->file;
 	    source_name = file_aux_name;
-#ifndef DISABLE_CPP
-	    if (c_preprocess) {
-		yyin = cpp_start (file_aux_name);
-	    }
-	    else
-#endif
-		yyin = fopen_or_exit (file_aux_name, "r");
+	    yyin = fopen_or_exit (file_aux_name, "r");
 	    read_file ();
 
 	    if (! verbatiming) {
@@ -2418,12 +2399,7 @@ main (int argc, char ** argv)
 	    copy_c_ex = TRUE;
 	    break;
 	case 'C':
-#ifdef DISABLE_CPP
-	    warning ("C preprocessor support was disabled at compilation time");
-#else
-	    c_preprocess = TRUE;
-	    cpp_add_argument (CPP);
-#endif
+	    warning ("C preprocessor support is now disabled.");
 	    break;
 	case 'D':
 
@@ -2483,14 +2459,6 @@ main (int argc, char ** argv)
 	    prototype_macro = optarg;
 	    break;
 	case 'P':
-#ifndef DISABLE_CPP
-	    if (! c_preprocess) {
-		warning ("ignoring -P / --cpp-arg %s: for C preprocessing "
-			 "use '-C / --cpp'", optarg);
-	    }
-	    else
-		cpp_add_argument (optarg);
-#endif
 	    break;
 	case 's':
 	    save_static_funcs = TRUE;
