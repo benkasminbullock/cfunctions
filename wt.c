@@ -16,7 +16,6 @@
 #include "file-name.h"
 #include "file.h"
 #include "options.h"
-#include "print-usage.h"
 #include "sys_or_exit.h"
 #include "wt.h"
 

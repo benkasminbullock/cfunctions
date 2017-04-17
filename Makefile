@@ -30,7 +30,6 @@ error-msg.c \
 file-name.c \
 file.c \
 options.c \
-print-usage.c \
 sys_or_exit.c \
 wt.c
 
@@ -43,7 +42,6 @@ error-msg.o \
 file-name.o \
 file.o \
 options.o \
-print-usage.o \
 sys_or_exit.o \
 wt.o
 
@@ -56,7 +54,6 @@ error-msg.h \
 file-name.h \
 file.h \
 options.h \
-print-usage.h \
 sys_or_exit.h \
 wt.h
 
@@ -97,8 +94,6 @@ error-msg.o: error-msg.c error-msg.h
 file.o: file.c file.h error-msg.h 
 
 options.o: options.c options.h sys_or_exit.h  options.h config.h file.h
-
-print-usage.o: print-usage.c print-usage.h error-msg.h sys_or_exit.h 
 
 wt.o: wt.c config.h error-msg.h  sys_or_exit.h file.h file-name.h \
 	options.h backup.h argument.h
