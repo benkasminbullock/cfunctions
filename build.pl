@@ -4,6 +4,5 @@ use strict;
 use Perl::Build;
 use FindBin '$Bin';
 perl_build (
-    pre => "$Bin/bkbconfig.pl",
-    clean => "$Bin/clean.pl",
+    makefile => "$Bin/Makefile",
 );

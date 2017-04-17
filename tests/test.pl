@@ -7,7 +7,7 @@ use strict;
 use FindBin '$Bin';
 use Test::More;
 
-my $cfunctions = "$Bin/../src/cfunctions";
+my $cfunctions = "$Bin/../cfunctions";
 
 if (! -x $cfunctions) {
     die "No $cfunctions";

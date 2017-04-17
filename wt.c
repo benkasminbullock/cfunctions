@@ -525,9 +525,9 @@ line_change (const char * text)
 	}
 	line_at += 1;
     }
-    else
+    else {
 	line_at += 4;
-
+    }
     yylineno = atoi (line_at) - 1;
     source_name = line_source_name;
     push_in_cpp ();
