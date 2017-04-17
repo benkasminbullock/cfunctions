@@ -9,7 +9,7 @@ SHELL=/bin/sh
 FLEX = flex
 CC = gcc
 CPPFLAGS = -I. 
-CFLAGS = -g3 -Wall
+CFLAGS = -g -Wall -O
 VERSION = 1.0
 GCOV = 
 INSTALL = /usr/bin/install -c
@@ -99,4 +99,4 @@ wt.o: wt.c config.h error-msg.h  sys_or_exit.h file.h file-name.h \
 	options.h backup.h argument.h
 
 test:
-	cd tests;prove test.pl
+	cd tests;prove --nocolor test.pl
