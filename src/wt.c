@@ -237,7 +237,7 @@ static BOOL hin_copying;
 /* The parsing state information.  'function_reset' resets this to all
    zeros. */
 
-static struct cfunctions_parse_state
+typedef struct cfunctions_parse_state
 {
     /* The number of function arguments seen so far. */
 
@@ -308,6 +308,7 @@ static struct cfunctions_parse_state
     unsigned function_pointer : 1;
 
 }
+parse_state_t;
 
 /* The state information is kept in 's'.  The instance 'z' is kept
    empty and used just for copying to reset the state.  Doing this via
@@ -315,7 +316,8 @@ static struct cfunctions_parse_state
    never forgets to reset all of the states at the end of parsing a
    function or external variable. */
 
-s, z;
+static parse_state_t s;
+static parse_state_t z;
 
 /* Are we reading from standard input? */
 
@@ -415,11 +417,10 @@ static unsigned comment_len;
 static void
 comment_add (const char * text, unsigned leng)
 {
-
+    int remaining;
     if (cfunctions_dbug.comm) {
 	line_info ("comment add %s\n", text);
     }
-
     if (! comment_buffer) {
 	comment_buffer = malloc_or_exit (INITIAL_LEN);
 	comment_buf_len = INITIAL_LEN;
@@ -428,12 +429,14 @@ comment_add (const char * text, unsigned leng)
 	comment_buf_len = comment_len + leng + 1;
 	comment_buffer = realloc_or_exit (comment_buffer, comment_buf_len);
     }
-    if (comment_len) {
-	strcat (comment_buffer, text);
+    remaining = comment_buf_len - comment_len;
+    if (remaining < 0) {
+	fprintf (stderr, "%s:%d: underflow %d = %d - %d.\n",
+		 __FILE__, __LINE__,
+		 remaining, comment_buf_len, comment_len);
+	return;
     }
-    else {
-	strcpy (comment_buffer, text);
-    }
+    strncpy (comment_buffer + comment_len, text, remaining);
     comment_len += leng;
 }
 
@@ -2143,14 +2146,19 @@ open_library_output (struct outfile * x)
 {
     if (x->name) {
 	char * file_aux_name;
+	/* File name length. */
+	int fnlen;
+	/* Auxiliary file name length. */
+	int auxlen;
 
 	/* Make the '.h' file name. */
 
 	x->name_len = strlen (x->name);
-	x->file_name = malloc_or_exit (x->name_len + 3);
-	file_aux_name = malloc_or_exit (x->name_len + 5);
-	strcpy (x->file_name, x->name);
-	strcat (x->file_name, ".h");
+	fnlen = x->name_len + 3;
+	x->file_name = malloc_or_exit (fnlen);
+	auxlen = x->name_len + 5;
+	file_aux_name = malloc_or_exit (auxlen);
+	snprintf (x->file_name, fnlen, "%s.h", x->name);
 
 	/* Back up any old file */
 
@@ -2161,8 +2169,7 @@ open_library_output (struct outfile * x)
 	x->file = fopen_or_exit (x->file_name, "w");
 	outfile = x->file;
 	wrapper_top (x->file_name, & x->guard_name);
-	strcpy (file_aux_name, x->file_name);
-	strcat (file_aux_name, "in");
+	snprintf (file_aux_name, auxlen, "%sin", x->file_name);
 	if (fexists (file_aux_name)) {
 	    verbatiming = TRUE;
 	    hin_copying = TRUE;
@@ -2310,49 +2317,6 @@ overwrite_check (char * c_file_name, struct outfile * x)
     }
 }
 
-static void
-preserve_command_line (int argc, char ** argv)
-{
-    unsigned i, argv_total_len, running_len;
-
-    argv_total_len = 0;
-    for (i = 0; i < argc; i++) {
-	argv_total_len += strlen (argv[i]) + 4;
-    }
-    command_line = malloc_or_exit (argv_total_len);
-    command_line[0] = '\0';
-    running_len = 0;
-    for (i = 0; i < argc; i++) {
-	unsigned len = strlen (argv[i]);
-	if (len > error_msg_width) {
-	    strcat (command_line, "\n");
-	    strcat (command_line, argv[i]);
-	    strcat (command_line, "\n");
-	    running_len = 2;
-	    continue;
-	}
-	else if (running_len + len > error_msg_width) {
-	    /* see 'error_msg.c' */
-	    running_len = len + 2;
-	    strcat (command_line, "\n");
-	}
-	else {
-	    running_len += len + 1;
-	}
-	strcat (command_line, argv[i]);
-	if (i != argc - 1) {
-	    strcat (command_line, " ");
-	}
-    }
-}
-
-const char * const version_info =
-    "Cfunctions version "VERSION", Copyright "
-    "(C) "COPYRIGHT_YEAR" Ben Bullock (benkasminbullock@gmail.com).\n"
-    "Cfunctions comes with NO WARRANTY, to the extent permitted by law.\n"
-    "You may redistribute Cfunctions under the terms of the GNU General\n"
-    "Public Licence.  For more information see the file named COPYING.\n";
-
 int
 main (int argc, char ** argv)
 {
@@ -2373,10 +2337,6 @@ main (int argc, char ** argv)
 	simple_backup_suffix = version;
     }
     version = getenv ("VERSION_CONTROL");
-
-    /* Get user defaults values from the run command file. */
-
-    preserve_command_line (argc, argv);
 
     write_line_numbers    = TRUE;//rc.line_numbers;
     /* parse the command line options. */
@@ -2466,9 +2426,6 @@ main (int argc, char ** argv)
 	case 'S':
 	    simple_backup_suffix = optarg;
 	    break;
-	case 'v':
-	    printf (version_info);
-	    return EXIT_SUCCESS;
 	case 'V':
 	    version = optarg;
 	    break;
