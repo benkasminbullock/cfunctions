@@ -1304,7 +1304,7 @@ argument_next (cfparse_t * cfp)
 /* Print out the list of arguments that were seen between the most
    recently seen pair of brackets '(' and ')' */
 
-void
+static void
 argument_print (cfparse_t * cfp)
 {
     unsigned i;
