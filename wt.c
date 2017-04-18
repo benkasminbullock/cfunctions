@@ -29,12 +29,6 @@ void push_in_cpp ();
 void start_initial ();
 const char * state_message ();
 
-/* Macro for printing debugging statements. */
-
-#define DBMSG(format,msg...)					\
-    printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);	\
-    printf (format, ## msg)
-
 #undef BOOL
 #define BOOL int
 enum bool { FALSE, TRUE };
@@ -574,14 +568,6 @@ static unsigned verbatim_limit;
 
 /* Debugging function to show 'cpp_if_stack'.  */
 
-static void
-show_cpp_if_stack (unsigned i)
-{
-    DBMSG ("CPP debug: cpp_if_stack[%d] = #%s%s\n", i,
-	   cpp_if_names[cpp_if_stack[i].type],
-	   cpp_if_stack[i].text);
-}
-
 /* Pass through the CPP stack and move everything to fill in holes. */
 
 static void
@@ -807,24 +793,13 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
 void
 cpp_eject (cfparse_t * cfp, unsigned u)
 {
-
     if (cpp_if_stack[u].printed) {
-	unsigned j;
-	for (j = 0; j < cfp->cpp_if_now; j++) {
-	    show_cpp_if_stack (j);
-	}
 	bug (HERE, "Attempt to eject already printed statement %d '%s'",
 	     u, cpp_if_stack[u].text);
     }
-
-
     if (cpp_if_stack[u].type == CPP_ZAP) {
 	return;
     }
-
-    /* The following one might point 'outfile' to the global file
-       wrongly when parsing local files. */
-
     /* Start a new line. */
 
     fprintf (cfp->outfile, "\n");
@@ -848,8 +823,9 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 	    fprintf (cfp->outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
 		     cpp_if_stack[u].text);
 	}
-	else
+	else {
 	    fprintf (cfp->outfile, "#%s\n", cpp_if_names[cpp_if_stack[u].type]);
+	}
     }
     else if (cpp_if_stack[u].text) {
 	fprintf (cfp->outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
@@ -904,8 +880,9 @@ do_extern (cfparse_t * cfp, const char * text, int leng)
     if (cfp->verbatiming) {
 	function_save (cfp, text, leng);
     }
-    else
+    else {
 	cfp->s.seen_extern = TRUE;
+    }
 }
 
 /* This is triggered by cfunctions' special macro "NO_RETURN". */
