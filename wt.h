@@ -29,7 +29,6 @@ extern unsigned n_fargs;
 extern unsigned max_fargs;
 struct warning {
     unsigned implicit_int      : 1;
-    unsigned strict_prototypes : 1;
     unsigned reserved_words    : 1;
 };
 extern struct warning warns;
@@ -92,4 +91,4 @@ void function_print (void);
 void wrapper_bottom (char * h_file_guard);
 void read_file (void);
 char * do_backup (char * file_name);
-#endif 
+#endif /* CFH_WT_H */

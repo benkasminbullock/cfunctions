@@ -217,10 +217,6 @@ BOOL inlining;
 
 BOOL verbatiming;
 
-/* Is Cfunctions copying a '.hin' file into the header file? */
-
-static BOOL hin_copying;
-
 /* The parsing state information.  'function_reset' resets this to all
    zeros. */
 
@@ -889,15 +885,13 @@ cpp_add (char * text, Cpp_If_Type type)
 
     if (verbatiming) {
 
-	if (! hin_copying) {
-	    if (cfunctions_dbug.cpp) {
-		DBMSG ("CPP debug: looking for end of verbatim\n");
-		DBMSG ("%d %d\n", cpp_stack_find_if (cpp_if_now),
-		       verbatim_limit);
-	    }
+	if (cfunctions_dbug.cpp) {
+	    DBMSG ("CPP debug: looking for end of verbatim\n");
+	    DBMSG ("%d %d\n", cpp_stack_find_if (cpp_if_now),
+		   verbatim_limit);
 	}
 
-	if (type == CPP_ENDIF && ! hin_copying &&
+	if (type == CPP_ENDIF &&
 	    cpp_stack_find_if (cpp_if_now) == verbatim_limit) {
 	    /* Cfunctions has hit the final '#endif' of a verbatim copying
 	       area. */
@@ -1163,11 +1157,13 @@ do_brace_close (void)
 	    fprintf (verbatim_file, "\n");
 	}
     }
-    else
+    else {
 	inline_print ("}");
+    }
 }
 
-/* Handle '(void)' argument declarations. */
+/* This function is called by the lexer if the function has the
+   argument string '(void)'. */
 
 void
 do_void_arguments (void)
@@ -1373,25 +1369,13 @@ void
 argument_print (void)
 {
     unsigned i;
-    int trad;
-    trad = s.is_trad && ! (inlining || verbatiming);
-
-
     if (cfunctions_dbug.arg) {
 	DBMSG ("printing argument\n");
     }
 
-
     fprintf (outfile,  " ");
-    if (trad) {
-	if (warns.strict_prototypes) {
-	    line_warning ("function with no prototype");
-	}
-	fprintf (outfile,  " %s (", prototype_macro);
-    }
     if (n_fargs) {
 	fprintf (outfile,  "(");
-
 	for (i = 0; i < n_fargs; i++) {
 	    arg_fprint (outfile, fargs[i]);
 
@@ -1399,23 +1383,10 @@ argument_print (void)
 		fprintf (outfile, ", ");
 	    }
 	}
-	if (trad) {
-	    fprintf (outfile,  "))");
-	}
-	else
-	    fprintf (outfile, ")");
+	fprintf (outfile, ")");
     }
     else {
-	if (s.void_arguments) {
-	    fprintf (outfile, "(void)");
-	}
-	else {
-	    if (warns.strict_prototypes) {
-		line_warning ("function with no prototype");
-	    }
-	    /* Cfunctions insists on prototypes. */
-	    fprintf (outfile, "PROTO ((void))");
-        }
+	fprintf (outfile, "()");
     }
 
     if (! inlining) {
