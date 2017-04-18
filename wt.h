@@ -17,6 +17,11 @@ struct warning {
 };
 extern struct warning warns;
 
+/* The store of information about print format.  This is for the GNU C
+   extension '__attribute__((format(printf,,)))' which tells the
+   compiler that the arguments to a function are in 'printf' format
+   and asks it to check them for errors.  */
+
 struct pf
 {
     unsigned index;

@@ -11,19 +11,21 @@
 
 #include "argument.h"
 #include "backup.h"
+#include "cfunctions.h"
 #include "config.h"
 #include "error-msg.h"
 #include "file-name.h"
 #include "file.h"
 #include "sys-or-exit.h"
 #include "wt.h"
-#include "cfunctions.h"
 
 /* Declare unexported Flex object. */
 
 extern int yy_flex_debug;
 
-/* Helper functions to work around Flex. */
+/* The following declarations are for functions defined in
+   "cfunctions.fl" which access the parsing state of the flex
+   lexer. */
 
 int argument_state ();
 int initial_state ();
@@ -46,31 +48,13 @@ enum bool { FALSE, TRUE };
 
 #define MAX_ARG_BR_DEPTH 3
 
-/* The store of information about print format.  This is for the GNU C
-   extension '__attribute__((format(printf,,)))' which tells the
-   compiler that the arguments to a function are in 'printf' format
-   and asks it to check them for errors.  */
-
 /* Name of source file from '#line' directives. */
 
 static const char * global_macro = "HEADER";
 
-struct outfile
-{
-    char * name;
-    unsigned name_len;
-    char * file_name;
-    char * guard_name;
-    char * backup_name;
-    FILE * file;
-}
-local;
-
-/* If 'curly_braces_depth' goes beyond the following arbitrary limit
-   Cfunctions gives a warning message.  Mostly this is in case
-   Cfunctions itself has gone bananas.  Because most counters in
-   Cfunctions are unsigned, overflow errors with large numbers
-   probably mean underflows have occured.  */
+/* If the number of "{" characters, 'cfp->curly_braces_depth', goes
+   beyond the following arbitrary limit, Cfunctions gives a warning
+   message in case Cfunctions itself has overcounted. */
 
 #define MAX_CURLY_DEPTH 20
 
@@ -169,11 +153,6 @@ typedef struct cfunctions_parse_state
 
     unsigned seen_print_format : 1;
 
-    /* FALSE if this is a user function (in other words a global function)
-       in a library consisting of several files */
-
-    unsigned local_func : 1;
-
     /* TRUE if typedef was seen. */
 
     unsigned seen_typedef : 1;
@@ -201,15 +180,6 @@ typedef struct cfunctions_parse_state
 }
 parse_state_t;
 
-/* The state information is kept in 's'.  The instance 'z' is kept
-   empty and used just for copying to reset the state.  Doing this via
-   struct copying makes the code simpler and means that Cfunctions
-   never forgets to reset all of the states at the end of parsing a
-   function or external variable. */
-
-static parse_state_t s;
-static parse_state_t z;
-
 /* Shared with "argument.c". */
 
 struct warning warns;
@@ -221,6 +191,8 @@ unsigned rule_line;
 /* The top-level thing which is being parsed. */
 
 struct arg * current_arg;
+
+/* The maximum file name length allowed in #line directives. */
 
 #define MAX_LINE_NAME 0x100
 
@@ -235,9 +207,13 @@ struct cfparse
 
     unsigned cpp_if_now;
 
-    /* Is Cfunctions copying everything?  (this is set by '#ifdef HEADER'
-       statements) */
+    /* Is Cfunctions copying everything?  This is set by '#ifdef
+       HEADER' statements. */
+
     BOOL verbatiming;
+
+    /* The current file name for #line directives. */
+
     char line_source_name[MAX_LINE_NAME];
 
     /* The depth of braces '{' and '}' seen. */
@@ -272,6 +248,10 @@ struct cfparse
     FILE * outfile;
 
     char * command_line;
+
+    /* Parse state information. */
+
+    parse_state_t s;
 }
 cfparser;
 
@@ -329,7 +309,7 @@ brace_close (cfparse_t * cfp)
 void
 do_PRINT_FORMAT (cfparse_t * cfp)
 {
-    s.seen_print_format = TRUE;
+    cfp->s.seen_print_format = TRUE;
     start_initial ();
 }
 
@@ -351,7 +331,7 @@ do_start_arguments (cfparse_t * cfp)
     }
     argument_next (cfp);
     arg_put_name (current_arg);
-    s.seen_arguments = TRUE;
+    cfp->s.seen_arguments = TRUE;
     cfp->arg_br_depth++;
 }
 
@@ -362,7 +342,7 @@ do_arguments (cfparse_t * cfp)
         DBMSG ("do arguments\n");
     }
     arg_put_name (current_arg);
-    s.seen_arguments = TRUE;
+    cfp->s.seen_arguments = TRUE;
 }
 
 void
@@ -413,11 +393,11 @@ do_function_pointer_argument (cfparse_t * cfp, const char * text)
 void
 do_word (cfparse_t * cfp, const char * text, int leng)
 {
-    if (s.saw_word) {
+    if (cfp->s.saw_word) {
 	pop_state ();
     }
     function_save (cfp, text, leng);
-    s.saw_word = TRUE;
+    cfp->s.saw_word = TRUE;
 }
 
 void
@@ -427,7 +407,7 @@ do_typedef (cfparse_t * cfp, const char * text, int leng)
 	function_save (cfp, text, leng);
     }
     else {
-	s.seen_typedef = TRUE;
+	cfp->s.seen_typedef = TRUE;
     }
 }
 
@@ -442,7 +422,6 @@ do_copy_typedef (cfparse_t * cfp, const char * text, int leng)
 void
 inline_print (cfparse_t * cfp, const char * x)
 {
-
     if (cfunctions_dbug.print) {
         DBMSG ("Printing '%s'.\n", x);
     }
@@ -492,8 +471,6 @@ line_change (cfparse_t * cfp, const char * text)
     source_name = cfp->line_source_name;
     push_in_cpp ();
 }
-
-
 
 /* Cfunctions sometimes needs to include 'c-extensions.h' because it
    defines all the information about C extensions. */
@@ -635,7 +612,10 @@ show_cpp_if_stack (unsigned i)
 static void
 cpp_fill_holes (cfparse_t * cfp)
 {
-    unsigned i, j = 0;
+    unsigned i;
+    unsigned j;
+
+    j = 0;
 
     for (i = 0; i < cfp->cpp_if_now; i++) {
 	if (cpp_if_stack[i].type != CPP_ZAP) {
@@ -911,7 +891,6 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
 	DBMSG ("CPP debug: if stack now %u deep\n", cfp->cpp_if_now);
     }
 
-
     /* Deficiency: there is no way to resize the stack */
 
     if (cfp->cpp_if_now > MAX_CPP_IFS) {
@@ -987,8 +966,6 @@ cpp_eject (cfparse_t * cfp, unsigned u)
     }
     cpp_if_stack[u].printed = TRUE;
 
-
-
     /* Print a line number to indicate where a particular statement
        was printed. */
 
@@ -997,8 +974,9 @@ cpp_eject (cfparse_t * cfp, unsigned u)
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: print line %u\n", cpp_if_stack[u].print_line);
     }
-
 }
+
+/* This is triggered by # at the start of a line. */
 
 void
 do_start_cpp (cfparse_t * cfp, const char * text)
@@ -1010,6 +988,9 @@ do_start_cpp (cfparse_t * cfp, const char * text)
     inline_print (cfp, text);
 }
 
+/* This deals with the unusual case of '{' and '}' in the C program
+   text. */
+
 void
 do_escaped_brace (cfparse_t * cfp, const char * text)
 {
@@ -1019,8 +1000,9 @@ do_escaped_brace (cfparse_t * cfp, const char * text)
 	DBMSG ("%s:%u: matched escaped brace.\n",
 	       source_name, yylineno);
     }
-
 }
+
+/* This is triggered by the word "extern" in the C program text. */
 
 void
 do_extern (cfparse_t * cfp, const char * text, int leng)
@@ -1029,53 +1011,52 @@ do_extern (cfparse_t * cfp, const char * text, int leng)
 	function_save (cfp, text, leng);
     }
     else
-	s.seen_extern = TRUE;
+	cfp->s.seen_extern = TRUE;
 }
+
+/* This is triggered by cfunctions' special macro "NO_RETURN". */
 
 void
 do_NO_RETURN (cfparse_t * cfp, const char * text)
 {
     check_extensions (cfp);
-    s.c_return_value = VOID;
-    s.c_no_return = TRUE;
+    cfp->s.c_return_value = VOID;
+    cfp->s.c_no_return = TRUE;
     function_save (cfp, "void", 5);
 }
 
+/* This is triggered by ")" in function arguments. */
 
 void
 do_arguments_close_bracket (cfparse_t * cfp, const char * text, int leng)
 {
     cfp->arg_br_depth--;
     if (cfp->arg_br_depth == 0) {
+	/* This was the last ) in the argument list, so revert to the
+	   "initial" state. */
 	start_initial ();
     }
     else if (cfp->arg_br_depth < 0) {
 	bug (HERE, "underflow %d\n", cfp->arg_br_depth);
     }
     else {
-	check_overflow (cfp->arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
+	/* This was not the last ) in the argument list, so we need to
+	   save it as part of the arguments. */
 	argument_save (cfp, text, leng);
     }
 }
 
 void
-do_LOCAL (cfparse_t * cfp, const char * text)
-{
-    check_extensions (cfp);
-    s.local_func = TRUE;
-}
-
-void
 do_static (cfparse_t * cfp, const char * text, int leng)
 {
-    s.seen_static = TRUE;
+    cfp->s.seen_static = TRUE;
     function_save (cfp, text, leng);
 }
 
 void
 do_void (cfparse_t * cfp, const char * text, int leng)
 {
-    s.c_return_value = VOID;
+    cfp->s.c_return_value = VOID;
     function_save (cfp, text, leng);
 }
 
@@ -1083,7 +1064,7 @@ void
 do_NO_SIDE_FX (cfparse_t * cfp, const char * text)
 {
     check_extensions (cfp);
-    s.no_side_effects = TRUE;
+    cfp->s.no_side_effects = TRUE;
 }
 
 
@@ -1119,7 +1100,7 @@ do_brace_close (cfparse_t * cfp)
 void
 do_void_arguments (cfparse_t * cfp)
 {
-    s.void_arguments = TRUE;
+    cfp->s.void_arguments = TRUE;
     do_arguments (cfp);
 }
 
@@ -1341,10 +1322,10 @@ external_clear (cfparse_t * cfp)
 	arg_fprint (cfp->outfile, current_arg);
 	fprintf (cfp->outfile, "{");
     }
-    else if (! (s.seen_static || s.seen_typedef)) {
-	s.unnamed_struct = TRUE;
+    else if (! (cfp->s.seen_static || cfp->s.seen_typedef)) {
+	cfp->s.unnamed_struct = TRUE;
     }
-    if (cfp->verbatiming || ! s.seen_static) {
+    if (cfp->verbatiming || ! cfp->s.seen_static) {
 	arg_tagable (current_arg);
     }
     arg_free (current_arg);
@@ -1363,7 +1344,7 @@ external_print (cfparse_t * cfp, const char * semicolon, const char * why)
 {
     int printable;
 
-    printable = ! s.seen_static;
+    printable = ! cfp->s.seen_static;
 
     if (cfunctions_dbug.func) {
         DBMSG ("external print called with argument '%s' because %s.\n",
@@ -1371,9 +1352,9 @@ external_print (cfparse_t * cfp, const char * semicolon, const char * why)
     }
 
 
-    if (cfp->verbatiming || (! (s.seen_arguments || s.seen_extern) &&
-			! s.seen_typedef &&
-			! s.unnamed_struct)) {
+    if (cfp->verbatiming || (! (cfp->s.seen_arguments || cfp->s.seen_extern) &&
+			! cfp->s.seen_typedef &&
+			! cfp->s.unnamed_struct)) {
         if (cfp->verbatiming || printable) {
             print_line_number (cfp);
             cpp_external_print (cfp);
@@ -1421,7 +1402,7 @@ function_reset (cfparse_t * cfp)
 	arg_free (current_arg);
     }
     current_arg = NULL;
-    s = z;
+    memset (& cfp->s, 0, sizeof (cfp->s));
     cpp_stack_tidy (cfp);
 
     argument_reset (cfp);
@@ -1457,7 +1438,7 @@ function_save (cfparse_t * cfp, const char * text, unsigned yylength)
         }
     }
     arg_add (current_arg, text, yylineno);
-    s.function_type_n++;
+    cfp->s.function_type_n++;
 }
 
 /* Write GNU C extensions for a function. */
@@ -1467,16 +1448,16 @@ write_gnu_c_x (cfparse_t * cfp)
 {
     /* GNU C chokes on the extensions in inline definitions. */
 
-    if (s.c_no_return) {
+    if (cfp->s.c_no_return) {
 	fprintf (cfp->outfile, " X_NO_RETURN");
     }
-    if (s.seen_print_format) {
+    if (cfp->s.seen_print_format) {
 	fprintf (cfp->outfile,  " X_PRINT_FORMAT(%d, %d)",
 		 pf.value[0], pf.value[1]);
     }
 
-    if (s.no_side_effects) {
-	if (s.c_return_value == VOID) {
+    if (cfp->s.no_side_effects) {
+	if (cfp->s.c_return_value == VOID) {
 	    line_warning ("function with no side effects and void return value");
 	}
 	fprintf (cfp->outfile,  " X_CONST");
@@ -1496,11 +1477,11 @@ function_print (cfparse_t * cfp)
 	DBMSG ("printing function\n");
     }
 
-    if (! s.seen_arguments) {
+    if (! cfp->s.seen_arguments) {
 	return;
     }
 
-    printable = ! s.seen_static;
+    printable = ! cfp->s.seen_static;
 
     if (printable || cfp->verbatiming) {
 	print_line_number (cfp);

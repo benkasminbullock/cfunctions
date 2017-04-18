@@ -60,7 +60,10 @@ file.o: file.c file.h error-msg.h
 wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h file-name.h \
 	backup.h argument.h cfunctions.h
 
-cfunctions.c cfunctions.h:	cfunctions.fl
+cfunctions.h: cfunctions.fl
+	$(FLEX) --header-file=cfunctions.h -o cfunctions.c cfunctions.fl
+
+cfunctions.c:	cfunctions.fl
 	if [ -f $@ ]; then chmod 0644 $@; fi
 	$(FLEX) --header-file=cfunctions.h -o cfunctions.c cfunctions.fl
 	chmod 0444 $@

@@ -498,8 +498,6 @@ main{c_opt_space}\([^\{]+\{ {
                   parser_push_state (function);
                   }
 
-LOCAL             do_LOCAL (cfp, yytext);
-
 static            { RULE_LINE; do_static (cfp, yytext, yyleng); }
 
 void              { RULE_LINE; do_void (cfp, yytext, yyleng); }
