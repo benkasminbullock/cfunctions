@@ -26,6 +26,21 @@ extern int yylineno;
 extern int yy_flex_debug;
 extern FILE * yyin;
 
+/* Options. */
+
+struct option long_options [] = {
+    {"debug",           required_argument, NULL, 'D'},
+    {0, 0, 0, 0}
+};
+
+#define N_OPTIONS sizeof (long_options) / sizeof (struct option) - 1
+
+int n_options = N_OPTIONS;
+
+const char * usage [ N_OPTIONS ] = {
+    "Set debugging option \"arg\" (-D help for list)",
+};
+
 /* Helper functions to work around Flex. */
 
 void push_in_cpp (void);
@@ -78,7 +93,6 @@ FILE * verbatim_file;
 #define MAX_LINE_NAME 0x100
 char line_source_name[MAX_LINE_NAME];
 
-static const char * local_macro = "LOCAL_H"; /* -L */
 static const char * global_macro = "HEADER"; /* -G */
 
 struct outfile
@@ -90,7 +104,6 @@ struct outfile
     char * backup_name;
     FILE * file;
 }
-global,                                 /* -g */
 local;                                  /* -l */
 
 const char *prototype_macro = "PROTO"; /* -p */
@@ -865,16 +878,8 @@ cpp_add (char * text, Cpp_If_Type type)
 
     if (type == CPP_IF) {
 	if (! verbatiming) {
-	    if (strstr (x, local_macro)) {
+	    if (strstr (x, global_macro)) {
 		verbatiming = TRUE;
-	    }
-	    else if (strstr (x, global_macro)) {
-		if (global.file) {
-		    outfile = global.file;
-		}
-		verbatiming = TRUE;
-	    }
-	    if (verbatiming) {
 		verbatim_file = outfile;
 		verbatim_limit = cpp_if_now;
 		cpp_stack_top.printed = TRUE;
@@ -980,10 +985,6 @@ cpp_eject (unsigned u)
 
     /* The following one might point 'outfile' to the global file
        wrongly when parsing local files. */
-
-    if (global.file) {
-	outfile = global.file;
-    }
 
     /* Start a new line. */
 
@@ -1481,11 +1482,6 @@ external_print (const char * semicolon, const char * why)
     if (verbatiming || (! (s.seen_arguments || s.seen_extern) &&
 			! s.seen_typedef &&
 			! s.unnamed_struct)) {
-        if (! s.local_func) {
-            if (global.file) {
-                outfile = global.file;
-            }
-        }
         if (verbatiming || printable) {
             print_line_number ();
             cpp_external_print ();
@@ -1620,11 +1616,6 @@ function_print (void)
 
     printable = ! s.seen_static;
 
-    if (! s.local_func) {
-	if (global.file) {
-	    outfile = global.file;
-	}
-    }
     if (inlining && printable) {
 	fprintf (outfile, "\n#ifdef %s\n", inline_macro);
 	fprintf (outfile, "extern inline ");
@@ -1744,7 +1735,7 @@ wrapper_bottom (char * h_file_guard)
    remove the new one, and rename the backup file to what it was
    before.  */
 
-void
+static void
 unbackup (char * backup_name, char * file_name)
 {
     int i;
@@ -1755,7 +1746,9 @@ unbackup (char * backup_name, char * file_name)
 	bug (HERE, "backup name and file name the same");
     }
     i = fdiff (backup_name, file_name);
-    if (! i) {
+    if (i == 0) {
+	/* Restore "backup_name" to "file_name", overwriting the newly
+	   created file. */
 	if (rename (backup_name, file_name)) {
 	    error ("could not rename %s to %s: %s", backup_name,
 		   file_name, strerror (errno));
@@ -1985,9 +1978,10 @@ main (int argc, char ** argv)
     program_name = "cfunctions";
     source_line = & yylineno;
     yy_flex_debug = 0;
-    /* parse the command line options. */
 
-    option_string = short_options (long_options, n_options);
+    /* Parse the command line options. */
+
+    option_string = "D";
 
     while (1) {
 	int c;
@@ -2005,8 +1999,6 @@ main (int argc, char ** argv)
 	    return EXIT_FAILURE;
 	}
     }
-
-    free (option_string);
 
     /* sanity checks for arguments */
 

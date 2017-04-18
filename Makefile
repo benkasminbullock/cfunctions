@@ -15,7 +15,6 @@ cpp.c \
 error-msg.c \
 file-name.c \
 file.c \
-options.c \
 sys-or-exit.c \
 wt.c
 
@@ -27,7 +26,6 @@ cfunctions.o \
 error-msg.o \
 file-name.o \
 file.o \
-options.o \
 sys-or-exit.o \
 wt.o
 
@@ -39,7 +37,6 @@ cfunctions.h \
 error-msg.h \
 file-name.h \
 file.h \
-options.h \
 sys-or-exit.h \
 wt.h
 
@@ -79,10 +76,8 @@ error-msg.o: error-msg.c error-msg.h
 
 file.o: file.c file.h error-msg.h 
 
-options.o: options.c options.h sys-or-exit.h  options.h config.h file.h
-
 wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h file-name.h \
-	options.h backup.h argument.h
+	backup.h argument.h
 
 test:   cfunctions
 	cd tests;prove --nocolor test.pl

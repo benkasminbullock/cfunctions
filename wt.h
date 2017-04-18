@@ -91,7 +91,6 @@ void function_save (const char * text, unsigned yylength);
 void write_gnu_c_x (void);
 void function_print (void);
 void wrapper_bottom (char * h_file_guard);
-void unbackup (char * backup_name, char * file_name);
 void read_file (void);
 char * do_backup (char * file_name);
 #endif 
