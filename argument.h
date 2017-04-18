@@ -48,7 +48,7 @@ struct arg
     unsigned debug : 1;
 };
 
-struct arg * arg_start (int debug);
+struct arg * arg_start ();
 struct arg * arg_share (struct arg * a);
 void arg_add (struct arg * a, const char * t, unsigned line);
 void arg_put_name (struct arg * a);

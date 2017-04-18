@@ -1,8 +1,4 @@
-/* 
-   This (cfunctions.fl) is a Flex input file.  The file `cfunctions.c'
-   included in the Cfunctions distribution is generated from the Flex
-   input file.  
-*/
+/* Lexer rules for cfunctions. */
 
 %{
 
@@ -11,12 +7,6 @@
 #include "wt.h"
 
 struct pf pf;
-
-/* Sometimes people doing debugging need to know what rule the flex
-   scanner matched without turning on the verbose Flex debugging.
-   That is what the following macro RULE_LINE is for. */
-
-#define RULE_LINE rule_line = __LINE__
 
 const char * state_message (void);
 
@@ -48,10 +38,6 @@ void parser_pop_state ();
    `parser_push_state' and `parser_pop_state' below. */
 
 %option stack
-
-/* Set debugging by default. */
-
-%option debug
 
 /* Can switch these sillinesses off according to
 "https://en.wikipedia.org/wiki/Flex_lexical_analyser#Usage_under_non-Unix_environments". */
@@ -166,7 +152,7 @@ braces \{[^{}]*\}
 
   /* Other C preprocessor statements. */
 
-<*>{cpp}define{cpp_space}{c_word} { RULE_LINE; do_define (cfp, yytext); }
+<*>{cpp}define{cpp_space}{c_word} { do_define (cfp, yytext); }
 
 <*>{cpp}(line)?{cpp_opt_space}[0-9]+{cpp_opt_space}\"([^\"]|\\\")+\" {
                   line_change (cfp, yytext);
@@ -221,16 +207,16 @@ typedef(\{(\{(\{({braces}|[^}{])*\}|{braces}|[^}{])*\}|{braces}|[^}{])*\}|{brace
 
   /* Type definitions. */
 
-typedef           { RULE_LINE; do_typedef (cfp, yytext, yyleng); }
+typedef           { do_typedef (cfp, yytext, yyleng); }
 
   /* Enumerations. */
 
-enum              { RULE_LINE;
+enum              { 
                   parser_push_state (in_enum);
                   function_save (cfp, yytext, yyleng);
                   }
 
-<in_enum>{c_word} { RULE_LINE; do_word (cfp, yytext, yyleng); }
+<in_enum>{c_word} { do_word (cfp, yytext, yyleng); }
 
 <in_enum>\{       {
                   external_clear (cfp);
@@ -239,7 +225,7 @@ enum              { RULE_LINE;
 
 <in_enum>{c_space} ;
 
-<is_enum>{c_word}[^\},;]* { RULE_LINE;
+<is_enum>{c_word}[^\},;]* { 
                   inline_print (cfp, yytext);
                   }
 
@@ -254,13 +240,13 @@ enum              { RULE_LINE;
                   
   /* Structures and unions. */
 
-(struct|union)    { RULE_LINE; /* A `struct' is just the same 
+(struct|union)    { /* A `struct' is just the same 
                                   syntactically as a `union'. */
                   function_save (cfp, yytext, yyleng);
                   parser_push_state (in_struct);
                   }
 
-<in_struct>{c_word}  { RULE_LINE; do_word (cfp, yytext, yyleng); }
+<in_struct>{c_word}  { do_word (cfp, yytext, yyleng); }
 
 <in_struct>\*     {
                   function_save (cfp, yytext, yyleng);
@@ -339,22 +325,22 @@ enum              { RULE_LINE;
                    }
 
 <func_ptr>[^\)]+   {
-                  do_function_pointer (cfp, yytext);
-                  }
+                   do_function_pointer (cfp, yytext);
+                   }
 
-<func_ptr_arg>\)  {
-                  do_function_pointer_argument (cfp, yytext);
-                  parser_pop_state ();
-                  }
+<func_ptr_arg>\)   {
+                   do_function_pointer_argument (cfp, yytext);
+                   parser_pop_state ();
+                   }
 
 <func_ptr_arg>\(   {
-                  do_function_pointer_argument (cfp, yytext);
-                  parser_push_state (func_ptr_arg);
-                  }
+                   do_function_pointer_argument (cfp, yytext);
+                   parser_push_state (func_ptr_arg);
+                   }
 
 <func_ptr_arg>[^\(\)]+   {
-                  do_function_pointer_argument (cfp, yytext);
-                  }
+                   do_function_pointer_argument (cfp, yytext);
+                   }
 
   /* Beginning of a C argument. */
 
@@ -458,14 +444,14 @@ enum              { RULE_LINE;
 
 <function>(\'\{\'|\'\}\')  do_escaped_brace (cfp, yytext);
 
-extern            { RULE_LINE; do_extern (cfp, yytext, yyleng); }
+extern            { do_extern (cfp, yytext, yyleng); }
 
 \[[^]]*\]         {
                     arg_put_name (current_arg);
                     arg_add (current_arg, yytext, yylineno);
                   }
 
-\;                { RULE_LINE;
+\;                { 
                     if (current_arg) {                   
                         arg_put_name (current_arg);
                         external_print (cfp, ";\n", "semicolon (initial state)");
@@ -475,7 +461,7 @@ extern            { RULE_LINE; do_extern (cfp, yytext, yyleng); }
                     }                     
                   }
 
-=                 { RULE_LINE;
+=                 { 
                     if (current_arg) {
                       arg_put_name (current_arg);
 }
@@ -484,7 +470,7 @@ extern            { RULE_LINE; do_extern (cfp, yytext, yyleng); }
                     parser_push_state (initialiser);
                   }
 
-\,                { RULE_LINE;
+\,                { 
                     if (current_arg) {                   
  		        arg_put_name (current_arg);
          		current_arg = arg_share (current_arg);
@@ -498,13 +484,13 @@ main{c_opt_space}\([^\{]+\{ {
                   parser_push_state (function);
                   }
 
-static            { RULE_LINE; do_static (cfp, yytext, yyleng); }
+static            { do_static (cfp, yytext, yyleng); }
 
-void              { RULE_LINE; do_void (cfp, yytext, yyleng); }
+void              { do_void (cfp, yytext, yyleng); }
 
 NO_SIDE_FX        do_NO_SIDE_FX (cfp, yytext);
 
-NO_RETURN         { RULE_LINE; do_NO_RETURN (cfp, yytext); }
+NO_RETURN         { do_NO_RETURN (cfp, yytext); }
 
   /* Over-complicated method for parsing GNU C extension related thing. */
 
@@ -527,11 +513,11 @@ PRINT_FORMAT      {
                   pf.value[pf.index] = atoi ( yytext );
                   }
 
-void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (cfp, yytext); }
+void{c_opt_space}\*+ { do_void_pointer (cfp, yytext); }
 
-{c_word}          { RULE_LINE; function_save (cfp, yytext, yyleng); }
+{c_word}          { function_save (cfp, yytext, yyleng); }
 
-\*                { RULE_LINE;
+\*                { 
                   /* This is for functions which return pointers 
                      to something.  It should be eliminated by 
                      making a better rule to match functions. */

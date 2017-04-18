@@ -9,8 +9,8 @@
 /* The name of the program running and of the source file the program
    is reading from.  The default values are just for debugging. */
 
-const char * program_name = "PROGRAM NAME UNDEFINED";
-const char * source_name = "SOURCE NAME UNDEFINED";
+static const char * program_name = "PROGRAM NAME UNDEFINED";
+static const char * source_name = "SOURCE NAME UNDEFINED";
 int * source_line = NULL;
 
 #define DO_PRINT(file)				\
@@ -133,3 +133,20 @@ bug (const char * file, unsigned line, const char * format, ... )
     exit (EXIT_FAILURE);
 }
 
+void
+set_source_name (const char * name)
+{
+    source_name = name;
+}
+
+const char *
+get_source_name ()
+{
+    return source_name;
+}
+
+void
+set_program_name (const char * name)
+{
+    program_name = name;
+}

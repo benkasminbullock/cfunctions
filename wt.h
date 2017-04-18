@@ -11,7 +11,6 @@ typedef enum {
 Cpp_If_Type;
 
 extern struct arg * current_arg;
-extern unsigned rule_line;
 struct warning {
     unsigned implicit_int      : 1;
 };

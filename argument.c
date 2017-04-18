@@ -10,24 +10,16 @@
 #include "error-msg.h"
 #include "argument.h"
 
-/* Macro for printing debugging statements. */
-
-#define DBMSG(format,msg...) do {                               \
-        printf ("%s:%d [%s]: ", __FILE__, __LINE__, __func__);	\
-        printf (format, ## msg);                                \
-    } while (0)
-
 /* Create a completely new "arg" structure. */
 
 struct arg * 
-arg_start (int debug)
+arg_start ()
 {
     struct arg * a;
 
     a = calloc_or_exit (1, sizeof (struct arg));
     a->types = calloc_or_exit (1, sizeof (struct shared_type));
     a->types->ref_count++;
-    a->debug = debug;
     return a;
 }
 
@@ -83,14 +75,6 @@ arg_add (struct arg * a, const char * t, unsigned line)
 {
     unsigned t_len;
     struct type * x;
-
-
-    if (a->debug) {
-        DBMSG ("Adding '%s' in state %d\n", t, a->parse_state);
-    }
-
-
-
     t_len = strlen (t);
     x = calloc_or_exit (1, sizeof (struct type));
     x->name = malloc_or_exit (t_len + 1);
@@ -119,11 +103,6 @@ arg_add (struct arg * a, const char * t, unsigned line)
             bug (HERE, "addition to a shared type list");
         }
         else {
-
-            if (a->debug) {
-                DBMSG ("Adding '%s' to list of types\n", t);
-            }
-
             type_list_add (& a->types->t, x);
         }
         break;
@@ -156,11 +135,6 @@ type_list_move (struct arg * a, struct type ** t)
 void
 arg_put_name (struct arg * a)
 {
-
-    if (a->debug) {
-        DBMSG ("putting name\n");
-    }
-
     /* Kludge. */
     if (a->is_function_pointer) {
         return;
@@ -317,12 +291,6 @@ type_fprint (FILE * f, struct type * t, int do_extern)
 void
 arg_fprint (FILE * f, struct arg * a)
 {
-
-    if (a->debug) {
-        DBMSG ("Printing one argument.\n");
-    }
-
-
     if (a->types->t) {
         type_fprint (f, a->types->t, 0);
     }
@@ -346,31 +314,10 @@ arg_fprint (FILE * f, struct arg * a)
 void
 arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 {
-
-    if (a->debug) {
-        DBMSG ("Printing all arguments: do extern is %d.\n", do_extern);
-        if (a->is_function_pointer) {
-            DBMSG ("Function pointer.\n");
-        }
-    }
-
-
     if (a->types->t) {
-
-        if (a->debug) {
-            DBMSG ("doing type_fprint.\n");
-        }
-
         type_fprint (f, a->types->t, do_extern);
     }
 
-    else {
-        if (a->debug) {
-            DBMSG ("No types.\n");
-        }
-    }
-
-    /* Kludge. */
     if (a->is_function_pointer) {
         fprintf (f, "(* %s) (%s",
                  a->function_pointer,
