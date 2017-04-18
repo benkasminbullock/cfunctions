@@ -95,9 +95,9 @@ int bbuzz)
    only match one `\n'. */
 
 static void function_save ( 
-                           #ifdef CFUNCTIONS_DEBUG
+#ifdef CFUNCTIONS_DEBUG
                            unsigned line, 
-                           #endif
+#endif
                            char * yytext, unsigned yylength );
 
 #endif /* 0 */

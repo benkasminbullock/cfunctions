@@ -9,7 +9,6 @@ INSTALL = /usr/bin/install -c
 SOURCES =  \
 argument.c \
 backup.c \
-c-word.c \
 cfunctions.c \
 cpp.c \
 error-msg.c \
@@ -20,7 +19,6 @@ wt.c
 OBJS =  \
 argument.o \
 backup.o \
-c-word.o \
 cfunctions.o \
 error-msg.o \
 file.o \
@@ -30,7 +28,6 @@ wt.o
 HEADERS =  \
 argument.h \
 backup.h \
-c-word.h \
 cfunctions.h \
 error-msg.h \
 file.h \
@@ -45,8 +42,6 @@ cfunctions:	$(OBJS)
 argument.o: argument.c argument.h wt.h sys-or-exit.h error-msg.h
 
 backup.o: backup.c backup.h sys-or-exit.h error-msg.h
-
-c-word.o: c-word.c c-word.h 
 
 cfunctions.o: cfunctions.c argument.h wt.h error-msg.h
 
