@@ -84,5 +84,5 @@ options.o: options.c options.h sys-or-exit.h  options.h config.h file.h
 wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h file-name.h \
 	options.h backup.h argument.h
 
-test:
+test:   cfunctions
 	cd tests;prove --nocolor test.pl

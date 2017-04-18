@@ -14,94 +14,6 @@
 #include "backup.h"
 #include "sys-or-exit.h"
 
-/* If ARG is an unambiguous match for an element of the
-   null-terminated array OPTLIST, return the index in OPTLIST
-   of the matched element, else -1 if it does not match any element
-   or -2 if it is ambiguous (is a prefix of more than one element).  */
-
-static int
-argmatch (const char *arg, const char *const *optlist)
-{
-    int i;			/* Temporary index in OPTLIST.  */
-    size_t arglen;		/* Length of ARG.  */
-    int matchind = -1;		/* Index of first nonexact match.  */
-    int ambiguous = 0;		/* If nonzero, multiple nonexact match(es).  */
-
-    arglen = strlen (arg);
-
-    /* Test all elements for either exact match or abbreviated matches.  */
-    for (i = 0; optlist[i]; i++) {
-	if (!strncmp (optlist[i], arg, arglen)) {
-	    if (strlen (optlist[i]) == arglen) {
-		/* Exact match found.  */
-		return i;
-	    }
-	    else if (matchind == -1) {
-		/* First nonexact match found.  */
-		matchind = i;
-	    }
-	    else {
-		/* Second nonexact match found.  */
-		ambiguous = 1;
-	    }
-	}
-    }
-    if (ambiguous) {
-	return -2;
-    }
-    else {
-	return matchind;
-    }
-}
-
-static const enum backup_type backup_types[] = {
-    simple,
-    simple,
-    numbered_existing,
-    numbered_existing,
-    numbered,
-    numbered
-};
-
-static const char *const backup_args [] = {
-    "never",
-    "simple",
-    "nil",
-    "existing",
-    "t",
-    "numbered",
-    0
-};
-
-/* Which type of backup file names are generated. */
-
-enum backup_type backup_type = none;
-
-/* The extension added to file names to produce a simple (as opposed
-   to numbered) backup file name. */
-
-const char *simple_backup_suffix = "~";
-
-/* Return the type of backup indicated by VERSION.
-   Unique abbreviations are accepted. */
-
-enum backup_type
-get_version (char * version)
-{
-    int i;
-
-    if (version == 0 || *version == 0) {
-	return numbered_existing;
-    }
-    i = argmatch (version, backup_args);
-    if (i >= 0) {
-	return backup_types[i];
-    }
-    error ("%s %s `%s'", (i == -1) ? "invalid" : "ambiguous", 
-	   "version control type", version);
-    return 0;
-}
-
 char *
 basename (const char *name)
 {
@@ -138,7 +50,10 @@ dirname (const char * path)
     }
     newpath = malloc (length + 1);
     if (newpath == 0) {
-	return 0;
+	fprintf (stderr, "%s:%d: malloc (%d) failed: %s\n",
+		 __FILE__, __LINE__, length + 1, strerror (errno));
+	// exit ok
+	exit (EXIT_FAILURE);
     }
     strncpy (newpath, path, length);
     newpath[length] = 0;
@@ -166,9 +81,11 @@ static char *
 make_version_name (const char * file, int version)
 {
     char *backup_name;
+    int maxlen;
 
-    backup_name = malloc_or_exit (strlen (file) + 16);
-    sprintf (backup_name, "%s.~%d~", file, version);
+    maxlen = strlen (file) + 16;
+    backup_name = malloc_or_exit (maxlen);
+    snprintf (backup_name, maxlen, "%s.~%d~", file, version);
     return backup_name;
 }
 
@@ -242,25 +159,32 @@ find_backup_file_name (char *file)
     char *dir;
     char *base_versions;
     int highest_backup;
+    char * name;
 
-    if (backup_type == simple) {
-	return concat (file, simple_backup_suffix);
-    }
     base_versions = concat (basename (file), ".~");
     if (base_versions == 0) {
-	return 0;
+	fprintf (stderr, "%s:%d: failed to make file name.\n",
+		 __FILE__, __LINE__);
+	// exit ok
+	exit (EXIT_FAILURE);
     }
     dir = dirname (file);
     if (dir == 0) {
-	free (base_versions);
-	return 0;
+	fprintf (stderr, "%s:%d: failed to make dirname.\n",
+		 __FILE__, __LINE__);
+	// exit ok
+	exit (EXIT_FAILURE);
     }
     highest_backup = max_backup_version (base_versions, dir);
     free (base_versions);
     free (dir);
-    if (backup_type == numbered_existing && highest_backup == 0) {
-	return concat (file, simple_backup_suffix);
+    name = make_version_name (file, highest_backup + 1);
+    if (! name) {
+	fprintf (stderr, "%s:%d: make_version_name (%s, %d) failed.\n",
+		 __FILE__, __LINE__, file, highest_backup + 1);
+	// exit ok
+	exit (EXIT_FAILURE);
     }
-    return make_version_name (file, highest_backup + 1);
+    return name;
 }
 

@@ -7,14 +7,15 @@ use strict;
 use FindBin '$Bin';
 use Test::More;
 
+chdir $Bin or die $!;
 my $cfunctions = "$Bin/../cfunctions";
-
 if (! -x $cfunctions) {
     die "No $cfunctions";
 }
-
 my $cc         = "cc";
 my $GNU_c      = 1;
+main ();
+exit;
 
 sub err_test
 {
@@ -128,17 +129,16 @@ sub try_ok
 
     open ( TEST_OUT, "$cfunctions $c_file 2>&1 |" );
 
-    while ( <TEST_OUT> )
-    {
+    while ( <TEST_OUT> ) {
 	$error_msg .= $_;
     }
     close TEST_OUT;
     ok (! $error_msg, "no errors with $cfunctions $c_file");
+    if ($error_msg) {
+	note ("Cfunctions produced errors as follows: $error_msg");
+    }
 
-# Now for the real test: try to compile and link without warnings
-# using the generated header file.
-
-    $test = "PASSED";
+    # Try compiling and linking using the generated header file.
 
     my $link_file = $c_file;
     $link_file =~ s/^ok-/link-/;
@@ -154,16 +154,12 @@ sub try_ok
     }
     open ( LINK_FILE, $link_file ) || die "no link file for $c_file";
 
-    while ( <LINK_FILE> )
-    {
-        if ( /\/\/\s*options:\s*(.*)/ )
-        {
+    while (<LINK_FILE>) {
+        if ( /\/\/\s*options:\s*(.*)/ ) {
             $cc_op .= $1;
         }
-        if ( $GNU_c )
-        {
-            if ( /\/\/\s*gcc_opt:\s*(.*)/ )
-            {
+        if ( $GNU_c ) {
+            if ( /\/\/\s*gcc_opt:\s*(.*)/ ) {
                 $gcc_op .= $1;
             }
         }
@@ -173,27 +169,25 @@ sub try_ok
 
 #    note "$cc $cc_op $gcc_op $c_file $link_file: "; 
 
-# The following `2>&1' directs `stderr' to Perl and `stdout' to
-# `/dev/null' (according to the Bash manual).
+    my $cc_error_msg = "";
 
-    $error_msg = "";
+    # The following `2>&1' directs `stderr' to Perl and `stdout' to
+    # `/dev/null'.
 
-    open ( CC_OUTPUT, 
-           "$cc $cc_op $gcc_op $c_file $link_file 2>&1 >/dev/null |" );
+    open ( CC_OUTPUT, '-|', 
+           "$cc $cc_op $gcc_op $c_file $link_file 2>&1 >/dev/null" );
 
-    while ( <CC_OUTPUT> )
-    {
-        if ( /.+/ )
-        {
-            $error_msg .= $_;
+    while ( <CC_OUTPUT> ) {
+        if ( /.+/ ) {
+            $cc_error_msg .= $_;
         }
     }
 
     close CC_OUTPUT;
 
-    ok (! $error_msg, "no errors compiling $c_file and $link_file");
-    if ($error_msg) {
-	note ("Error is '$error_msg'");
+    ok (! $cc_error_msg, "no errors compiling $c_file and $link_file");
+    if ($cc_error_msg) {
+	note ("Compiler error is '$cc_error_msg'");
     }
     return;
 }
@@ -250,5 +244,3 @@ sub main
     done_testing ();
 }
 
-main ();
-exit (0);

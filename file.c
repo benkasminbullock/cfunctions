@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "file.h"
 #include "error-msg.h"
@@ -67,65 +68,78 @@ int fcopy (FILE * out, const char * in_file_name)
     Side effects: opens & closes files with names a_name and b_name.
 */
 
+#define A_B_SAME_FILE -5
+#define NO_A_FILE -2
+#define NO_B_FILE -1
+#define A_B_DIFFERENT 1
+
 int fdiff (const char * a_name, const char * b_name)
 {
-    FILE * a;
-    FILE * b;
-
-    char a_block[USUAL_BLOCKS];
-    char b_block[USUAL_BLOCKS];
-    unsigned a_len;
-    unsigned b_len;
-    unsigned i;
+    struct stat stats[2];
+    const char * names[2];
+    FILE * files[2];
+    char * block[2];
+    int i;
     unsigned comp;
+    size_t size;
+
+    names[0] = a_name;
+    names[1] = b_name;
 
     if (strcmp (a_name, b_name) == 0) {
-	return -5;
+	return A_B_SAME_FILE;
     }
-    a = fopen (a_name, "r");
-    if (! a) {
-	return -2;
-    }
-    b = fopen (b_name, "r");
-    if (! b) {
-	fclose (a);
-	return -1;
-    }
-    while (1) {
-	a_len = fread (a_block, sizeof (char), USUAL_BLOCKS, a);
-	if (a_len == 0) {
-	    if (! feof (a)) {
-		comp = -4;
-		goto end;
+    for (i = 0; i < 2; i++) {
+	if (stat (names[i], & stats[i])) {
+	    switch (errno) {
+	    case ENOENT:
+		if (i == 0) {
+		    return NO_A_FILE;
+		}
+		else {
+		    return NO_B_FILE;
+		}
+	    default:
+		fprintf (stderr, "%s:%d: error from stat ('%s'): %s.\n",
+			 __FILE__, __LINE__, names[i], strerror (errno));
+		// exit ok
+		exit (EXIT_FAILURE);
 	    }
 	}
-	b_len = fread (b_block, sizeof (char), USUAL_BLOCKS, b);
-	if (b_len == 0) {
-	    if (! feof (b)) {
-		comp = -3;
-		goto end;
-	    }
-	}
-	if (a_len != b_len) {
-	    comp = 1;
-	    goto end;
-        }
-	for (i = 0; i < a_len; i++) {
-	    if (a_block[i] != b_block[i]) {
-		comp = 1;
-		goto end;
-	    }
-	}
-	if (a_len != USUAL_BLOCKS) {
-	    comp = 0;
-	    goto end;
-        }
     }
- end:
-
-    fclose (a);
-    fclose (b);
-    
+    /* If the two files have different sizes, then they cannot
+       possibly be identical. */
+    size = stats[0].st_size;
+    if (size != stats[1].st_size) {
+	return A_B_DIFFERENT;
+    }
+    for (i = 0; i < 2; i++) {
+	int bytes_read;
+	block[i] = malloc (size);
+	if (! block[i]) {
+	    fprintf (stderr, "%s:%d: malloc (%d) failed: %s.\n",
+		     __FILE__, __LINE__, size, strerror (errno));
+	}
+	files[i] = fopen (names[i], "r");
+	if (! files[i]) {
+	    fprintf (stderr, "%s:%d: error from fopen ('%s'): %s.\n",
+		     __FILE__, __LINE__, names[i], strerror (errno));
+	    // exit ok
+	    exit (EXIT_FAILURE);
+	}
+	bytes_read = fread (block[i], 1, size, files[i]);
+	if (bytes_read != size) {
+	    fprintf (stderr, "%s:%d: fread (%s): short read %d bytes (expected %d)",
+		     __FILE__, __LINE__, names[i], bytes_read, size);
+	    // exit ok
+	    exit (EXIT_FAILURE);
+	}
+	fclose (files[i]);
+    }
+    comp = memcmp (block[0], block[1], size);
+    for (i = 0; i < 2; i++) {
+	free (block[i]);
+    }
     return comp;
 }
 
