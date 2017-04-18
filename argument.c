@@ -330,7 +330,7 @@ arg_fprint (FILE * f, struct arg * a)
         if (warns.implicit_int) {
             line_warning ("function `%s' is implicit int", a->name->name);
         }
-        fprintf (outfile, "int /* default */");
+        fprintf (f, "int /* default */");
     }
     type_fprint (f, a->pointers, 0);
     if (a->name) {

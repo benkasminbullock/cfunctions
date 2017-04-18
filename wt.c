@@ -51,16 +51,6 @@ enum bool { FALSE, TRUE };
    compiler that the arguments to a function are in 'printf' format
    and asks it to check them for errors.  */
 
-/* Files to write output to.  The file 'outfile' is the usual output
-   file.  The file 'localfile' is the file for outputting things which
-   are prefixed with 'LOCAL'.  The file 'verbatimfile' is the file to
-   write verbatim output to.  This can be either 'localfile' or
-   'outfile'. */
-
-FILE * outfile;
-static FILE * localfile;
-static FILE * verbatim_file;
-
 /* Name of source file from '#line' directives. */
 
 static const char * global_macro = "HEADER";
@@ -135,8 +125,6 @@ struct
     unsigned print : 1;
 }
 cfunctions_dbug;
-
-unsigned string_debug_on = 0;
 
 /* The parsing state information.  'function_reset' resets this to all
    zeros. */
@@ -234,49 +222,65 @@ unsigned rule_line;
 
 struct arg * current_arg;
 
-/* The number of brackets inside an argument list.  Brackets inside an
-   argument list are most likely to happen for function pointer
-   arguments.
-
-   Deficiency: I am not sure where else it could happen.  There is a
-   MAX variable just in case things go wrong. */
-
-unsigned arg_br_depth;
+#define MAX_LINE_NAME 0x100
 
 struct cfparse
 {
-/* This keeps track of how many lines have been printed by the CPP
-   output part. */
+    /* This keeps track of how many lines have been printed by the CPP
+       output part. */
 
-unsigned cpp_prints;
+    unsigned cpp_prints;
 
-/* The top of the 'cpp_if_stack' stack. */
+    /* The top of the 'cpp_if_stack' stack. */
 
-unsigned cpp_if_now;
+    unsigned cpp_if_now;
 
     /* Is Cfunctions copying everything?  (this is set by '#ifdef HEADER'
        statements) */
     BOOL verbatiming;
-#define MAX_LINE_NAME 0x100
-char line_source_name[MAX_LINE_NAME];
+    char line_source_name[MAX_LINE_NAME];
 
-/* The depth of braces '{' and '}' seen. */
+    /* The depth of braces '{' and '}' seen. */
 
-unsigned curly_braces_depth;
+    unsigned curly_braces_depth;
 
-/* Are we in a typedef? */
+    /* Are we in a typedef? */
 
-BOOL in_typedef;
+    BOOL in_typedef;
 
+    /* Arguments to the most recently seen function. */
+
+    struct arg ** fargs;
+
+    /* Number of arguments to the most recently seen function. */
+
+    unsigned n_fargs;
+
+    /* Size of allocated memory for 'fargs'. */
+
+    unsigned max_fargs;
+
+    /* The number of brackets inside an argument list.  Brackets inside an
+       argument list are most likely to happen for function pointer
+       arguments.
+
+       Deficiency: I am not sure where else it could happen.  There is a
+       MAX variable just in case things go wrong. */
+
+    int arg_br_depth;
+
+    FILE * outfile;
+
+    char * command_line;
 }
 cfparser;
 
 cfparse_t * cfp = & cfparser;
 
 static void
-print_line_number (void)
+print_line_number (cfparse_t * cfp)
 {
-    fprintf (outfile, "\n#line %u \"%s\"\n", yylineno, source_name);
+    fprintf (cfp->outfile, "\n#line %u \"%s\"\n", yylineno, source_name);
 }
 
 /* Check whether a particular quantity has overflowed a maximum, and if
@@ -348,6 +352,7 @@ do_start_arguments (cfparse_t * cfp)
     argument_next (cfp);
     arg_put_name (current_arg);
     s.seen_arguments = TRUE;
+    cfp->arg_br_depth++;
 }
 
 void
@@ -430,7 +435,7 @@ void
 do_copy_typedef (cfparse_t * cfp, const char * text, int leng)
 {
     if (cfp->verbatiming) {
-        fprintf (outfile, "%s\n", text);
+        fprintf (cfp->outfile, "%s\n", text);
     }
 }
 
@@ -444,7 +449,7 @@ inline_print (cfparse_t * cfp, const char * x)
 
     if (cfp->verbatiming) {
         if (! cfp->in_typedef) {
-            fprintf (verbatim_file, "%s", x);
+            fprintf (cfp->outfile, "%s", x);
         }
     }
 }
@@ -516,8 +521,8 @@ copy_c_extensions (cfparse_t * cfp)
     }
 
     if (c_ex_file_name) {
-	fprintf (outfile, "#line 1 \"%s\"\n", c_ex_file_name);
-	if (fcopy (outfile, c_ex_file_name)) {
+	fprintf (cfp->outfile, "#line 1 \"%s\"\n", c_ex_file_name);
+	if (fcopy (cfp->outfile, c_ex_file_name)) {
 	    warning ("could not copy '%s': %s", c_ex_file_name,
 		     strerror (errno));
 	}
@@ -835,10 +840,9 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
 	if (! cfp->verbatiming) {
 	    if (strstr (x, global_macro)) {
 		cfp->verbatiming = TRUE;
-		verbatim_file = outfile;
 		verbatim_limit = cfp->cpp_if_now;
 		cpp_stack_top.printed = TRUE;
-		print_line_number ();
+		print_line_number (cfp);
 		goto verbatim_started;
 	    }
 	}
@@ -864,7 +868,6 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
 	    cfp->verbatiming = FALSE;
 	}
 	else {
-	    outfile = verbatim_file;
 	    cpp_eject (cfp, cfp->cpp_if_now);
 	}
     }
@@ -941,7 +944,7 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 
     /* Start a new line. */
 
-    fprintf (outfile, "\n");
+    fprintf (cfp->outfile, "\n");
 
     if (cpp_if_stack[u].type == CPP_ENDIF) {
 	int matching_if;
@@ -962,14 +965,14 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 	   there will be two consecutive '\n's */
 
 	if (cpp_if_stack[u].text) {
-	    fprintf (outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
+	    fprintf (cfp->outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
 		     cpp_if_stack[u].text);
 	}
 	else
-	    fprintf (outfile, "#%s\n", cpp_if_names[cpp_if_stack[u].type]);
+	    fprintf (cfp->outfile, "#%s\n", cpp_if_names[cpp_if_stack[u].type]);
     }
     else if (cpp_if_stack[u].text) {
-	fprintf (outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
+	fprintf (cfp->outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
 		 cpp_if_stack[u].text);
     }
     else {
@@ -980,7 +983,7 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 		 cpp_if_names [cpp_if_stack[u].type]);
 	}
 
-	fprintf (outfile, "#%s\n", cpp_if_names [cpp_if_stack[u].type]);
+	fprintf (cfp->outfile, "#%s\n", cpp_if_names [cpp_if_stack[u].type]);
     }
     cpp_if_stack[u].printed = TRUE;
 
@@ -1042,12 +1045,15 @@ do_NO_RETURN (cfparse_t * cfp, const char * text)
 void
 do_arguments_close_bracket (cfparse_t * cfp, const char * text, int leng)
 {
-    arg_br_depth--;
-    if (! arg_br_depth) {
+    cfp->arg_br_depth--;
+    if (cfp->arg_br_depth == 0) {
 	start_initial ();
     }
+    else if (cfp->arg_br_depth < 0) {
+	bug (HERE, "underflow %d\n", cfp->arg_br_depth);
+    }
     else {
-	check_overflow (arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
+	check_overflow (cfp->arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
 	argument_save (cfp, text, leng);
     }
 }
@@ -1084,8 +1090,8 @@ do_NO_SIDE_FX (cfparse_t * cfp, const char * text)
 void
 do_arguments_open_bracket (cfparse_t * cfp, const char * text, int leng)
 {
-    arg_br_depth++;
-    check_overflow (arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
+    cfp->arg_br_depth++;
+    check_overflow (cfp->arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
     argument_save (cfp, text, leng);
 }
 
@@ -1095,11 +1101,11 @@ do_brace_close (cfparse_t * cfp)
     brace_close (cfp);
     if (cfp->curly_braces_depth == 0) {
 	if (cfp->verbatiming) {
-	    fprintf (verbatim_file, "} ");
+	    fprintf (cfp->outfile, "} ");
 	}
 	pop_state ();
 	if (cfp->verbatiming && initial_state ()) {
-	    fprintf (verbatim_file, "\n");
+	    fprintf (cfp->outfile, "\n");
 	}
     }
     else {
@@ -1223,18 +1229,6 @@ cpp_external_print (cfparse_t * cfp)
     }
 }
 
-/* Arguments to the most recently seen function. */
-
-struct arg ** fargs;
-
-/* Number of arguments to the most recently seen function. */
-
-unsigned n_fargs;
-
-/* Size of allocated memory for 'fargs'. */
-
-unsigned max_fargs;
-
 /* Free all the memory allocated for the argument names and type
    names, then reset the counter for arguments.  This function is
    called when an argument list has been printed. */
@@ -1249,10 +1243,10 @@ argument_reset (cfparse_t * cfp)
 	DBMSG ("argument reset.\n");
     }
 
-    for (i = 0; i < n_fargs; i++) {
-	arg_free (fargs[i]);
+    for (i = 0; i < cfp->n_fargs; i++) {
+	arg_free (cfp->fargs[i]);
     }
-    n_fargs = 0;
+    cfp->n_fargs = 0;
 }
 
 /* Allocate memory to copy text into and copy it, then make a pointer
@@ -1264,9 +1258,9 @@ argument_save (cfparse_t * cfp, const char * text, unsigned text_length)
 
     if (cfunctions_dbug.arg) {
 	DBMSG ("%s:%u: saving argument '%s' to slot %d\n",
-	       source_name, yylineno, text, n_fargs - 1);
+	       source_name, yylineno, text, cfp->n_fargs - 1);
     }
-    arg_add (fargs[n_fargs - 1], text, 0);
+    arg_add (cfp->fargs[cfp->n_fargs - 1], text, 0);
 }
 
 /* Test if the function is an ANSI C style one with the arguments'
@@ -1276,8 +1270,8 @@ int
 no_prototype (cfparse_t * cfp)
 {
     unsigned i;
-    for (i = 0; i < n_fargs; i++) {
-	struct arg * a = fargs[i];
+    for (i = 0; i < cfp->n_fargs; i++) {
+	struct arg * a = cfp->fargs[i];
 	if (! a->types->t || a->types->t->prev || a->name || a->pointers) {
 	    return 0;
 	}
@@ -1292,19 +1286,19 @@ no_prototype (cfparse_t * cfp)
 void
 argument_next (cfparse_t * cfp)
 {
-    n_fargs++;
-    if (n_fargs > max_fargs) {
-	if (fargs) {
-	    max_fargs *= 2;
-	    fargs = (struct arg **)
-		realloc_or_exit (fargs, sizeof (struct arg *) * max_fargs);
+    cfp->n_fargs++;
+    if (cfp->n_fargs > cfp->max_fargs) {
+	if (cfp->fargs) {
+	    cfp->max_fargs *= 2;
+	    cfp->fargs = (struct arg **)
+		realloc_or_exit (cfp->fargs, sizeof (struct arg *) * cfp->max_fargs);
 	}
 	else {
-	    max_fargs = 4;
-	    fargs = malloc_or_exit (sizeof (struct arg *) * max_fargs);
+	    cfp->max_fargs = 4;
+	    cfp->fargs = malloc_or_exit (sizeof (struct arg *) * cfp->max_fargs);
 	}
     }
-    fargs[n_fargs - 1] = arg_start (cfunctions_dbug.arg);
+    cfp->fargs[cfp->n_fargs - 1] = arg_start (cfunctions_dbug.arg);
 }
 
 /* Print out the list of arguments that were seen between the most
@@ -1318,20 +1312,20 @@ argument_print (cfparse_t * cfp)
 	DBMSG ("printing argument\n");
     }
 
-    fprintf (outfile,  " ");
-    if (n_fargs) {
-	fprintf (outfile,  "(");
-	for (i = 0; i < n_fargs; i++) {
-	    arg_fprint (outfile, fargs[i]);
+    fprintf (cfp->outfile,  " ");
+    if (cfp->n_fargs) {
+	fprintf (cfp->outfile,  "(");
+	for (i = 0; i < cfp->n_fargs; i++) {
+	    arg_fprint (cfp->outfile, cfp->fargs[i]);
 
-	    if (i < n_fargs - 1) {
-		fprintf (outfile, ", ");
+	    if (i < cfp->n_fargs - 1) {
+		fprintf (cfp->outfile, ", ");
 	    }
 	}
-	fprintf (outfile, ")");
+	fprintf (cfp->outfile, ")");
     }
     else {
-	fprintf (outfile, "()");
+	fprintf (cfp->outfile, "()");
     }
 
     argument_reset (cfp);
@@ -1344,8 +1338,8 @@ void
 external_clear (cfparse_t * cfp)
 {
     if (cfp->verbatiming) {
-	arg_fprint (outfile, current_arg);
-	fprintf (outfile, "{");
+	arg_fprint (cfp->outfile, current_arg);
+	fprintf (cfp->outfile, "{");
     }
     else if (! (s.seen_static || s.seen_typedef)) {
 	s.unnamed_struct = TRUE;
@@ -1381,17 +1375,17 @@ external_print (cfparse_t * cfp, const char * semicolon, const char * why)
 			! s.seen_typedef &&
 			! s.unnamed_struct)) {
         if (cfp->verbatiming || printable) {
-            print_line_number ();
+            print_line_number (cfp);
             cpp_external_print (cfp);
             if (current_arg) {
-                arg_fprint_all (outfile, current_arg, ! cfp->verbatiming);
+                arg_fprint_all (cfp->outfile, current_arg, ! cfp->verbatiming);
                 if (cfp->verbatiming) {
-                    if (n_fargs) {
+                    if (cfp->n_fargs) {
                         argument_print (cfp);
                     }
                 }
             }
-            fprintf (outfile, "%s", semicolon);
+            fprintf (cfp->outfile, "%s", semicolon);
         }
     }
 
@@ -1429,12 +1423,6 @@ function_reset (cfparse_t * cfp)
     current_arg = NULL;
     s = z;
     cpp_stack_tidy (cfp);
-    if (cfp->verbatiming) {
-	outfile = verbatim_file;
-    }
-    else {
-	outfile = localfile;
-    }
 
     argument_reset (cfp);
     cfp->in_typedef = 0;
@@ -1480,10 +1468,10 @@ write_gnu_c_x (cfparse_t * cfp)
     /* GNU C chokes on the extensions in inline definitions. */
 
     if (s.c_no_return) {
-	fprintf (outfile, " X_NO_RETURN");
+	fprintf (cfp->outfile, " X_NO_RETURN");
     }
     if (s.seen_print_format) {
-	fprintf (outfile,  " X_PRINT_FORMAT(%d, %d)",
+	fprintf (cfp->outfile,  " X_PRINT_FORMAT(%d, %d)",
 		 pf.value[0], pf.value[1]);
     }
 
@@ -1491,7 +1479,7 @@ write_gnu_c_x (cfparse_t * cfp)
 	if (s.c_return_value == VOID) {
 	    line_warning ("function with no side effects and void return value");
 	}
-	fprintf (outfile,  " X_CONST");
+	fprintf (cfp->outfile,  " X_CONST");
     }
 }
 
@@ -1515,16 +1503,16 @@ function_print (cfparse_t * cfp)
     printable = ! s.seen_static;
 
     if (printable || cfp->verbatiming) {
-	print_line_number ();
+	print_line_number (cfp);
 	cpp_external_print (cfp);
-	arg_fprint (outfile, current_arg);
+	arg_fprint (cfp->outfile, current_arg);
 	argument_print (cfp);
 	if (cfp->verbatiming) {
-	    fprintf (outfile,  "\n{");
+	    fprintf (cfp->outfile,  "\n{");
 	}
 	else {
 	    write_gnu_c_x (cfp);
-	    fprintf (outfile,  ";\n");
+	    fprintf (cfp->outfile,  ";\n");
 	}
     }
     function_reset (cfp);
@@ -1544,21 +1532,20 @@ wt_status_t;
 #define BSIZE 0x100
 
 static wt_status_t
-wrapper_top (const char * h_file_name, char ** h_file_guard,
-	     const char * command_line)
+wrapper_top (cfparse_t * cfp, const char * h_file_name, char ** h_file_guard)
 {
     unsigned i;
-    unsigned j = 0;
+    unsigned j;
     unsigned l;
     int maxlen;
 
     /* Don't add the date to the file stamp, or the diff will not work
        properly. */
 
-    fprintf (outfile,
+    fprintf (cfp->outfile,
 	     "/*\nThis file was generated by the following command:\n\n"
 	     "%s\n\n*/\n",
-	     command_line);
+	     cfp->command_line);
 
     /* print out the C preprocessor wrapper. */
 
@@ -1569,6 +1556,8 @@ wrapper_top (const char * h_file_name, char ** h_file_guard,
     maxlen = l + 50;
 
     * h_file_guard = malloc_or_exit (maxlen);
+
+    j = 0;
 
     /* 'CFH_' abbreviates CFUNCTIONS HEADER FILE.  This should prevent
        clashes I hope. */
@@ -1590,14 +1579,14 @@ wrapper_top (const char * h_file_name, char ** h_file_guard,
 	    j++;
 	}
     }
-    i = fprintf (outfile,
+    i = fprintf (cfp->outfile,
 		 "#ifndef %s\n"
 		 "#define %s\n"
 		 "\n",
 		 * h_file_guard, * h_file_guard);
 
     if (! i) {
-	bug (HERE, "print failure for wrapper top: outfile not assigned?");
+	bug (HERE, "print failure for wrapper top: cfp->outfile not assigned?");
     }
 
     return wt_status_ok;
@@ -1607,10 +1596,10 @@ wrapper_top (const char * h_file_name, char ** h_file_guard,
    '.h' file (see the comments before the function 'wrapper_top' for
    an explanation).  */
 
-void
-wrapper_bottom (char * h_file_guard)
+static void
+wrapper_bottom (cfparse_t * cfp, char * h_file_guard)
 {
-    fprintf (outfile, "\n#endif /* %s */\n", h_file_guard);
+    fprintf (cfp->outfile, "\n#endif /* %s */\n", h_file_guard);
     free (h_file_guard);
     h_file_guard = NULL;
 }
@@ -1648,7 +1637,7 @@ unbackup (char * backup_name, char * file_name)
 
 /* Read an input C file. */
 
-void
+static void
 read_file (cfparse_t * cfp)
 {
     yylineno = 1;
@@ -1681,7 +1670,7 @@ read_file (cfparse_t * cfp)
    return the name of the file it is renamed to. If a header file with
    the name "file_name" does not already exist, return 0. */
 
-char *
+static char *
 do_backup (char * file_name)
 {
     char * b;
@@ -1702,11 +1691,15 @@ do_backup (char * file_name)
 /* Extract function names from a C file. */
 
 static void
-extract (char * c_file_name, const char * command_line)
+extract (cfparse_t * cfp, char * c_file_name)
 {
-    char * h_file_name = NULL;
+    /* The name of the header file, derived from "c_file_name". */
+    char * h_file_name;
+    /* The ifdef protective wrapper macro name. */
     char * h_file_guard;
+    /* The length of "c_file_name". */
     unsigned c_file_name_len;
+    /* The name of a backup file, if it exists. */
     char * backup_name;
 
     if (! c_file_name) {
@@ -1715,22 +1708,16 @@ extract (char * c_file_name, const char * command_line)
     }
     source_name = c_file_name;
     c_file_name_len = strlen (c_file_name);
-
     yyin = fopen_or_exit (c_file_name, "r");
-
     h_file_name = malloc_or_exit (c_file_name_len + 1);
     strcpy (h_file_name, c_file_name);
     h_file_name[c_file_name_len - 1] = 'h';
     backup_name = do_backup (h_file_name);
-    localfile = fopen_or_exit (h_file_name, "w");
-    outfile = localfile;
-    wrapper_top (h_file_name, & h_file_guard, command_line);
-    outfile = localfile;
-
+    cfp->outfile = fopen_or_exit (h_file_name, "w");
+    wrapper_top (cfp, h_file_name, & h_file_guard);
     read_file (cfp);
-
-    wrapper_bottom (h_file_guard);
-    fclose (localfile);
+    wrapper_bottom (cfp, h_file_guard);
+    fclose_or_exit (cfp->outfile);
     if (backup_name) {
 	unbackup (backup_name, h_file_name);
     }
@@ -1771,10 +1758,6 @@ debug_options[] = {
 	"function pointers"
     },
     {
-	"string",
-	"C strings"
-    },
-    {
 	"flex",
 	"flex lexer"
     },
@@ -1808,9 +1791,6 @@ set_debug_flag (char * flag_name)
     else if (strcmp (flag_name, "print") == 0) {
 	cfunctions_dbug.print = 1;
     }
-    else if (strcmp (flag_name, "string") == 0) {
-	string_debug_on = 1;
-    }
     else if (strcmp (flag_name, "flex") == 0) {
 	yy_flex_debug = 1;
     }
@@ -1832,7 +1812,7 @@ set_debug_flag (char * flag_name)
 }
 
 static void
-fill_command_line (char ** command_line_ptr, int argc, char ** argv)
+fill_command_line (cfparse_t * cfp, int argc, char ** argv)
 {
     int cllen;
     char * clnext;
@@ -1856,15 +1836,14 @@ fill_command_line (char ** command_line_ptr, int argc, char ** argv)
 			  space, argv[i]);
 	clused += bytes;
     }
-    * command_line_ptr = command_line;
+    cfp->command_line = command_line;
 }
 
 int
 main (int argc, char ** argv)
 {
     char * c_file_name;
-    char * command_line;
-    fill_command_line (& command_line, argc, argv);
+    fill_command_line (cfp, argc, argv);
     program_name = "cfunctions";
     source_line = & yylineno;
     yy_flex_debug = 0;
@@ -1895,8 +1874,8 @@ main (int argc, char ** argv)
 	if (! is_c_file (c_file_name)) {
 	    warning ("'%s' does not look like a C file", c_file_name);
 	}
-	extract (c_file_name, command_line);
+	extract (cfp, c_file_name);
     }
-    free (command_line);
+    free (cfp->command_line);
     return 0;
 }

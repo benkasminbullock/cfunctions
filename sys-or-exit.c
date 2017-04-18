@@ -113,3 +113,12 @@ stat_or_exit (const char * file_name, struct stat * buf )
     }
 }
 
+void
+fclose_or_exit (FILE * f)
+{
+    int status;
+    status = fclose (f);
+    if (status != 0) {
+	error ("fclose failed: %s", strerror ( errno ) );
+    }
+}

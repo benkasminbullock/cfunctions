@@ -1,6 +1,5 @@
 #ifndef CFH_WT_H
 #define CFH_WT_H
-extern FILE * outfile;
 
 /* Different kinds of preprocessor conditional statements */
 
@@ -12,19 +11,11 @@ typedef enum {
 Cpp_If_Type;
 
 extern struct arg * current_arg;
-extern unsigned arg_br_depth;
-extern unsigned n_local_writes;
-extern unsigned string_debug_on;
 extern unsigned rule_line;
-extern struct arg * * fargs;
-extern unsigned n_fargs;
-extern unsigned max_fargs;
 struct warning {
     unsigned implicit_int      : 1;
-    unsigned reserved_words    : 1;
 };
 extern struct warning warns;
-extern const char * const version_info;
 
 struct pf
 {
@@ -85,7 +76,4 @@ void function_reset (cfparse_t *);
 void function_save (cfparse_t * cfp, const char * text, unsigned yylength);
 void write_gnu_c_x (cfparse_t *);
 void function_print (cfparse_t *);
-void wrapper_bottom (char * h_file_guard);
-void read_file (cfparse_t *);
-char * do_backup (char * file_name);
 #endif /* CFH_WT_H */

@@ -367,7 +367,6 @@ enum              { RULE_LINE;
                      in front of a function definition are quite rare. */
 
                   BEGIN(arguments);
-                  arg_br_depth++;
                   }
 
 <arguments>\)     do_arguments_close_bracket (cfp, yytext, yyleng);

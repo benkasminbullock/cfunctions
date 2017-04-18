@@ -8,4 +8,5 @@ void fread_or_exit (void * buffer, size_t size, size_t nmemb, FILE * stream);
 void fwrite_or_exit (const void * buffer, size_t size, size_t nmemb, FILE * stream);
 FILE * fopen_or_exit (const char * path, const char * mode);
 void stat_or_exit (const char * file_name, struct stat * buf);
-#endif 
+void fclose_or_exit (FILE * f);
+#endif /* CFH_SYS_OR_EXIT_H */
