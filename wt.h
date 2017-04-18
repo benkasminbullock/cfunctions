@@ -68,7 +68,6 @@ void do_extern (const char * text, int leng);
 void do_NO_RETURN (const char * text);
 void do_arguments_close_bracket (const char * text, int leng);
 void do_LOCAL (const char * text);
-void do_INLINE (const char * text);
 void do_static (const char * text, int leng);
 void do_void (const char * text, int leng);
 void do_NO_SIDE_FX (const char * text);

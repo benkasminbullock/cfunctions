@@ -504,8 +504,6 @@ main{c_opt_space}\([^\{]+\{ { /*EK*/
 
 LOCAL             do_LOCAL (yytext);
 
-INLINE            do_INLINE (yytext);
-
 static            { RULE_LINE; do_static (yytext, yyleng); }
 
 void              { RULE_LINE; do_void (yytext, yyleng); }

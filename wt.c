@@ -15,7 +15,6 @@
 #include "error-msg.h"
 #include "file-name.h"
 #include "file.h"
-#include "options.h"
 #include "sys-or-exit.h"
 #include "wt.h"
 
@@ -43,13 +42,12 @@ const char * usage [ N_OPTIONS ] = {
 
 /* Helper functions to work around Flex. */
 
-void push_in_cpp (void);
-int initial_state (void);
-int argument_state (void);
-void start_initial (void);
-void start_maybe_traditional (void);
-void pop_state (void);
-const char * state_message (void);
+int argument_state ();
+int initial_state ();
+void pop_state ();
+void push_in_cpp ();
+void start_initial ();
+const char * state_message ();
 
 /* Macro for printing debugging statements. */
 
@@ -1104,17 +1102,6 @@ do_LOCAL (const char * text)
     check_extensions ();
     n_local_writes++;
     s.local_func = TRUE;
-}
-
-void
-do_INLINE (const char * text)
-{
-    check_extensions ();
-    if (verbatiming) {
-	line_error ("INLINE inside verbatim region");
-    }
-    s.seen_inline = TRUE;
-    inlining = TRUE;
 }
 
 void
