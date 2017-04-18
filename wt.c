@@ -17,13 +17,11 @@
 #include "file.h"
 #include "sys-or-exit.h"
 #include "wt.h"
+#include "cfunctions.h"
 
-/* Declarations of Flex objects. */
+/* Declare unexported Flex object. */
 
-extern int yylex ();
-extern int yylineno;
 extern int yy_flex_debug;
-extern FILE * yyin;
 
 /* Helper functions to work around Flex. */
 
@@ -334,7 +332,6 @@ do_void_pointer (const char * text)
     c = strchr (text, '*');
     function_save (c, strlen (c));
 }
-
 
 void
 do_start_arguments (void)

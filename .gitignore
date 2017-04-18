@@ -4,4 +4,4 @@ cfunctions
 
 # Made by flex
 
-cfunctions.c
+cfunctions.[ch]

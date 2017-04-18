@@ -45,25 +45,6 @@ all: cfunctions
 cfunctions:	$(OBJS)
 	$(CC) $(CFLAGS) -o cfunctions $(OBJS)
 
-cfunctions.c:	cfunctions.fl
-	if [ -f $@ ]; then chmod 0644 $@; fi
-	$(FLEX) -o cfunctions.c cfunctions.fl
-	chmod 0444 $@
-
-clean:	
-	rm -f cfunctions $(OBJS) cfunctions.c
-
-install:	all
-	$(INSTALL) cfunctions $(bindir)
-	if test ! -d ${sharedir} ; then \
-          mkdir ${sharedir} ;\
-	fi
-	$(INSTALL) -m 644 c-extensions.h ${sharedir}
-
-uninstall:
-	rm -rf ${sharedir}
-	rm -f ${bindir}/cfunctions
-
 argument.o: argument.c argument.h wt.h sys-or-exit.h error-msg.h
 
 backup.o: backup.c backup.h sys-or-exit.h error-msg.h
@@ -77,7 +58,24 @@ error-msg.o: error-msg.c error-msg.h
 file.o: file.c file.h error-msg.h 
 
 wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h file-name.h \
-	backup.h argument.h
+	backup.h argument.h cfunctions.h
+
+cfunctions.c cfunctions.h:	cfunctions.fl
+	if [ -f $@ ]; then chmod 0644 $@; fi
+	$(FLEX) --header-file=cfunctions.h -o cfunctions.c cfunctions.fl
+	chmod 0444 $@
+
+clean:	
+	rm -f cfunctions $(OBJS) cfunctions.c
+
+install:	all
+	$(INSTALL) cfunctions $(bindir)
+	if test ! -d ${sharedir}; then mkdir ${sharedir}; fi
+	$(INSTALL) -m 644 c-extensions.h ${sharedir}
+
+uninstall:
+	rm -rf ${sharedir}
+	rm -f ${bindir}/cfunctions
 
 test:   cfunctions
 	cd tests;prove --nocolor test.pl

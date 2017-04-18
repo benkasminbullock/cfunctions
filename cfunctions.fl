@@ -2,6 +2,10 @@
    This (cfunctions.fl) is a Flex input file.  The file `cfunctions.c'
    included in the Cfunctions distribution is generated from the Flex
    input file.  
+
+   Flex is a horror show of overconfigurable nonsense options, and
+   this file is scheduled to be replaced by a sane lexer.  
+
 */
 
 %{
@@ -29,7 +33,6 @@ void parser_pop_state ();
 #define YY_NO_INPUT
 
 %}
-
 
 /* See the Flex manual */
 
@@ -128,8 +131,7 @@ void parser_pop_state ();
 
 endline       \r?\n
 
-/* The `\\\n' is to deal with multiline cpp statements.
-   *EK* included CR and FF as whitespace. */
+/* The `\\{endline}' is to deal with multiline cpp statements. */
 
 cpp_space     ([ \t\f\r]|\\{endline})+
 cpp_opt_space ([ \t\f\r]|\\{endline})*
@@ -389,8 +391,6 @@ enum              { RULE_LINE;
                   line_error ("nasty macro: use -C option");
                   }
 
-  /* At the moment `traditional' does not handle function pointers. */
-
 <INITIAL>\{  {
                   /* All functions must start like this. */
                   function_print();
@@ -559,31 +559,31 @@ void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (yytext); }
 void
 push_in_cpp (void)
 {
-  parser_push_state (in_cpp);
+    parser_push_state (in_cpp);
 }
 
 int
 initial_state (void)
 {
-  return YY_START == INITIAL;
+    return YY_START == INITIAL;
 }
 
 int
 argument_state (void)
 {
-  return YY_START == arguments;
+    return YY_START == arguments;
 }
 
 void
 start_initial (void)
 {
-  BEGIN (INITIAL);
+    BEGIN (INITIAL);
 }
 
 void
 pop_state (void)
 {
-  parser_pop_state (); 
+    parser_pop_state (); 
 }
 
 typedef struct
@@ -591,7 +591,8 @@ typedef struct
     const char * file_name;
     int line_number;
     int line_offset;
-} parse_location;
+}
+parse_location;
 
 #define MAX_DEPTH 0x100
 
@@ -622,39 +623,37 @@ void parser_pop_state ()
 const char * 
 state_message (void)
 {
-//    printf ("Line number: %d\n", state_starts[state_depth - 1].line_number);
-  switch (YY_START)
-    {
+    switch (YY_START) {
     case comment:
-      return "C comment string";
+	return "C comment string";
     case function:
-      return "C function or variable declaration";
+	return "C function or variable declaration";
     case arguments:
-      return "C function's argument list";
+	return "C function's argument list";
     case func_ptr:
-      return "pointer to a function";
+	return "pointer to a function";
     case func_ptr_arg:
-      return "arguments to pointer to a function";
+	return "arguments to pointer to a function";
     case print_format:
-      return "PRINT_FORMAT instruction";
+	return "PRINT_FORMAT instruction";
     case c_string:
-      return "C string";
+	return "C string";
     case in_cpp:
-      return "C preprocessor statement";
+	return "C preprocessor statement";
     case in_struct:
-      return "C struct or union";
+	return "C struct or union";
     case initialiser:
-      return "C initialiser";
+	return "C initialiser";
     case in_enum:
-      return "enum definition";
+	return "enum definition";
     case is_enum:
-      return "enum declaration";
+	return "enum declaration";
     case traditional:
-      return "traditional C function argument declaration";
+	return "traditional C function argument declaration";
     case INITIAL:
-      return "initial";
+	return "initial";
     default:
-      return "unknown state (report this message as a bug please)";
+	return "unknown state (report this message as a bug please)";
     }
 }
 
