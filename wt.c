@@ -25,21 +25,6 @@ extern int yylineno;
 extern int yy_flex_debug;
 extern FILE * yyin;
 
-/* Options. */
-
-struct option long_options [] = {
-    {"debug",           required_argument, NULL, 'D'},
-    {0, 0, 0, 0}
-};
-
-#define N_OPTIONS sizeof (long_options) / sizeof (struct option) - 1
-
-int n_options = N_OPTIONS;
-
-const char * usage [ N_OPTIONS ] = {
-    "Set debugging option \"arg\" (-D help for list)",
-};
-
 /* Helper functions to work around Flex. */
 
 int argument_state ();
@@ -58,10 +43,6 @@ const char * state_message ();
 #undef BOOL
 #define BOOL int
 enum bool { FALSE, TRUE };
-
-/* The whole command line. */
-
-static char * command_line;
 
 /* Maximum number of brackets '(' to expect in function arguments. */
 
@@ -91,7 +72,7 @@ FILE * verbatim_file;
 #define MAX_LINE_NAME 0x100
 char line_source_name[MAX_LINE_NAME];
 
-static const char * global_macro = "HEADER"; /* -G */
+static const char * global_macro = "HEADER";
 
 struct outfile
 {
@@ -102,13 +83,7 @@ struct outfile
     char * backup_name;
     FILE * file;
 }
-local;                                  /* -l */
-
-const char *prototype_macro = "PROTO"; /* -p */
-
-/* The wrapper for inline macros for GNU C. */
-
-const char * inline_macro = "X_INLINE";
+local;
 
 /* The depth of braces '{' and '}' seen. */
 
@@ -152,8 +127,6 @@ cpp_if_stack[MAX_CPP_IFS],
 
 empty_cpp_if;
 
-
-
 /* This keeps track of how many lines have been printed by the CPP
    output part. */
 
@@ -178,17 +151,9 @@ struct arg * current_arg;
 
 unsigned arg_br_depth;
 
-/* The number of prototypes written to the local header file.  If this
-   is zero, then Cfunctions knows that the local header file has no
-   content and can be removed. */
-
-unsigned n_local_writes;
-
 /* The maximum number of chars allowed in a struct name. */
 
 #define MAX_STRUCT_CHARS 0x100
-
-
 
 /* Debugging flags. */
 
@@ -206,11 +171,6 @@ struct
 cfunctions_dbug;
 
 unsigned string_debug_on = 0;
-
-/* Are we writing an inline function?  This is not part of the parsing
-   state because it needs to survive through 'function_reset'. */
-
-BOOL inlining;
 
 /* Is Cfunctions copying everything?  (this is set by '#ifdef HEADER'
    statements) */
@@ -479,10 +439,7 @@ inline_print (const char * x)
         DBMSG ("Printing '%s'.\n", x);
     }
 
-    if (inlining) {
-        fprintf (outfile, "%s", x);
-    }
-    else if (verbatiming) {
+    if (verbatiming) {
         if (! in_typedef) {
             fprintf (verbatim_file, "%s", x);
         }
@@ -1094,7 +1051,6 @@ void
 do_LOCAL (const char * text)
 {
     check_extensions ();
-    n_local_writes++;
     s.local_func = TRUE;
 }
 
@@ -1133,23 +1089,7 @@ do_brace_close (void)
 {
     brace_close ();
     if (curly_braces_depth == 0) {
-	if (inlining) {
-	    FILE * outfile_now = outfile;
-	    fprintf (outfile, "}");
-	    fprintf (outfile, "\n#else /* not def %s */\n", inline_macro);
-	    inlining = FALSE;
-
-	    /* Because Cfunctions was copying an inline function, the
-	       first call to 'function_print' did not call
-	       'function_reset', so that Cfunctions can call
-	       'function_print' again here.
-
-	       Unfortunately this resets 'outfile' to 'localfile'. */
-
-	    function_print ();
-	    fprintf (outfile_now, "\n#endif /* def %s */\n", inline_macro);
-	}
-	else if (verbatiming) {
+	if (verbatiming) {
 	    fprintf (verbatim_file, "} ");
 	}
 	pop_state ();
@@ -1389,9 +1329,7 @@ argument_print (void)
 	fprintf (outfile, "()");
     }
 
-    if (! inlining) {
-	argument_reset ();
-    }
+    argument_reset ();
 }
 
 /* Print everything external which has been seen regardless of anything
@@ -1434,9 +1372,6 @@ external_print (const char * semicolon, const char * why)
     }
 
 
-    if (inlining) {
-        bug (HERE, "an external variable cannot be 'inline'");
-    }
     if (verbatiming || (! (s.seen_arguments || s.seen_extern) &&
 			! s.seen_typedef &&
 			! s.unnamed_struct)) {
@@ -1574,33 +1509,17 @@ function_print (void)
 
     printable = ! s.seen_static;
 
-    if (inlining && printable) {
-	fprintf (outfile, "\n#ifdef %s\n", inline_macro);
-	fprintf (outfile, "extern inline ");
-    }
     if (printable || verbatiming) {
 	print_line_number ();
 	cpp_external_print ();
-	/* Check for the case PROTO ((void)). */
-	if (! n_fargs && ! s.void_arguments) {
-	    check_extensions ();
-	}
 	arg_fprint (outfile, current_arg);
 	argument_print ();
-	if (! inlining && ! verbatiming) {
+	if (verbatiming) {
+	    fprintf (outfile,  "\n{");
+	}
+	else {
 	    write_gnu_c_x ();
 	    fprintf (outfile,  ";\n");
-	}
-	else {/* inlining or verbatiming */
-	    fprintf (outfile,  "\n{");
-
-	    /* Return from the function here so that 'function_reset' is
-	       not called, because we will need to call 'function_print'
-	       again for the non-inline case. */
-
-	    if (inlining) {
-		return;
-	    }
 	}
     }
     function_reset ();
@@ -1619,7 +1538,8 @@ wt_status_t;
 #define BSIZE 0x100
 
 static wt_status_t
-wrapper_top (const char * h_file_name, char ** h_file_guard)
+wrapper_top (const char * h_file_name, char ** h_file_guard,
+	     const char * command_line)
 {
     unsigned i;
     unsigned j = 0;
@@ -1776,7 +1696,7 @@ do_backup (char * file_name)
 /* Extract function names from a C file. */
 
 static void
-extract (char * c_file_name)
+extract (char * c_file_name, const char * command_line)
 {
     char * h_file_name = NULL;
     char * h_file_guard;
@@ -1798,8 +1718,7 @@ extract (char * c_file_name)
     backup_name = do_backup (h_file_name);
     localfile = fopen_or_exit (h_file_name, "w");
     outfile = localfile;
-    n_local_writes = 0;
-    wrapper_top (h_file_name, & h_file_guard);
+    wrapper_top (h_file_name, & h_file_guard, command_line);
     outfile = localfile;
 
     read_file ();
@@ -1898,7 +1817,7 @@ set_debug_flag (char * flag_name)
 		    debug_options[i].explanation);
 	}
 	// exit ok
-	exit (0);
+	exit (EXIT_SUCCESS);
     }
     else {
 	warning ("unknown debug flag '%s': see the Cfunctions manual for a list "
@@ -1906,16 +1825,14 @@ set_debug_flag (char * flag_name)
     }
 }
 
-int
-main (int argc, char ** argv)
+static void
+fill_command_line (char ** command_line_ptr, int argc, char ** argv)
 {
-    int option_index = 0;
-    char * c_file_name;
-    char * option_string;
     int cllen;
     char * clnext;
     int clused;
     int i;
+    char * command_line;
     cllen = 0;
     for (i = 0; i < argc; i++) {
 	cllen += strlen (argv[i]) + 1;
@@ -1933,19 +1850,25 @@ main (int argc, char ** argv)
 			  space, argv[i]);
 	clused += bytes;
     }
+    * command_line_ptr = command_line;
+}
+
+int
+main (int argc, char ** argv)
+{
+    char * c_file_name;
+    char * command_line;
+    fill_command_line (& command_line, argc, argv);
     program_name = "cfunctions";
     source_line = & yylineno;
     yy_flex_debug = 0;
 
     /* Parse the command line options. */
 
-    option_string = "D";
-
     while (1) {
 	int c;
 
-	c = getopt_long (argc, argv, option_string, long_options,
-			 & option_index);
+	c = getopt (argc, argv, "D");
 	if (c == -1) {
 	    break;
 	}
@@ -1954,6 +1877,7 @@ main (int argc, char ** argv)
 	    set_debug_flag (optarg);
 	    break;
 	default:
+	    fprintf (stderr, "Unknown option '-%c'.\n", c);
 	    return EXIT_FAILURE;
 	}
     }
@@ -1965,7 +1889,8 @@ main (int argc, char ** argv)
 	if (! is_c_file (c_file_name)) {
 	    warning ("'%s' does not look like a C file", c_file_name);
 	}
-	extract (c_file_name);
+	extract (c_file_name, command_line);
     }
+    free (command_line);
     return 0;
 }

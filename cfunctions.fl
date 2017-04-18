@@ -12,7 +12,6 @@
 
 struct pf pf;
 
-
 /* Sometimes people doing debugging need to know what rule the flex
    scanner matched without turning on the verbose Flex debugging.
    That is what the following macro RULE_LINE is for. */
@@ -30,6 +29,7 @@ void parser_pop_state ();
 #define YY_NO_INPUT
 
 %}
+
 
 /* See the Flex manual */
 
