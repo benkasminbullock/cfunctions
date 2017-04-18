@@ -247,7 +247,6 @@ arg_free (struct arg * a)
     free (a);
 }
 
-extern void cpp_eject (unsigned);
 
 /* Print a list of array suffixes to the specified stream. */
 
@@ -296,7 +295,7 @@ type_fprint (FILE * f, struct type * t, int do_extern)
 
 		/* I removed the `extern' printing bit. */
 
-		cpp_eject (cpp_id);
+		cpp_eject (cfp, cpp_id);
 	    }
 	    else
 		bug (HERE, "unknown @ escape `%s'", t->name);

@@ -2,10 +2,6 @@
    This (cfunctions.fl) is a Flex input file.  The file `cfunctions.c'
    included in the Cfunctions distribution is generated from the Flex
    input file.  
-
-   Flex is a horror show of overconfigurable nonsense options, and
-   this file is scheduled to be replaced by a sane lexer.  
-
 */
 
 %{
@@ -67,10 +63,11 @@ void parser_pop_state ();
 
 %x comment   
 
-/* state "in a C function".  Because the only thing the function state
-   does is counts { and } and then exits when there have been enough
-   }'s, this state can also be used for such things as "inside a
-   struct definition" and "inside an initialiser". */
+/* State "in a C function".  Because the only thing the "function"
+   state does is skips strings and comments, and counts "{" and "}",
+   and then exits when there have been enough }'s, the "function"
+   state can also be used for such things as "inside a struct
+   definition" and "inside an initialiser". */
 
 %x function  
 
@@ -144,7 +141,7 @@ cpp           ^{cpp_opt_space}#{cpp_opt_space}
 /* The macro c_space has been set to match only a single `\n' in order
    to prevent collisions with {cpp}.  I don't know if there is
    anywhere in the rules that expects {c_space} to match more than one
-   `\n' - this might be a problem. *EK* included CR and FF as whitespace. */
+   `\n' - this might be a problem. */
 
 c_space       ([ \t\f\r]+|\n)
 c_opt_space   [ \t\f\r\n]*
@@ -159,27 +156,27 @@ braces \{[^{}]*\}
 
   /* C preprocessor conditional statements. */
 
-<*>{cpp}if{cpp_any}*$              cpp_add (yytext, CPP_IF);
+<*>{cpp}if{cpp_any}*$              cpp_add (cfp, yytext, CPP_IF);
 
-<*>{cpp}else{cpp_any}*$            cpp_add (yytext, CPP_ELSE);
+<*>{cpp}else{cpp_any}*$            cpp_add (cfp, yytext, CPP_ELSE);
 
-<*>{cpp}elif{cpp_any}*$            cpp_add (yytext, CPP_ELIF);
+<*>{cpp}elif{cpp_any}*$            cpp_add (cfp, yytext, CPP_ELIF);
 
-<*>{cpp}endif{cpp_any}*$           cpp_add (yytext, CPP_ENDIF);
+<*>{cpp}endif{cpp_any}*$           cpp_add (cfp, yytext, CPP_ENDIF);
 
   /* Other C preprocessor statements. */
 
-<*>{cpp}define{cpp_space}{c_word} { RULE_LINE; do_define (yytext); }
+<*>{cpp}define{cpp_space}{c_word} { RULE_LINE; do_define (cfp, yytext); }
 
 <*>{cpp}(line)?{cpp_opt_space}[0-9]+{cpp_opt_space}\"([^\"]|\\\")+\" {
-                  line_change (yytext);
+                  line_change (cfp, yytext);
                   }
 
-{cpp}             do_start_cpp (yytext);
+{cpp}             do_start_cpp (cfp, yytext);
 
-<in_cpp>{cpp_any} inline_print (yytext);
+<in_cpp>{cpp_any} inline_print (cfp, yytext);
 
-<in_cpp>{endline} { inline_print (yytext); parser_pop_state (); }
+<in_cpp>{endline} { inline_print (cfp, yytext); parser_pop_state (); }
 
   /* Comments. */
 
@@ -201,7 +198,7 @@ braces \{[^{}]*\}
                     }
                     #endif /* CFUNCTIONS_DEBUG */
                     /* Don't need a warning. */
-                    inline_print (yytext);
+                    inline_print (cfp, yytext);
                     }               
                   }
 
@@ -219,37 +216,37 @@ braces \{[^{}]*\}
                   }
 
 typedef(\{(\{(\{({braces}|[^}{])*\}|{braces}|[^}{])*\}|{braces}|[^}{])*\}|{braces}|[^}{;])*;   {
-                      do_copy_typedef (yytext, yyleng);
+                      do_copy_typedef (cfp, yytext, yyleng);
                   }
 
   /* Type definitions. */
 
-typedef           { RULE_LINE; do_typedef (yytext, yyleng); }
+typedef           { RULE_LINE; do_typedef (cfp, yytext, yyleng); }
 
   /* Enumerations. */
 
 enum              { RULE_LINE;
                   parser_push_state (in_enum);
-                  function_save (yytext, yyleng);
+                  function_save (cfp, yytext, yyleng);
                   }
 
-<in_enum>{c_word} { RULE_LINE; do_word (yytext, yyleng); }
+<in_enum>{c_word} { RULE_LINE; do_word (cfp, yytext, yyleng); }
 
 <in_enum>\{       {
-                  external_clear ();
+                  external_clear (cfp);
                   BEGIN (is_enum);
                   }
 
 <in_enum>{c_space} ;
 
 <is_enum>{c_word}[^\},;]* { RULE_LINE;
-                  inline_print (yytext);
+                  inline_print (cfp, yytext);
                   }
 
-<is_enum>(,|{c_space}) inline_print (yytext);
+<is_enum>(,|{c_space}) inline_print (cfp, yytext);
 
 <is_enum>\}       {
-                  inline_print (yytext);
+                  inline_print (cfp, yytext);
                   parser_pop_state ();
                   }
 
@@ -259,29 +256,29 @@ enum              { RULE_LINE;
 
 (struct|union)    { RULE_LINE; /* A `struct' is just the same 
                                   syntactically as a `union'. */
-                  function_save (yytext, yyleng);
+                  function_save (cfp, yytext, yyleng);
                   parser_push_state (in_struct);
                   }
 
-<in_struct>{c_word}  { RULE_LINE; do_word (yytext, yyleng); }
+<in_struct>{c_word}  { RULE_LINE; do_word (cfp, yytext, yyleng); }
 
 <in_struct>\*     {
-                  function_save (yytext, yyleng);
-                  parser_pop_state ();
+                  function_save (cfp, yytext, yyleng);
+                  parser_pop_state (cfp);
                   }
 
 <in_struct>;      {
                   /* This state occurs in incomplete forward
                      declaration of a struct. */
-                  forward_print (";\n");
+                  forward_print (cfp, ";\n");
                   BEGIN (INITIAL);
                   }
 
 <in_struct>{c_space} ;
 
 <in_struct>\{      { 
-                   brace_open ();
-                   external_clear ();
+                   brace_open (cfp);
+                   external_clear (cfp);
                    BEGIN (function);
                    }
 
@@ -289,17 +286,17 @@ enum              { RULE_LINE;
      initialisers, because they don't need to be copied into header files. */
 
 <initialiser>;    {
-                    external_print (";\n", "end initializer");
-                    parser_pop_state ();
+                    external_print (cfp, ";\n", "end initializer");
+                    parser_pop_state (cfp);
                   }
 
 <initialiser>,    {
                     current_arg = arg_share (current_arg);
-                    parser_pop_state ();
+                    parser_pop_state (cfp);
                   }
 
 <initialiser>\{   {
-                  brace_open ();
+                  brace_open (cfp);
                   parser_push_state (function);
                   }
 
@@ -313,56 +310,56 @@ enum              { RULE_LINE;
      encounter them.  */
                   }
 
-<initialiser>([^\"]|\n)   inline_print (yytext);
+<initialiser>([^\"]|\n)   inline_print (cfp, yytext);
 
-\({c_opt_space}{c_opt_space}\)        do_arguments ();
-\({c_opt_space}void{c_opt_space}\)    do_void_arguments ();
+\({c_opt_space}{c_opt_space}\)        do_arguments (cfp);
+\({c_opt_space}void{c_opt_space}\)    do_void_arguments (cfp);
 
   /* Function pointers.  At the moment this works for inline versions
      of them but not for several other cases. */
 
 \({c_opt_space}\*{c_opt_space}     {
                   //external_print ("", "start of function pointer");
-                  inline_print (yytext);
+                  inline_print (cfp, yytext);
                   parser_push_state (func_ptr);
                   }
 
 <func_ptr>\){c_opt_space}\(        {
-                  inline_print (yytext);
+                  inline_print (cfp, yytext);
                   BEGIN (func_ptr_arg);
                   }
 
 <func_ptr>\)      {
-                  inline_print (yytext);
+                  inline_print (cfp, yytext);
                   parser_pop_state ();
                   }
 
 <func_ptr>{c_word} {
-                   do_function_pointer (yytext);
+                   do_function_pointer (cfp, yytext);
                    }
 
 <func_ptr>[^\)]+   {
-                  do_function_pointer (yytext);
+                  do_function_pointer (cfp, yytext);
                   }
 
 <func_ptr_arg>\)  {
-                  do_function_pointer_argument (yytext);
+                  do_function_pointer_argument (cfp, yytext);
                   parser_pop_state ();
                   }
 
 <func_ptr_arg>\(   {
-                  do_function_pointer_argument (yytext);
+                  do_function_pointer_argument (cfp, yytext);
                   parser_push_state (func_ptr_arg);
                   }
 
 <func_ptr_arg>[^\(\)]+   {
-                  do_function_pointer_argument (yytext);
+                  do_function_pointer_argument (cfp, yytext);
                   }
 
   /* Beginning of a C argument. */
 
 \(                {
-                  do_start_arguments ();
+                  do_start_arguments (cfp);
                   /* Deficiency: switching into argument mode immediately
                      on seeing a bracket can miss things like macros with
                      arguments which come immediately in front of a 
@@ -373,19 +370,19 @@ enum              { RULE_LINE;
                   arg_br_depth++;
                   }
 
-<arguments>\)     do_arguments_close_bracket (yytext, yyleng);
+<arguments>\)     do_arguments_close_bracket (cfp, yytext, yyleng);
 
-<arguments>\(     do_arguments_open_bracket (yytext, yyleng);
+<arguments>\(     do_arguments_open_bracket (cfp, yytext, yyleng);
 
 <arguments>({c_var}|\*+) {
-                  argument_save (yytext, yyleng);
+                  argument_save (cfp, yytext, yyleng);
                   }
 
-<arguments>,      argument_next();
+<arguments>,      argument_next (cfp);
 
 <arguments>{c_space}      ;
 
-<arguments>"..."  argument_save (yytext, yyleng);
+<arguments>"..."  argument_save (cfp, yytext, yyleng);
 
 <arguments>([0-9]*|\"([^\"]|\\\")*\")  {
                   line_error ("nasty macro: use -C option");
@@ -393,9 +390,9 @@ enum              { RULE_LINE;
 
 <INITIAL>\{  {
                   /* All functions must start like this. */
-                  function_print();
+                  function_print (cfp);
                   parser_push_state (function);
-                  brace_open ();
+                  brace_open (cfp);
                   }
 
 \}                {
@@ -405,14 +402,14 @@ enum              { RULE_LINE;
                   }
 
 <function>\{      {
-                  inline_print(yytext);
-                  brace_open ();
+                  inline_print(cfp, yytext);
+                  brace_open (cfp);
                   }
 
-<function>\}      do_brace_close ();
+<function>\}      do_brace_close (cfp);
 
 <*>\"             {
-                  inline_print (yytext);
+                  inline_print (cfp, yytext);
                   if (YY_START != comment) {
                     if ( YY_START != c_string ) {
                       #ifdef CFUNCTIONS_DEBUG
@@ -443,7 +440,7 @@ enum              { RULE_LINE;
                                               source_name, yylineno, yytext);
                                   }
                                   #endif /* CFUNCTIONS_DEBUG */
-                                  inline_print (yytext);
+                                  inline_print (cfp, yytext);
                                   }
                  /* Match escaped quotes or non-quote characters in a C string. */
 
@@ -455,14 +452,14 @@ enum              { RULE_LINE;
                                               source_name, yylineno, yytext);
                                   }
                                   #endif /* CFUNCTIONS_DEBUG */
-                                  inline_print (yytext);
+                                  inline_print (cfp, yytext);
                                   }
 
-<function>([^\}\{\"]|\n|\'\\\"\'|\'\"\')    inline_print (yytext);
+<function>([^\}\{\"]|\n|\'\\\"\'|\'\"\')    inline_print (cfp, yytext);
 
-<function>(\'\{\'|\'\}\')  do_escaped_brace (yytext);
+<function>(\'\{\'|\'\}\')  do_escaped_brace (cfp, yytext);
 
-extern            { RULE_LINE; do_extern (yytext, yyleng); }
+extern            { RULE_LINE; do_extern (cfp, yytext, yyleng); }
 
 \[[^]]*\]         {
                     arg_put_name (current_arg);
@@ -472,7 +469,7 @@ extern            { RULE_LINE; do_extern (yytext, yyleng); }
 \;                { RULE_LINE;
                     if (current_arg) {                   
                         arg_put_name (current_arg);
-                        external_print (";\n", "semicolon (initial state)");
+                        external_print (cfp, ";\n", "semicolon (initial state)");
                     }
                     else {
                       /* Function pointer trips here. */;
@@ -495,27 +492,27 @@ extern            { RULE_LINE; do_extern (yytext, yyleng); }
 	            }			
                   }
 
-main{c_opt_space}\([^\{]+\{ { /*EK*/
+main{c_opt_space}\([^\{]+\{ {
                   /* Never write a prototype for main. */
-                  function_reset ();
-                  brace_open ();
-                  parser_push_state(function);
+                  function_reset (cfp);
+                  brace_open (cfp);
+                  parser_push_state (function);
                   }
 
-LOCAL             do_LOCAL (yytext);
+LOCAL             do_LOCAL (cfp, yytext);
 
-static            { RULE_LINE; do_static (yytext, yyleng); }
+static            { RULE_LINE; do_static (cfp, yytext, yyleng); }
 
-void              { RULE_LINE; do_void (yytext, yyleng); }
+void              { RULE_LINE; do_void (cfp, yytext, yyleng); }
 
-NO_SIDE_FX        do_NO_SIDE_FX (yytext);
+NO_SIDE_FX        do_NO_SIDE_FX (cfp, yytext);
 
-NO_RETURN         { RULE_LINE; do_NO_RETURN (yytext); }
+NO_RETURN         { RULE_LINE; do_NO_RETURN (cfp, yytext); }
 
   /* Over-complicated method for parsing GNU C extension related thing. */
 
 PRINT_FORMAT      {
-                  check_extensions ();
+                  check_extensions (cfp);
                   BEGIN (print_format);
                   }
 
@@ -525,7 +522,7 @@ PRINT_FORMAT      {
                   
 <print_format>,   pf.index++;
 
-<print_format>\)  do_PRINT_FORMAT ();
+<print_format>\)  do_PRINT_FORMAT (cfp);
 
 <print_format>[1-9][0-9]* {
                   if (pf.index > 1)
@@ -533,15 +530,15 @@ PRINT_FORMAT      {
                   pf.value[pf.index] = atoi ( yytext );
                   }
 
-void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (yytext); }
+void{c_opt_space}\*+ { RULE_LINE; do_void_pointer (cfp, yytext); }
 
-{c_word}          { RULE_LINE; function_save (yytext, yyleng); }
+{c_word}          { RULE_LINE; function_save (cfp, yytext, yyleng); }
 
 \*                { RULE_LINE;
                   /* This is for functions which return pointers 
                      to something.  It should be eliminated by 
                      making a better rule to match functions. */
-                  function_save (yytext, yyleng);
+                  function_save (cfp, yytext, yyleng);
                   }
 
 {c_space}         ;

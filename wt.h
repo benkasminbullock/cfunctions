@@ -1,12 +1,6 @@
 #ifndef CFH_WT_H
 #define CFH_WT_H
 extern FILE * outfile;
-extern FILE * localfile;
-extern FILE * verbatim_file;
-extern char line_source_name[];
-extern const char * prototype_macro;
-extern const char * inline_macro;
-extern unsigned curly_braces_depth;
 
 /* Different kinds of preprocessor conditional statements */
 
@@ -17,8 +11,6 @@ typedef enum {
 }
 Cpp_If_Type;
 
-extern unsigned cpp_prints;
-extern unsigned cpp_if_now;
 extern struct arg * current_arg;
 extern unsigned arg_br_depth;
 extern unsigned n_local_writes;
@@ -41,54 +33,59 @@ struct pf
 };
 
 extern struct pf pf;
-void brace_open (void);
-void brace_close (void);
-void do_comment_start (void);
-void do_comment_end (void);
-void do_comment_print (const char * text, int leng);
-void do_PRINT_FORMAT (void);
-void do_void_pointer (const char * text);
-void do_start_arguments (void);
-void do_arguments (void);
-void do_function_pointer (const char * text);
-void do_function_pointer_argument (const char * text);
-void do_word (const char * text, int leng);
-void do_typedef (const char * text, int leng);
-void do_copy_typedef (const char * text, int leng);
-void inline_print (const char * x);
-void line_change (const char * text);
-void copy_c_extensions (void);
-void check_extensions (void);
-void cpp_add (char * text, Cpp_If_Type type);
-void cpp_eject (unsigned u);
-void do_start_cpp (const char * text);
-void do_escaped_brace (const char * text);
-void do_extern (const char * text, int leng);
-void do_NO_RETURN (const char * text);
-void do_arguments_close_bracket (const char * text, int leng);
-void do_LOCAL (const char * text);
-void do_static (const char * text, int leng);
-void do_void (const char * text, int leng);
-void do_NO_SIDE_FX (const char * text);
-void do_arguments_open_bracket (const char * text, int leng);
-void do_brace_close (void);
-void do_void_arguments (void);
-void do_define (const char * text);
+
+typedef struct cfparse cfparse_t;
+
+extern cfparse_t * cfp;
+
+void brace_open (cfparse_t *);
+void brace_close (cfparse_t *);
+void do_comment_start (cfparse_t *);
+void do_comment_end (cfparse_t *);
+void do_comment_print (cfparse_t * cfp, const char * text, int leng);
+void do_PRINT_FORMAT (cfparse_t *);
+void do_void_pointer (cfparse_t * cfp, const char * text);
+void do_start_arguments (cfparse_t *);
+void do_arguments (cfparse_t *);
+void do_function_pointer (cfparse_t * cfp, const char * text);
+void do_function_pointer_argument (cfparse_t * cfp, const char * text);
+void do_word (cfparse_t * cfp, const char * text, int leng);
+void do_typedef (cfparse_t * cfp, const char * text, int leng);
+void do_copy_typedef (cfparse_t * cfp, const char * text, int leng);
+void inline_print (cfparse_t * cfp, const char * x);
+void line_change (cfparse_t * cfp, const char * text);
+void copy_c_extensions (cfparse_t *);
+void check_extensions (cfparse_t *);
+void cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type);
+void cpp_eject (cfparse_t * cfp, unsigned u);
+void do_start_cpp (cfparse_t * cfp, const char * text);
+void do_escaped_brace (cfparse_t * cfp, const char * text);
+void do_extern (cfparse_t * cfp, const char * text, int leng);
+void do_NO_RETURN (cfparse_t * cfp, const char * text);
+void do_arguments_close_bracket (cfparse_t * cfp, const char * text, int leng);
+void do_LOCAL (cfparse_t * cfp, const char * text);
+void do_static (cfparse_t * cfp, const char * text, int leng);
+void do_void (cfparse_t * cfp, const char * text, int leng);
+void do_NO_SIDE_FX (cfparse_t * cfp, const char * text);
+void do_arguments_open_bracket (cfparse_t * cfp, const char * text, int leng);
+void do_brace_close (cfparse_t *);
+void do_void_arguments (cfparse_t *);
+void do_define (cfparse_t * cfp, const char * text);
 void cpp_stack_free (unsigned p);
-void cpp_external_tidy (void);
-void cpp_external_print (void);
-void argument_save (const char * text, unsigned text_length);
-int no_prototype (void);
-void argument_next (void);
-void argument_print (void);
-void external_clear (void);
-void external_print (const char * semicolon, const char * why);
-void forward_print (const char * end);
-void function_reset (void);
-void function_save (const char * text, unsigned yylength);
-void write_gnu_c_x (void);
-void function_print (void);
+void cpp_external_tidy (cfparse_t *);
+void cpp_external_print (cfparse_t *);
+void argument_save (cfparse_t * cfp, const char * text, unsigned text_length);
+int no_prototype (cfparse_t *);
+void argument_next (cfparse_t *);
+void argument_print (cfparse_t *);
+void external_clear (cfparse_t *);
+void external_print (cfparse_t * cfp, const char * semicolon, const char * why);
+void forward_print (cfparse_t * cfp, const char * end);
+void function_reset (cfparse_t *);
+void function_save (cfparse_t * cfp, const char * text, unsigned yylength);
+void write_gnu_c_x (cfparse_t *);
+void function_print (cfparse_t *);
 void wrapper_bottom (char * h_file_guard);
-void read_file (void);
+void read_file (cfparse_t *);
 char * do_backup (char * file_name);
 #endif /* CFH_WT_H */

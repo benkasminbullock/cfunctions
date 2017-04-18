@@ -66,7 +66,7 @@ cfunctions.c cfunctions.h:	cfunctions.fl
 	chmod 0444 $@
 
 clean:	
-	rm -f cfunctions $(OBJS) cfunctions.c
+	rm -f cfunctions $(OBJS) cfunctions.[ch]
 
 install:	all
 	$(INSTALL) cfunctions $(bindir)

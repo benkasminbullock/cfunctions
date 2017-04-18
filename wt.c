@@ -46,10 +46,6 @@ enum bool { FALSE, TRUE };
 
 #define MAX_ARG_BR_DEPTH 3
 
-/* Are we in a typedef? */
-
-static int in_typedef;
-
 /* The store of information about print format.  This is for the GNU C
    extension '__attribute__((format(printf,,)))' which tells the
    compiler that the arguments to a function are in 'printf' format
@@ -62,13 +58,10 @@ static int in_typedef;
    'outfile'. */
 
 FILE * outfile;
-FILE * localfile;
-FILE * verbatim_file;
+static FILE * localfile;
+static FILE * verbatim_file;
 
 /* Name of source file from '#line' directives. */
-
-#define MAX_LINE_NAME 0x100
-char line_source_name[MAX_LINE_NAME];
 
 static const char * global_macro = "HEADER";
 
@@ -82,10 +75,6 @@ struct outfile
     FILE * file;
 }
 local;
-
-/* The depth of braces '{' and '}' seen. */
-
-unsigned curly_braces_depth;
 
 /* If 'curly_braces_depth' goes beyond the following arbitrary limit
    Cfunctions gives a warning message.  Mostly this is in case
@@ -112,7 +101,8 @@ struct cpp_if
 
     unsigned external : 1;
 
-    unsigned print_line; /* For debugging: if printed, when was it printed ? */
+    /* For debugging: if printed, when was it printed ? */
+    unsigned print_line;
 
 }
 /* The stack of CPP '#if', '#else', '#elif' and '#endif'
@@ -125,29 +115,7 @@ cpp_if_stack[MAX_CPP_IFS],
 
 empty_cpp_if;
 
-/* This keeps track of how many lines have been printed by the CPP
-   output part. */
-
-unsigned cpp_prints;
-
-/* The top of the 'cpp_if_stack' stack. */
-
-unsigned cpp_if_now;
-
-#define cpp_stack_top cpp_if_stack[cpp_if_now]
-
-/* The top-level thing which is being parsed. */
-
-struct arg * current_arg;
-
-/* The number of brackets inside an argument list.  Brackets inside an
-   argument list are most likely to happen for function pointer
-   arguments.
-
-   Deficiency: I am not sure where else it could happen.  There is a
-   MAX variable just in case things go wrong. */
-
-unsigned arg_br_depth;
+#define cpp_stack_top cpp_if_stack[cfp->cpp_if_now]
 
 /* The maximum number of chars allowed in a struct name. */
 
@@ -169,11 +137,6 @@ struct
 cfunctions_dbug;
 
 unsigned string_debug_on = 0;
-
-/* Is Cfunctions copying everything?  (this is set by '#ifdef HEADER'
-   statements) */
-
-BOOL verbatiming;
 
 /* The parsing state information.  'function_reset' resets this to all
    zeros. */
@@ -259,13 +222,56 @@ parse_state_t;
 static parse_state_t s;
 static parse_state_t z;
 
+/* Shared with "argument.c". */
+
+struct warning warns;
+
 /* Line number of rule matched. */
 
 unsigned rule_line;
 
-/* Shared with "argument.c". */
+/* The top-level thing which is being parsed. */
 
-struct warning warns;
+struct arg * current_arg;
+
+/* The number of brackets inside an argument list.  Brackets inside an
+   argument list are most likely to happen for function pointer
+   arguments.
+
+   Deficiency: I am not sure where else it could happen.  There is a
+   MAX variable just in case things go wrong. */
+
+unsigned arg_br_depth;
+
+struct cfparse
+{
+/* This keeps track of how many lines have been printed by the CPP
+   output part. */
+
+unsigned cpp_prints;
+
+/* The top of the 'cpp_if_stack' stack. */
+
+unsigned cpp_if_now;
+
+    /* Is Cfunctions copying everything?  (this is set by '#ifdef HEADER'
+       statements) */
+    BOOL verbatiming;
+#define MAX_LINE_NAME 0x100
+char line_source_name[MAX_LINE_NAME];
+
+/* The depth of braces '{' and '}' seen. */
+
+unsigned curly_braces_depth;
+
+/* Are we in a typedef? */
+
+BOOL in_typedef;
+
+}
+cfparser;
+
+cfparse_t * cfp = & cfparser;
 
 static void
 print_line_number (void)
@@ -288,64 +294,64 @@ check_overflow (unsigned n, const unsigned max, const char * name)
 /* count a '{'. */
 
 void
-brace_open (void)
+brace_open (cfparse_t * cfp)
 {
-    curly_braces_depth++;
+    cfp->curly_braces_depth++;
 
     if (cfunctions_dbug.brace) {
 	DBMSG ("%s:%u: brace debug: '{' (%d deep) at %s:%u\n",
-	       source_name, yylineno, curly_braces_depth, __FILE__,
+	       source_name, yylineno, cfp->curly_braces_depth, __FILE__,
 	       __LINE__);
     }
-    check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
+    check_overflow (cfp->curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
 }
 
 /* count a '}'. */
 
 void
-brace_close (void)
+brace_close (cfparse_t * cfp)
 {
-    curly_braces_depth--;
+    cfp->curly_braces_depth--;
 
     if (cfunctions_dbug.brace) {
 	printf ("%s:%u: brace debug: '}' (%d deep)\n",
-		source_name, yylineno, curly_braces_depth);
+		source_name, yylineno, cfp->curly_braces_depth);
     }
-    check_overflow (curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
+    check_overflow (cfp->curly_braces_depth, MAX_CURLY_DEPTH, "curly braces");
 }
 
 /* The name do_PRINT_FORMAT is misleading: this is a temporary fix. */
 
 void
-do_PRINT_FORMAT (void)
+do_PRINT_FORMAT (cfparse_t * cfp)
 {
     s.seen_print_format = TRUE;
     start_initial ();
 }
 
 void
-do_void_pointer (const char * text)
+do_void_pointer (cfparse_t * cfp, const char * text)
 {
     char * c;
     /* 'void *' functions have a return value */
-    function_save ("void", 4);
+    function_save (cfp, "void", 4);
     c = strchr (text, '*');
-    function_save (c, strlen (c));
+    function_save (cfp, c, strlen (c));
 }
 
 void
-do_start_arguments (void)
+do_start_arguments (cfparse_t * cfp)
 {
     if (cfunctions_dbug.arg) {
         DBMSG ("start arguments\n");
     }
-    argument_next ();
+    argument_next (cfp);
     arg_put_name (current_arg);
     s.seen_arguments = TRUE;
 }
 
 void
-do_arguments (void)
+do_arguments (cfparse_t * cfp)
 {
     if (cfunctions_dbug.arg) {
         DBMSG ("do arguments\n");
@@ -355,7 +361,7 @@ do_arguments (void)
 }
 
 void
-do_function_pointer (const char * text)
+do_function_pointer (cfparse_t * cfp, const char * text)
 {
     if (! current_arg) {
         bug (HERE, "null pointer for current arg");
@@ -366,14 +372,14 @@ do_function_pointer (const char * text)
         DBMSG ("pointer to function '%s'\n", text);
     }
 
-    inline_print (text);
+    inline_print (cfp, text);
     current_arg->function_pointer = strdup (text);
 }
 
 void
-do_function_pointer_argument (const char * text)
+do_function_pointer_argument (cfparse_t * cfp, const char * text)
 {
-    inline_print (text);
+    inline_print (cfp, text);
 
     if (cfunctions_dbug.fptr) {
         DBMSG ("argument to function pointer '%s'\n", text);
@@ -400,20 +406,20 @@ do_function_pointer_argument (const char * text)
 }
 
 void
-do_word (const char * text, int leng)
+do_word (cfparse_t * cfp, const char * text, int leng)
 {
     if (s.saw_word) {
 	pop_state ();
     }
-    function_save (text, leng);
+    function_save (cfp, text, leng);
     s.saw_word = TRUE;
 }
 
 void
-do_typedef (const char * text, int leng)
+do_typedef (cfparse_t * cfp, const char * text, int leng)
 {
-    if (verbatiming) {
-	function_save (text, leng);
+    if (cfp->verbatiming) {
+	function_save (cfp, text, leng);
     }
     else {
 	s.seen_typedef = TRUE;
@@ -421,23 +427,23 @@ do_typedef (const char * text, int leng)
 }
 
 void
-do_copy_typedef (const char * text, int leng)
+do_copy_typedef (cfparse_t * cfp, const char * text, int leng)
 {
-    if (verbatiming) {
+    if (cfp->verbatiming) {
         fprintf (outfile, "%s\n", text);
     }
 }
 
 void
-inline_print (const char * x)
+inline_print (cfparse_t * cfp, const char * x)
 {
 
     if (cfunctions_dbug.print) {
         DBMSG ("Printing '%s'.\n", x);
     }
 
-    if (verbatiming) {
-        if (! in_typedef) {
+    if (cfp->verbatiming) {
+        if (! cfp->in_typedef) {
             fprintf (verbatim_file, "%s", x);
         }
     }
@@ -446,7 +452,7 @@ inline_print (const char * x)
 /* Deal with preprocessor '#line' directives. */
 
 void
-line_change (const char * text)
+line_change (cfparse_t * cfp, const char * text)
 {
     char * first_quote;
     unsigned name_length;
@@ -457,13 +463,13 @@ line_change (const char * text)
     if (name_length > MAX_LINE_NAME) {
 	line_warning ("very long source name '%s': truncating",
 		      first_quote);
-	strncpy (line_source_name, first_quote + 1,
+	strncpy (cfp->line_source_name, first_quote + 1,
 		 MAX_LINE_NAME);
-	line_source_name[MAX_LINE_NAME-1] = '\0';
+	cfp->line_source_name[MAX_LINE_NAME-1] = '\0';
     }
     else {
-	strcpy (line_source_name, first_quote + 1);
-	line_source_name[name_length-2] = '\0';
+	strcpy (cfp->line_source_name, first_quote + 1);
+	cfp->line_source_name[name_length-2] = '\0';
     }
     line_at = strstr (text, "line");
     if (! line_at) {
@@ -478,7 +484,7 @@ line_change (const char * text)
 	line_at += 4;
     }
     yylineno = atoi (line_at) - 1;
-    source_name = line_source_name;
+    source_name = cfp->line_source_name;
     push_in_cpp ();
 }
 
@@ -488,7 +494,7 @@ line_change (const char * text)
    defines all the information about C extensions. */
 
 void
-copy_c_extensions (void)
+copy_c_extensions (cfparse_t * cfp)
 {
     static BOOL c_ex_searched = FALSE;
     static const char * c_ex_file_name = NULL;
@@ -526,13 +532,13 @@ copy_c_extensions (void)
    in there.  */
 
 void
-check_extensions (void)
+check_extensions (cfparse_t * cfp)
 {
     static unsigned written_c_extensions;
     if (written_c_extensions) {
 	return;
     }
-    copy_c_extensions ();
+    copy_c_extensions (cfp);
     written_c_extensions = 1;
 }
 
@@ -622,11 +628,11 @@ show_cpp_if_stack (unsigned i)
 /* Pass through the CPP stack and move everything to fill in holes. */
 
 static void
-cpp_fill_holes (void)
+cpp_fill_holes (cfparse_t * cfp)
 {
     unsigned i, j = 0;
 
-    for (i = 0; i < cpp_if_now; i++) {
+    for (i = 0; i < cfp->cpp_if_now; i++) {
 	if (cpp_if_stack[i].type != CPP_ZAP) {
 	    if (i != j) {
 		cpp_if_stack[j] = cpp_if_stack[i];
@@ -649,14 +655,14 @@ cpp_fill_holes (void)
 
     /* Reset the top of the stack. */
 
-    for (i = j; i < cpp_if_now; i++) {
+    for (i = j; i < cfp->cpp_if_now; i++) {
 	cpp_if_stack[i] = empty_cpp_if;
     }
 
-    cpp_if_now = j;
+    cfp->cpp_if_now = j;
 
     if (cfunctions_dbug.cpp) {
-	DBMSG ("CPP debug: stack size after tidying %d\n", cpp_if_now);
+	DBMSG ("CPP debug: stack size after tidying %d\n", cfp->cpp_if_now);
     }
 }
 
@@ -666,14 +672,14 @@ cpp_fill_holes (void)
 */
 
 static void
-cpp_stack_tidy (void)
+cpp_stack_tidy (cfparse_t * cfp)
 {
     int i;
 
     /* Find matching pairs of '#if' and '#endif' and mark them for
        deletion. */
 
-    for (i = cpp_if_now - 1; i >= 0; i--) {
+    for (i = cfp->cpp_if_now - 1; i >= 0; i--) {
 	if (cpp_if_stack[i].type == CPP_ENDIF) {
 	    /* Cfunctions has found an '#endif', and it will now descend
 	       the stack looking for the partner '#if'. */
@@ -709,7 +715,7 @@ cpp_stack_tidy (void)
 		    endif_level--;
 		    if (! endif_level) {
 			if (! printed && cpp_if_stack[depth].printed) {
-			    cpp_eject (i);
+			    cpp_eject (cfp, i);
 			}
 			else if (printed && ! cpp_if_stack[depth].printed) {
 			    bug (HERE, "#endif printed but #if not printed");
@@ -761,13 +767,13 @@ cpp_stack_tidy (void)
 	    cpp_if_stack[i].type = CPP_ZAP;
 	}
     }
-    cpp_fill_holes ();
+    cpp_fill_holes (cfp);
 
     /* Set everything to 'external'.  Now Cfunctions knows that the C
        preprocessor stuff currently on the stack is not entangled with
        the currently parsed function or variable. */
 
-    for (i = 0; i < cpp_if_now; i++) {
+    for (i = 0; i < cfp->cpp_if_now; i++) {
 	if (! cpp_if_stack[i].printed) {
 	    cpp_if_stack [i].external = 1;
 	}
@@ -777,7 +783,7 @@ cpp_stack_tidy (void)
 /* Push a new thing onto the preprocessor conditional stack. */
 
 void
-cpp_add (char * text, Cpp_If_Type type)
+cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
 {
     char * x;
     unsigned leng;
@@ -817,19 +823,20 @@ cpp_add (char * text, Cpp_If_Type type)
 	cpp_stack_top.text = malloc_or_exit (leng + 1);
 	strcpy (cpp_stack_top.text, x);
     }
-    else
+    else {
 	cpp_stack_top.text = NULL;
+    }
     cpp_stack_top.type = type;
     cpp_stack_top.printed = FALSE;
 
     /* Check for the verbatim copying conditions. */
 
     if (type == CPP_IF) {
-	if (! verbatiming) {
+	if (! cfp->verbatiming) {
 	    if (strstr (x, global_macro)) {
-		verbatiming = TRUE;
+		cfp->verbatiming = TRUE;
 		verbatim_file = outfile;
-		verbatim_limit = cpp_if_now;
+		verbatim_limit = cfp->cpp_if_now;
 		cpp_stack_top.printed = TRUE;
 		print_line_number ();
 		goto verbatim_started;
@@ -837,28 +844,28 @@ cpp_add (char * text, Cpp_If_Type type)
 	}
     }
 
-    if (verbatiming) {
+    if (cfp->verbatiming) {
 
 	if (cfunctions_dbug.cpp) {
 	    DBMSG ("CPP debug: looking for end of verbatim\n");
-	    DBMSG ("%d %d\n", cpp_stack_find_if (cpp_if_now),
+	    DBMSG ("%d %d\n", cpp_stack_find_if (cfp->cpp_if_now),
 		   verbatim_limit);
 	}
 
 	if (type == CPP_ENDIF &&
-	    cpp_stack_find_if (cpp_if_now) == verbatim_limit) {
+	    cpp_stack_find_if (cfp->cpp_if_now) == verbatim_limit) {
 	    /* Cfunctions has hit the final '#endif' of a verbatim copying
 	       area. */
 	    if (cfunctions_dbug.cpp) {
 		DBMSG ("CPP debug: final '#endif' of a verbatim area\n");
 	    }
 	    cpp_stack_top.printed = TRUE;
-	    cpp_stack_tidy ();
-	    verbatiming = FALSE;
+	    cpp_stack_tidy (cfp);
+	    cfp->verbatiming = FALSE;
 	}
 	else {
 	    outfile = verbatim_file;
-	    cpp_eject (cpp_if_now);
+	    cpp_eject (cfp, cfp->cpp_if_now);
 	}
     }
     else {
@@ -869,7 +876,7 @@ cpp_add (char * text, Cpp_If_Type type)
 	   Each client routine has to call 'atoi' to get the number and call
 	   'cpp_eject'. */
 
-	leng = sprintf (cpp_word, "@CPP%u", cpp_if_now);
+	leng = sprintf (cpp_word, "@CPP%u", cfp->cpp_if_now);
 
 	if (initial_state ()) {
 
@@ -878,10 +885,10 @@ cpp_add (char * text, Cpp_If_Type type)
 	    }
 
 
-	    function_save (cpp_word, leng);
+	    function_save (cfp, cpp_word, leng);
 	}
 	else if (argument_state ()) {
-	    argument_save (cpp_word, leng);
+	    argument_save (cfp, cpp_word, leng);
 	}
 	else {
 	    /* Even if the statement is ignored here, it remains on the
@@ -894,17 +901,17 @@ cpp_add (char * text, Cpp_If_Type type)
 
  verbatim_started:
 
-    cpp_if_now++;
+    cfp->cpp_if_now++;
 
 
     if (cfunctions_dbug.cpp) {
-	DBMSG ("CPP debug: if stack now %u deep\n", cpp_if_now);
+	DBMSG ("CPP debug: if stack now %u deep\n", cfp->cpp_if_now);
     }
 
 
     /* Deficiency: there is no way to resize the stack */
 
-    if (cpp_if_now > MAX_CPP_IFS) {
+    if (cfp->cpp_if_now > MAX_CPP_IFS) {
 	line_error ("too many '#if's: limit is %d", MAX_CPP_IFS);
     }
 }
@@ -912,12 +919,12 @@ cpp_add (char * text, Cpp_If_Type type)
 /* Write out the preprocessor statement on the stack at position 'u'.  */
 
 void
-cpp_eject (unsigned u)
+cpp_eject (cfparse_t * cfp, unsigned u)
 {
 
     if (cpp_if_stack[u].printed) {
 	unsigned j;
-	for (j = 0; j < cpp_if_now; j++) {
+	for (j = 0; j < cfp->cpp_if_now; j++) {
 	    show_cpp_if_stack (j);
 	}
 	bug (HERE, "Attempt to eject already printed statement %d '%s'",
@@ -982,7 +989,8 @@ cpp_eject (unsigned u)
     /* Print a line number to indicate where a particular statement
        was printed. */
 
-    cpp_if_stack[u].print_line = cpp_prints++;
+    cpp_if_stack[u].print_line = cfp->cpp_prints;
+    cfp->cpp_prints++;
     if (cfunctions_dbug.cpp) {
 	DBMSG ("CPP debug: print line %u\n", cpp_if_stack[u].print_line);
     }
@@ -990,19 +998,19 @@ cpp_eject (unsigned u)
 }
 
 void
-do_start_cpp (const char * text)
+do_start_cpp (cfparse_t * cfp, const char * text)
 {
     if (initial_state ()) {
-        function_reset ();
+        function_reset (cfp);
     }
     push_in_cpp ();
-    inline_print (text);
+    inline_print (cfp, text);
 }
 
 void
-do_escaped_brace (const char * text)
+do_escaped_brace (cfparse_t * cfp, const char * text)
 {
-    inline_print (text);
+    inline_print (cfp, text);
 
     if (cfunctions_dbug.brace) {
 	DBMSG ("%s:%u: matched escaped brace.\n",
@@ -1012,27 +1020,27 @@ do_escaped_brace (const char * text)
 }
 
 void
-do_extern (const char * text, int leng)
+do_extern (cfparse_t * cfp, const char * text, int leng)
 {
-    if (verbatiming) {
-	function_save (text, leng);
+    if (cfp->verbatiming) {
+	function_save (cfp, text, leng);
     }
     else
 	s.seen_extern = TRUE;
 }
 
 void
-do_NO_RETURN (const char * text)
+do_NO_RETURN (cfparse_t * cfp, const char * text)
 {
-    check_extensions ();
+    check_extensions (cfp);
     s.c_return_value = VOID;
     s.c_no_return = TRUE;
-    function_save ("void", 5);
+    function_save (cfp, "void", 5);
 }
 
 
 void
-do_arguments_close_bracket (const char * text, int leng)
+do_arguments_close_bracket (cfparse_t * cfp, const char * text, int leng)
 {
     arg_br_depth--;
     if (! arg_br_depth) {
@@ -1040,89 +1048,89 @@ do_arguments_close_bracket (const char * text, int leng)
     }
     else {
 	check_overflow (arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
-	argument_save (text, leng);
+	argument_save (cfp, text, leng);
     }
 }
 
 void
-do_LOCAL (const char * text)
+do_LOCAL (cfparse_t * cfp, const char * text)
 {
-    check_extensions ();
+    check_extensions (cfp);
     s.local_func = TRUE;
 }
 
 void
-do_static (const char * text, int leng)
+do_static (cfparse_t * cfp, const char * text, int leng)
 {
     s.seen_static = TRUE;
-    function_save (text, leng);
+    function_save (cfp, text, leng);
 }
 
 void
-do_void (const char * text, int leng)
+do_void (cfparse_t * cfp, const char * text, int leng)
 {
     s.c_return_value = VOID;
-    function_save (text, leng);
+    function_save (cfp, text, leng);
 }
 
 void
-do_NO_SIDE_FX (const char * text)
+do_NO_SIDE_FX (cfparse_t * cfp, const char * text)
 {
-    check_extensions ();
+    check_extensions (cfp);
     s.no_side_effects = TRUE;
 }
 
 
 void
-do_arguments_open_bracket (const char * text, int leng)
+do_arguments_open_bracket (cfparse_t * cfp, const char * text, int leng)
 {
     arg_br_depth++;
     check_overflow (arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
-    argument_save (text, leng);
+    argument_save (cfp, text, leng);
 }
 
 void
-do_brace_close (void)
+do_brace_close (cfparse_t * cfp)
 {
-    brace_close ();
-    if (curly_braces_depth == 0) {
-	if (verbatiming) {
+    brace_close (cfp);
+    if (cfp->curly_braces_depth == 0) {
+	if (cfp->verbatiming) {
 	    fprintf (verbatim_file, "} ");
 	}
 	pop_state ();
-	if (verbatiming && initial_state ()) {
+	if (cfp->verbatiming && initial_state ()) {
 	    fprintf (verbatim_file, "\n");
 	}
     }
     else {
-	inline_print ("}");
+	inline_print (cfp, "}");
     }
 }
 
 /* This function is called by the lexer if the function has the
-   argument string '(void)'. */
+   argument string '(cfparse_t * cfp)'. */
 
 void
-do_void_arguments (void)
+do_void_arguments (cfparse_t * cfp)
 {
     s.void_arguments = TRUE;
-    do_arguments ();
+    do_arguments (cfp);
 }
 
 
 void
-do_define (const char * text)
+do_define (cfparse_t * cfp, const char * text)
 {
     unsigned char * macro_name;
     if (initial_state ()) {
-	function_reset ();
+	function_reset (cfp);
     }
     macro_name = (unsigned char *) strstr (text, "define") + 7;
     while (! (isalnum (macro_name[0]) || macro_name[0] == '_')) {
 	macro_name++;
     }
     push_in_cpp ();
-    inline_print (text);
+    inline_print (cfp, text);
 }
 
 /* Nullify elements of the stack and release their memory. */
@@ -1139,14 +1147,14 @@ cpp_stack_free (unsigned p)
 /* Zap pairs of #if and #endif where #if is 'external'. */
 
 void
-cpp_external_tidy (void)
+cpp_external_tidy (cfparse_t * cfp)
 {
     int i;
 
     /* Find matching pairs of '#if' and '#endif' and mark them for
        deletion. */
 
-    for (i = cpp_if_now - 1; i >= 0; i--) {
+    for (i = cfp->cpp_if_now - 1; i >= 0; i--) {
 	if (cpp_if_stack[i].type == CPP_ENDIF) {
 	    /* Cfunctions has found an '#endif', and it will now descend
 	       the stack looking for the partner '#if'. */
@@ -1166,7 +1174,7 @@ cpp_external_tidy (void)
 			   stack from this statement onwards to i. */
 			unsigned j;
 			if (cpp_if_stack[depth].printed) {
-			    cpp_eject (i);
+			    cpp_eject (cfp, i);
 			}
 			for (j = depth; j <= i; j++) {
 			    cpp_stack_free (j);
@@ -1185,7 +1193,7 @@ cpp_external_tidy (void)
    are not part of a complete #if and #endif block. */
 
 void
-cpp_external_print (void)
+cpp_external_print (cfparse_t * cfp)
 {
     unsigned i;
 
@@ -1195,9 +1203,9 @@ cpp_external_print (void)
     }
 
 
-    cpp_external_tidy ();
+    cpp_external_tidy (cfp);
 
-    for (i = 0; i < cpp_if_now; i++) {
+    for (i = 0; i < cfp->cpp_if_now; i++) {
 
 	if (cfunctions_dbug.cpp) {
 	    DBMSG ("CPP debug: external print of %u\n", i);
@@ -1205,7 +1213,7 @@ cpp_external_print (void)
 
 
 	if (cpp_if_stack[i].external && ! cpp_if_stack[i].printed) {
-	    cpp_eject (i);
+	    cpp_eject (cfp, i);
 	}
 
 	else if (cfunctions_dbug.cpp) {
@@ -1232,7 +1240,7 @@ unsigned max_fargs;
    called when an argument list has been printed. */
 
 static void
-argument_reset (void)
+argument_reset (cfparse_t * cfp)
 {
     unsigned i;
 
@@ -1251,7 +1259,7 @@ argument_reset (void)
    to it in the types array */
 
 void
-argument_save (const char * text, unsigned text_length)
+argument_save (cfparse_t * cfp, const char * text, unsigned text_length)
 {
 
     if (cfunctions_dbug.arg) {
@@ -1265,7 +1273,7 @@ argument_save (const char * text, unsigned text_length)
    types declared or not. */
 
 int
-no_prototype (void)
+no_prototype (cfparse_t * cfp)
 {
     unsigned i;
     for (i = 0; i < n_fargs; i++) {
@@ -1282,7 +1290,7 @@ no_prototype (void)
    pointer. */
 
 void
-argument_next (void)
+argument_next (cfparse_t * cfp)
 {
     n_fargs++;
     if (n_fargs > max_fargs) {
@@ -1303,7 +1311,7 @@ argument_next (void)
    recently seen pair of brackets '(' and ')' */
 
 void
-argument_print (void)
+argument_print (cfparse_t * cfp)
 {
     unsigned i;
     if (cfunctions_dbug.arg) {
@@ -1326,23 +1334,23 @@ argument_print (void)
 	fprintf (outfile, "()");
     }
 
-    argument_reset ();
+    argument_reset (cfp);
 }
 
 /* Print everything external which has been seen regardless of anything
    else. */
 
 void
-external_clear (void)
+external_clear (cfparse_t * cfp)
 {
-    if (verbatiming) {
+    if (cfp->verbatiming) {
 	arg_fprint (outfile, current_arg);
 	fprintf (outfile, "{");
     }
     else if (! (s.seen_static || s.seen_typedef)) {
 	s.unnamed_struct = TRUE;
     }
-    if (verbatiming || ! s.seen_static) {
+    if (cfp->verbatiming || ! s.seen_static) {
 	arg_tagable (current_arg);
     }
     arg_free (current_arg);
@@ -1357,7 +1365,7 @@ external_clear (void)
    well as 'y' and 'z'. */
 
 void
-external_print (const char * semicolon, const char * why)
+external_print (cfparse_t * cfp, const char * semicolon, const char * why)
 {
     int printable;
 
@@ -1369,17 +1377,17 @@ external_print (const char * semicolon, const char * why)
     }
 
 
-    if (verbatiming || (! (s.seen_arguments || s.seen_extern) &&
+    if (cfp->verbatiming || (! (s.seen_arguments || s.seen_extern) &&
 			! s.seen_typedef &&
 			! s.unnamed_struct)) {
-        if (verbatiming || printable) {
+        if (cfp->verbatiming || printable) {
             print_line_number ();
-            cpp_external_print ();
+            cpp_external_print (cfp);
             if (current_arg) {
-                arg_fprint_all (outfile, current_arg, ! verbatiming);
-                if (verbatiming) {
+                arg_fprint_all (outfile, current_arg, ! cfp->verbatiming);
+                if (cfp->verbatiming) {
                     if (n_fargs) {
-                        argument_print ();
+                        argument_print (cfp);
                     }
                 }
             }
@@ -1387,19 +1395,19 @@ external_print (const char * semicolon, const char * why)
         }
     }
 
-    function_reset ();
+    function_reset (cfp);
 }
 
 /* Print something like 'struct empty;'. */
 
 void
-forward_print (const char * end)
+forward_print (cfparse_t * cfp, const char * end)
 {
-    if (verbatiming) {
-	external_print (end, "incomplete forward declaration of struct");
+    if (cfp->verbatiming) {
+	external_print (cfp, end, "incomplete forward declaration of struct");
     }
     else {
-	function_reset ();
+	function_reset (cfp);
     }
 }
 
@@ -1407,7 +1415,7 @@ forward_print (const char * end)
    switches to their default values ready for a new parse. */
 
 void
-function_reset (void)
+function_reset (cfparse_t * cfp)
 {
 
     if (cfunctions_dbug.func) {
@@ -1420,23 +1428,23 @@ function_reset (void)
     }
     current_arg = NULL;
     s = z;
-    cpp_stack_tidy ();
-    if (verbatiming) {
+    cpp_stack_tidy (cfp);
+    if (cfp->verbatiming) {
 	outfile = verbatim_file;
     }
-    else
+    else {
 	outfile = localfile;
-    argument_reset ();
-    in_typedef = 0;
+    }
+
+    argument_reset (cfp);
+    cfp->in_typedef = 0;
 }
 
 /* Save a function type or name in the current list. */
 
 void
-function_save (const char * text, unsigned yylength)
+function_save (cfparse_t * cfp, const char * text, unsigned yylength)
 {
-
-
     if (cfunctions_dbug.func) {
         DBMSG ("%s:%u: saving function word '%s'\n%s:%u: word appears here\n",
                "cfunctions.fl", rule_line, text, source_name, yylineno);
@@ -1452,7 +1460,7 @@ function_save (const char * text, unsigned yylength)
 
         if (strcmp (text, "typedef") == 0) {
             current_arg->is_typedef = 1;
-            in_typedef = 1;
+            cfp->in_typedef = 1;
 
             if (cfunctions_dbug.func) {
                 DBMSG ("This is a typedef.\n");
@@ -1467,7 +1475,7 @@ function_save (const char * text, unsigned yylength)
 /* Write GNU C extensions for a function. */
 
 void
-write_gnu_c_x (void)
+write_gnu_c_x (cfparse_t * cfp)
 {
     /* GNU C chokes on the extensions in inline definitions. */
 
@@ -1491,7 +1499,7 @@ write_gnu_c_x (void)
    name. */
 
 void
-function_print (void)
+function_print (cfparse_t * cfp)
 {
     int printable;
 
@@ -1506,23 +1514,24 @@ function_print (void)
 
     printable = ! s.seen_static;
 
-    if (printable || verbatiming) {
+    if (printable || cfp->verbatiming) {
 	print_line_number ();
-	cpp_external_print ();
+	cpp_external_print (cfp);
 	arg_fprint (outfile, current_arg);
-	argument_print ();
-	if (verbatiming) {
+	argument_print (cfp);
+	if (cfp->verbatiming) {
 	    fprintf (outfile,  "\n{");
 	}
 	else {
-	    write_gnu_c_x ();
+	    write_gnu_c_x (cfp);
 	    fprintf (outfile,  ";\n");
 	}
     }
-    function_reset ();
+    function_reset (cfp);
 }
 
-typedef enum {
+typedef enum
+{
     wt_status_ok,
     wt_status_memory_failure,
 }
@@ -1640,7 +1649,7 @@ unbackup (char * backup_name, char * file_name)
 /* Read an input C file. */
 
 void
-read_file (void)
+read_file (cfparse_t * cfp)
 {
     yylineno = 1;
 
@@ -1648,22 +1657,22 @@ read_file (void)
 	;
     }
 
-    function_reset ();
+    function_reset (cfp);
 
-    if (! initial_state ()) {
+    if (! initial_state (cfp)) {
 	warning ("was parsing %s in %s when the file unexpectedly ended",
-		 state_message (), source_name);
-	start_initial ();
+		 state_message (cfp), source_name);
+	start_initial (cfp);
     }
 
-    if (curly_braces_depth) {
-	warning ("%d too many open braces in '%s'", curly_braces_depth,
+    if (cfp->curly_braces_depth > 0) {
+	warning ("%d too many open braces in '%s'", cfp->curly_braces_depth,
 		 source_name);
 
 	/* Reset this variable for the next source file to prevent
 	   cascading error messages. */
 
-	curly_braces_depth = 0;
+	cfp->curly_braces_depth = 0;
     }
 }
 
@@ -1718,7 +1727,7 @@ extract (char * c_file_name, const char * command_line)
     wrapper_top (h_file_name, & h_file_guard, command_line);
     outfile = localfile;
 
-    read_file ();
+    read_file (cfp);
 
     wrapper_bottom (h_file_guard);
     fclose (localfile);
