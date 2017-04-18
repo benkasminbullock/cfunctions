@@ -10,7 +10,6 @@
 #define X_CONST
 #endif 
 #define NO_RETURN void
-#define NO_SIDE_FX
 #define PRINT_FORMAT(a,b)
 #define LOCAL
 #endif /* C_EXTENSIONS_H */

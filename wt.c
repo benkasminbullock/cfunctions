@@ -982,15 +982,6 @@ do_void (cfparse_t * cfp, const char * text, int leng)
     function_save (cfp, text, leng);
 }
 
-/* Respond to "NO_SIDE_FX" macro. */
-
-void
-do_NO_SIDE_FX (cfparse_t * cfp, const char * text)
-{
-    check_extensions (cfp);
-    cfp->s.no_side_effects = TRUE;
-}
-
 /* Respond to a '(' in arguments. */
 
 void

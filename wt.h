@@ -61,7 +61,6 @@ void do_arguments_close_bracket (cfparse_t * cfp, const char * text, int leng);
 void do_LOCAL (cfparse_t * cfp, const char * text);
 void do_static (cfparse_t * cfp, const char * text, int leng);
 void do_void (cfparse_t * cfp, const char * text, int leng);
-void do_NO_SIDE_FX (cfparse_t * cfp, const char * text);
 void do_arguments_open_bracket (cfparse_t * cfp, const char * text, int leng);
 void do_brace_close (cfparse_t *);
 void do_void_arguments (cfparse_t *);

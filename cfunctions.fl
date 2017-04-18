@@ -488,8 +488,6 @@ static            { do_static (cfp, yytext, yyleng); }
 
 void              { do_void (cfp, yytext, yyleng); }
 
-NO_SIDE_FX        do_NO_SIDE_FX (cfp, yytext);
-
 NO_RETURN         { do_NO_RETURN (cfp, yytext); }
 
   /* Over-complicated method for parsing GNU C extension related thing. */

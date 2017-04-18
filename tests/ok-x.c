@@ -10,7 +10,7 @@ NO_RETURN bye_bye ()
   exit ( 1 );
 }
 
-NO_SIDE_FX int jubbins ()
+int jubbins ()
 {
   return 33;
 }
