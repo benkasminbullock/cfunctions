@@ -13,7 +13,6 @@ c-word.c \
 cfunctions.c \
 cpp.c \
 error-msg.c \
-file-name.c \
 file.c \
 sys-or-exit.c \
 wt.c
@@ -24,7 +23,6 @@ backup.o \
 c-word.o \
 cfunctions.o \
 error-msg.o \
-file-name.o \
 file.o \
 sys-or-exit.o \
 wt.o
@@ -35,7 +33,6 @@ backup.h \
 c-word.h \
 cfunctions.h \
 error-msg.h \
-file-name.h \
 file.h \
 sys-or-exit.h \
 wt.h
@@ -57,7 +54,7 @@ error-msg.o: error-msg.c error-msg.h
 
 file.o: file.c file.h error-msg.h 
 
-wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h file-name.h \
+wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h \
 	backup.h argument.h cfunctions.h
 
 cfunctions.h: cfunctions.fl

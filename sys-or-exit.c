@@ -15,73 +15,71 @@
 #include "sys-or-exit.h"
 
 void * 
-malloc_or_exit ( size_t s )
+malloc_or_exit (size_t s)
 {
     void * v;
 
-    v = malloc ( s );
+    v = malloc (s);
 
-    if ( ! v ) {
-	error ( "out of memory" );
+    if (! v) {
+	error ("out of memory");
     }
     return v;
 }
 
 void * 
-calloc_or_exit ( size_t s, size_t size )
+calloc_or_exit (size_t s, size_t size)
 {
     void * v;
 
-    v = calloc ( s, size );
+    v = calloc (s, size);
 
-    if ( ! v ) {
-	error ( "out of memory" );
+    if (! v) {
+	error ("out of memory");
     }
     return v;
 }
 
 void * 
-realloc_or_exit ( void * v, size_t s )
+realloc_or_exit (void * v, size_t s)
 {
-    v = realloc ( v, s );
+    v = realloc (v, s);
 
-    if ( ! v ) {
-	error ( "out of memory" );
+    if (! v) {
+	error ("out of memory");
     }
     return v;
 }
 
 void
-fseek_or_exit ( FILE * file, long offset, int whence )
+fseek_or_exit (FILE * file, long offset, int whence)
 {
-    if ( fseek ( file, offset, whence ) == -1 ) {
-	error ( "file seek failed: %s", strerror (errno));
+    if (fseek (file, offset, whence) == -1) {
+	error ("file seek failed: %s", strerror (errno));
     }
 }
 
 void
-fread_or_exit ( void * buffer, size_t size, size_t nmemb, FILE * stream )
+fread_or_exit (void * buffer, size_t size, size_t nmemb, FILE * stream)
 {
-    /* note that clearerr has been called by fopen_or_exit already. */
-
-    if ( fread ( buffer, size, nmemb, stream ) != nmemb ) {
-	if ( ferror ( stream ) ) {
-	    error ( "file read failed: %s", strerror (errno) );
+    if (fread (buffer, size, nmemb, stream) != nmemb) {
+	if (ferror (stream)) {
+	    error ("file read failed: %s", strerror (errno));
 	}
-	else if ( feof ( stream ) ) {
-	    error ( "file read failed: unexpected end of file" );
+	else if (feof (stream)) {
+	    error ("file read failed: unexpected end of file");
 	}
 	else {
-	    bug ( HERE, "problems with fread, feof or ferror");
+	    bug (HERE, "problems with fread, feof or ferror");
 	}
     }
 }
 
 void
-fwrite_or_exit (const void * buffer, size_t size, size_t nmemb, FILE * stream )
+fwrite_or_exit (const void * buffer, size_t size, size_t nmemb, FILE * stream)
 {
-    if ( fwrite ( buffer, size, nmemb, stream ) != nmemb ) {
-	error ( "file write failed: %s", strerror (errno) );
+    if (fwrite (buffer, size, nmemb, stream) != nmemb) {
+	error ("file write failed: %s", strerror (errno));
     }
 }
 
@@ -90,26 +88,20 @@ fopen_or_exit (const char * path, const char * mode)
 {
     FILE * file;
 
-    file = fopen ( path, mode );
+    file = fopen (path, mode);
 
-    if ( ! file ) {
-	error ( "could not open file \"%s\": %s",
-		path, strerror ( errno ) );
+    if (! file) {
+	error ("could not open file \"%s\": %s",
+		path, strerror (errno));
     }
-    /* I cannot find in the documentation I have (linux man pages and
-       K&R) whether clearerr needs to be called here or not.  I am
-       including this although wonder if it is really necessary. */
-
-    /* clearerr ( file ); */
-
     return file;
 }
 
 void
-stat_or_exit (const char * file_name, struct stat * buf )
+stat_or_exit (const char * file_name, struct stat * buf)
 {
-    if ( stat ( file_name, buf ) == -1 ) {
-	error ( "stat failed on %s: %s", file_name, strerror ( errno ) );
+    if (stat (file_name, buf) == -1) {
+	error ("stat failed on %s: %s", file_name, strerror (errno));
     }
 }
 
@@ -119,6 +111,6 @@ fclose_or_exit (FILE * f)
     int status;
     status = fclose (f);
     if (status != 0) {
-	error ("fclose failed: %s", strerror ( errno ) );
+	error ("fclose failed: %s", strerror (errno));
     }
 }
