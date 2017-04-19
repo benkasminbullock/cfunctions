@@ -56,4 +56,5 @@ void arg_free (struct arg * a);
 void arg_fprint (FILE * f, struct arg * a);
 void arg_fprint_all (FILE * f, struct arg * a, int do_extern);
 void arg_tagable (struct arg * a);
+void arg_memory_check ();
 #endif 

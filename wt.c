@@ -17,16 +17,7 @@
 #include "sys-or-exit.h"
 #include "wt.h"
 
-/* The following declarations are for functions defined in
-   "cfunctions.fl" which access the parsing state of the flex
-   lexer. */
-
-int argument_state ();
-int initial_state ();
-void pop_state ();
-void push_in_cpp ();
-void start_initial ();
-const char * state_message ();
+#include "flex.h"
 
 #undef BOOL
 #define BOOL int
@@ -360,7 +351,7 @@ do_function_pointer (cfparse_t * cfp, const char * text)
     current_arg->is_function_pointer = TRUE;
 
     inline_print (cfp, text);
-    current_arg->function_pointer = strdup (text);
+    current_arg->function_pointer = strdup_or_exit (text);
 }
 
 /* Add function pointer arguments. */
@@ -382,11 +373,11 @@ do_function_pointer_argument (cfparse_t * cfp, const char * text)
             strlen (text) + 1;
         new = malloc_or_exit (new_length);
         sprintf (new, "%s%s", current_arg->function_pointer_arguments, text);
-        free (current_arg->function_pointer_arguments);
+        CALLX (free_or_exit (current_arg->function_pointer_arguments));
         current_arg->function_pointer_arguments = new;
     }
     else {
-        current_arg->function_pointer_arguments = strdup (text);
+        current_arg->function_pointer_arguments = strdup_or_exit (text);
     }
 }
 
@@ -613,9 +604,8 @@ cpp_stack_find_if (int i)
 
 static unsigned verbatim_limit;
 
-/* Debugging function to show 'cpp_if_stack'.  */
-
-/* Pass through the CPP stack and move everything to fill in holes. */
+/* Compact the CPP stack such that zapped entries are deleted and the
+   remaining ones are made contiguous. */
 
 static void
 cpp_fill_holes (cfparse_t * cfp)
@@ -636,7 +626,10 @@ cpp_fill_holes (cfparse_t * cfp)
 	    j++;
 	}
 	else {
-	    free (cpp_if_stack [ i ].text);
+	    if (cpp_if_stack [i].text) {
+		CALLX (free_or_exit (cpp_if_stack [i].text));
+		cpp_if_stack [i].text = 0;
+	    }
 	}
     }
 
@@ -644,10 +637,12 @@ cpp_fill_holes (cfparse_t * cfp)
 
     for (i = j; i < cfp->cpp_if_now; i++) {
 	cpp_if_stack[i] = empty_cpp_if;
+	if (cpp_if_stack [i].text) {
+	    CALLX (free_or_exit (cpp_if_stack [i].text));
+	    cpp_if_stack [i].text = 0;
+	}
     }
-
     cfp->cpp_if_now = j;
-
 }
 
 /*
@@ -748,27 +743,25 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
        because it was rejected it counts it again.  I have sent the full
        description of the bug to Vern Paxson, the author of Flex, who said
        it is on the 'to do' list. */
+
     yylineno--;
 
-
     x = strstr (text, cpp_if_names[type]);
-
 
     if (! x) {
 	bug (HERE, "bad string '%s' in cpp_add: should contain '%s'", text,
 	     cpp_if_names[type]);
     }
 
-
     x += cpp_if_len[type];
     leng = strlen (x);
 
+    if (cpp_stack_top.text) {
+	bug (HERE, "Unfreed memory at the top of the CPP stack");
+    }
     if (leng) {
 	cpp_stack_top.text = malloc_or_exit (leng + 1);
 	strcpy (cpp_stack_top.text, x);
-    }
-    else {
-	cpp_stack_top.text = NULL;
     }
     cpp_stack_top.type = type;
     cpp_stack_top.printed = FALSE;
@@ -777,10 +770,17 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
 
     if (type == CPP_IF) {
 	if (! cfp->verbatiming) {
+	    /* Look for the text HEADER. */
 	    if (strstr (x, global_macro)) {
 		cfp->verbatiming = TRUE;
 		verbatim_limit = cfp->cpp_if_now;
+		/* Mark this as "printed" although we don't actually
+		   print it. */
 		cpp_stack_top.printed = TRUE;
+		/* Add a line directive containing the current line
+		   number of the C file to the output to show that
+		   this is a section copied verbatim from the C
+		   file. */
 		print_line_number (cfp);
 		goto verbatim_started;
 	    }
@@ -828,7 +828,6 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
  verbatim_started:
 
     cfp->cpp_if_now++;
-    /* Deficiency: there is no way to resize the stack */
 
     if (cfp->cpp_if_now > MAX_CPP_IFS) {
 	line_error ("too many '#if's: limit is %d", MAX_CPP_IFS);
@@ -916,7 +915,6 @@ void
 do_escaped_brace (cfparse_t * cfp, const char * text)
 {
     inline_print (cfp, text);
-
 }
 
 /* This is triggered by the word "extern" in the C program text. */
@@ -1038,7 +1036,8 @@ void
 cpp_stack_free (unsigned p)
 {
     if (cpp_if_stack[p].text) {
-	free (cpp_if_stack[p].text);
+	CALLX (free_or_exit (cpp_if_stack[p].text));
+	cpp_if_stack[p].text = 0;
     }
     cpp_if_stack[p] = empty_cpp_if;
 }
@@ -1125,7 +1124,6 @@ argument_reset (cfparse_t * cfp)
 void
 argument_save (cfparse_t * cfp, const char * text, unsigned text_length)
 {
-
     arg_add (cfp->fargs[cfp->n_fargs - 1], text, 0);
 }
 
@@ -1154,14 +1152,16 @@ argument_next (cfparse_t * cfp)
 {
     cfp->n_fargs++;
     if (cfp->n_fargs > cfp->max_fargs) {
+	size_t new_size;
 	if (cfp->fargs) {
 	    cfp->max_fargs *= 2;
-	    cfp->fargs = (struct arg **)
-		realloc_or_exit (cfp->fargs, sizeof (struct arg *) * cfp->max_fargs);
+	    new_size = cfp->max_fargs * sizeof (struct arg *);
+	    cfp->fargs = realloc_or_exit (cfp->fargs, new_size);
 	}
 	else {
 	    cfp->max_fargs = 4;
-	    cfp->fargs = malloc_or_exit (sizeof (struct arg *) * cfp->max_fargs);
+	    new_size = cfp->max_fargs * sizeof (struct arg *);
+	    cfp->fargs = malloc_or_exit (new_size);
 	}
     }
     cfp->fargs[cfp->n_fargs - 1] = arg_start ();
@@ -1429,7 +1429,7 @@ static void
 wrapper_bottom (cfparse_t * cfp, char * h_file_guard)
 {
     fprintf (cfp->outfile, "\n#endif /* %s */\n", h_file_guard);
-    free (h_file_guard);
+    CALLX (free_or_exit (h_file_guard));
     h_file_guard = NULL;
 }
 
@@ -1461,7 +1461,7 @@ unbackup (char * backup_name, char * file_name)
 	   number on failure. */
 	error ("failure number %d in fdiff", i);
     }
-    free (backup_name);
+    CALLX (free_or_exit (backup_name));
 }
 
 /* Read an input C file. */
@@ -1502,10 +1502,10 @@ read_file (cfparse_t * cfp)
 static char *
 do_backup (char * file_name)
 {
-    char * b;
 
-    b = find_backup_file_name (file_name);
     if (fexists (file_name)) {
+	char * b;
+	b = find_backup_file_name (file_name);
 	if (rename (file_name, b)) {
 	    error ("could not rename '%s' to '%s': %s", file_name, b,
 		   strerror (errno));
@@ -1534,8 +1534,7 @@ extract (cfparse_t * cfp, char * c_file_name)
     char * backup_name;
 
     if (! c_file_name) {
-	fprintf (stderr, "%s:%d: no file name.\n", __FILE__, __LINE__);
-	return;
+	bug (HERE, "no file name");
     }
     set_source_name (c_file_name);
     c_file_name_len = strlen (c_file_name);
@@ -1552,7 +1551,7 @@ extract (cfparse_t * cfp, char * c_file_name)
     if (backup_name) {
 	unbackup (backup_name, h_file_name);
     }
-    free (h_file_name);
+    CALLX (free_or_exit (h_file_name));
 }
 
 /* This takes the command line in "argc" and "argv" and puts it into
@@ -1588,6 +1587,24 @@ fill_command_line (cfparse_t * cfp, int argc, char ** argv)
     cfp->command_line = command_line;
 }
 
+static void
+release_memory (cfparse_t * cfp)
+{
+    int j;
+    for (j = 0; j < MAX_CPP_IFS; j++) {
+	cpp_stack_free (j);
+    }
+    if (cfp->fargs) {
+	CALLX (free_or_exit (cfp->fargs));
+    }
+    cfp->fargs = 0;
+    CALLX (free_or_exit (cfp->command_line));
+    cfp->command_line = 0;
+    clean_up_flex ();
+//    arg_memory_check ();
+    memory_check ();
+}
+
 int
 main (int argc, char ** argv)
 {
@@ -1604,6 +1621,6 @@ main (int argc, char ** argv)
 	}
 	extract (cfp, c_file_name);
     }
-    free (cfp->command_line);
+    release_memory (cfp);
     return 0;
 }

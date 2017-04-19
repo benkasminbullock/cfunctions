@@ -176,8 +176,8 @@ find_backup_file_name (char *file)
 	exit (EXIT_FAILURE);
     }
     highest_backup = max_backup_version (base_versions, dir);
-    free (base_versions);
-    free (dir);
+    free_or_exit (base_versions);
+    free_or_exit (dir);
     name = make_version_name (file, highest_backup + 1);
     if (! name) {
 	fprintf (stderr, "%s:%d: make_version_name (%s, %d) failed.\n",

@@ -14,6 +14,8 @@
 #include "error-msg.h"
 #include "sys-or-exit.h"
 
+static int n_mallocs;
+
 void * 
 malloc_or_exit (size_t s)
 {
@@ -24,6 +26,7 @@ malloc_or_exit (size_t s)
     if (! v) {
 	error ("out of memory");
     }
+    n_mallocs++;
     return v;
 }
 
@@ -37,12 +40,16 @@ calloc_or_exit (size_t s, size_t size)
     if (! v) {
 	error ("out of memory");
     }
+    n_mallocs++;
     return v;
 }
 
 void * 
 realloc_or_exit (void * v, size_t s)
 {
+    if (! v) {
+	n_mallocs++;
+    }
     v = realloc (v, s);
 
     if (! v) {
@@ -114,3 +121,40 @@ fclose_or_exit (FILE * f)
 	error ("fclose failed: %s", strerror (errno));
     }
 }
+
+or_exit_t
+free_or_exit (void * memory)
+{
+    if (! memory) {
+	fprintf (stderr, "%s:%d: Attempt to free null pointer.\n",
+		 __FILE__, __LINE__);
+	return or_exit_null_pointer;
+    }
+    free (memory);
+    n_mallocs--;
+    return or_exit_ok;
+}
+
+char *
+strdup_or_exit (const char * todup)
+{
+    char * dupped;
+    dupped = strdup (todup);
+    if (! dupped) {
+	error ("strdup failed: %s", strerror (errno));
+    }
+    n_mallocs++;
+    return dupped;
+}
+
+/* Check for memory leaks. */
+
+void
+memory_check ()
+{
+    if (n_mallocs != 0) {
+	fprintf (stderr, "%s:%d: n_mallocs = %d\n",
+		 __FILE__, __LINE__, n_mallocs);
+    }
+}
+

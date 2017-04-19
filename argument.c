@@ -3,23 +3,32 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 
 #include "wt.h"
 #include "sys-or-exit.h"
 #include "error-msg.h"
 #include "argument.h"
 
-/* Create a completely new "arg" structure. */
+static int arg_n_mallocs;
+
+static struct arg *
+new_arg ()
+{
+    return calloc_or_exit (1, sizeof (struct arg));
+    arg_n_mallocs++;
+}
+
+/* Create a new "arg" structure. */
 
 struct arg * 
 arg_start ()
 {
     struct arg * a;
 
-    a = calloc_or_exit (1, sizeof (struct arg));
+    a = new_arg ();
     a->types = calloc_or_exit (1, sizeof (struct shared_type));
-    a->types->ref_count++;
+    arg_n_mallocs++;
+    a->types->ref_count = 1;
     return a;
 }
 
@@ -30,11 +39,17 @@ arg_share (struct arg * a)
 {
     struct arg * b;
 
-    b = calloc_or_exit (1, sizeof (struct arg));
+    b = new_arg ();
     b->types = a->types;
+    if (a->types->ref_count == 0) {
+	bug (HERE, "zero ref count in copied argument");
+    }
     b->types->ref_count++;
     b->parse_state = POINTER;
     b->prev = a;
+    if (a->next) {
+	bug (HERE, "non-zero next argument in arg");
+    }
     a->next = b;
     return b;
 }
@@ -52,8 +67,6 @@ type_list_add (struct type ** a, struct type * b)
 }
 
 /* Check for a muddled situation */
-
-extern unsigned yylineno;
 
 static void
 check_cpp_muddle (struct arg * a, const char * t, unsigned line)
@@ -77,7 +90,9 @@ arg_add (struct arg * a, const char * t, unsigned line)
     struct type * x;
     t_len = strlen (t);
     x = calloc_or_exit (1, sizeof (struct type));
+    arg_n_mallocs++;
     x->name = malloc_or_exit (t_len + 1);
+    arg_n_mallocs++;
     strcpy ((char *) x->name, t);
     x->line = line;
     if (t[0] == '*') {
@@ -120,13 +135,15 @@ arg_add (struct arg * a, const char * t, unsigned line)
 /* Move a word out of a type list and into the name of an argument. */
 
 static void
-type_list_move (struct arg * a, struct type ** t)
+type_list_move (struct arg * a, struct type ** t_ptr)
 {
-    a->name = * t;
-    if ((* t)->prev) {
-	(* t)->prev->next = NULL;
+    struct type * t;
+    t = * t_ptr;
+    a->name = t;
+    if (t->prev) {
+	t->prev->next = NULL;
     }
-    * t = (* t)->prev;
+    * t_ptr = t->prev;
 }
 
 /* For a particular argument, make the last-seen word the name
@@ -135,12 +152,9 @@ type_list_move (struct arg * a, struct type ** t)
 void
 arg_put_name (struct arg * a)
 {
-    /* Kludge. */
     if (a->is_function_pointer) {
         return;
     }
-
-
     if (a->name) {
         return;
     }
@@ -169,6 +183,10 @@ arg_put_name (struct arg * a)
 	bug (HERE, "attempt to move a suffix to arg name");
     }
 
+    if (! a->name) {
+	bug (HERE, "Could not find a name");
+    }
+
     /* Anything which comes now must be a suffix. */
 
     a->parse_state = SUFFIX;
@@ -187,13 +205,16 @@ type_free (struct type * t)
     while (t->prev) {
 	t = t->prev;
     }
-    while (t->next) {
-	free (t->name);
-	t = t->next;
-	free (t->prev);
+    while (t) {
+	struct type * prev;
+	prev = t;
+	t = prev->next;
+	free_or_exit (prev->name);
+	prev->name = 0;
+	arg_n_mallocs--;
+	free_or_exit (prev);
+	arg_n_mallocs--;
     }
-    free (t->name);
-    free (t);
 }
 
 /* Free the memory associated with an argument. */
@@ -204,21 +225,33 @@ arg_free (struct arg * a)
     a->types->ref_count--;
     if (a->types->ref_count == 0) {
 	type_free (a->types->t);
-	free (a->types);
+	free_or_exit (a->types);
+	a->types = 0;
+	arg_n_mallocs--;
     }
     if (a->name) {
-	free (a->name->name);
-	free (a->name);
+	free_or_exit (a->name->name);
+	a->name->name = 0;
+	arg_n_mallocs--;
+	free_or_exit (a->name);
+	a->name = 0;
+	arg_n_mallocs--;
     }
     type_free (a->pointers);
     type_free (a->suffixes);
-    if (a->next) {
-	a->next->prev = NULL;
-    }
     if (a->prev) {
 	arg_free (a->prev);
     }
-    free (a);
+    if (a->is_function_pointer) {
+	if (a->function_pointer) {
+	    free_or_exit (a->function_pointer);
+	}
+    }
+    if (a->function_pointer_arguments) {
+	free_or_exit (a->function_pointer_arguments);
+    }
+    free_or_exit (a);
+    arg_n_mallocs--;
 }
 
 
@@ -261,18 +294,16 @@ type_fprint (FILE * f, struct type * t, int do_extern)
     while (t->prev) {
 	t = t->prev;
     }
-    do {
+    while (t) {
 	if (t->name[0] == '@') {
 	    unsigned cpp_id;
 	    if (strncmp ((char *) t->name + 1, "CPP", 3) == 0) {
 		cpp_id = atoi ((char *)t->name + 4);
-
-		/* I removed the `extern' printing bit. */
-
 		cpp_eject (cfp, cpp_id);
 	    }
-	    else
+	    else {
 		bug (HERE, "unknown @ escape `%s'", t->name);
+	    }
 	}
 	else {
 	    if (do_extern && ! did_extern) {
@@ -283,7 +314,6 @@ type_fprint (FILE * f, struct type * t, int do_extern)
 	}
 	t = t->next;
     }
-    while (t);
 }
 
 /* Print just one argument. */
@@ -361,5 +391,14 @@ arg_tagable (struct arg * a)
     }
     if (strcmp ((char *) t->name, "typedef") == 0) {
 	return;
+    }
+}
+
+void
+arg_memory_check ()
+{
+    if (arg_n_mallocs != 0) {
+	fprintf (stderr, "%s:%d: arg_n_mallocs = %d\n",
+		 __FILE__, __LINE__, arg_n_mallocs);
     }
 }

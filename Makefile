@@ -43,17 +43,19 @@ argument.o: argument.c argument.h wt.h sys-or-exit.h error-msg.h
 
 backup.o: backup.c backup.h sys-or-exit.h error-msg.h
 
-cfunctions.o: cfunctions.c argument.h wt.h error-msg.h
+cfunctions.o: cfunctions.c argument.h wt.h error-msg.h flex.c
 
 error-msg.o: error-msg.c error-msg.h
 
 file.o: file.c file.h error-msg.h 
 
 wt.o: wt.c config.h error-msg.h  sys-or-exit.h file.h \
-	backup.h argument.h cfunctions.h
+	backup.h argument.h cfunctions.h flex.h
 
 cfunctions.h: cfunctions.fl
 	$(FLEX) --header-file=cfunctions.h -o cfunctions.c cfunctions.fl
+
+sys-or-exit.o: sys-or-exit.c sys-or-exit.h error-msg.h
 
 cfunctions.c:	cfunctions.fl
 	if [ -f $@ ]; then chmod 0644 $@; fi

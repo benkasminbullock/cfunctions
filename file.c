@@ -8,6 +8,7 @@
 
 #include "file.h"
 #include "error-msg.h"
+#include "sys-or-exit.h"
 
 #define USUAL_BLOCKS 0x1000
 
@@ -115,11 +116,7 @@ int fdiff (const char * a_name, const char * b_name)
     }
     for (i = 0; i < 2; i++) {
 	int bytes_read;
-	block[i] = malloc (size);
-	if (! block[i]) {
-	    fprintf (stderr, "%s:%d: malloc (%d) failed: %s.\n",
-		     __FILE__, __LINE__, size, strerror (errno));
-	}
+	block[i] = malloc_or_exit (size);
 	files[i] = fopen (names[i], "r");
 	if (! files[i]) {
 	    fprintf (stderr, "%s:%d: error from fopen ('%s'): %s.\n",
@@ -138,7 +135,7 @@ int fdiff (const char * a_name, const char * b_name)
     }
     comp = memcmp (block[0], block[1], size);
     for (i = 0; i < 2; i++) {
-	free (block[i]);
+	CALLX (free_or_exit (block[i]));
     }
     return comp;
 }

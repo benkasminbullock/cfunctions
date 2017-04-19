@@ -135,7 +135,7 @@ sub try_ok
     close TEST_OUT;
     ok (! $error_msg, "no errors with $cfunctions $c_file");
     if ($error_msg) {
-	note ("Cfunctions produced errors as follows: $error_msg");
+	diag ("Cfunctions produced errors as follows: $error_msg");
     }
 
     # Try compiling and linking using the generated header file.
