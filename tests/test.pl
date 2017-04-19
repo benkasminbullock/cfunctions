@@ -76,6 +76,10 @@ sub main
     rm_h_files ();
     test_line_numbers ();
     rm_h_files ();
+    test_spacing ();
+    rm_h_files ();
+    test_attribute ();
+    rm_h_files ();
 }
 
 # Remove the backups
@@ -341,6 +345,31 @@ sub test_line_numbers
 	unlike ($htext, qr/#line 4/);
     };
 }
+
+# https://github.com/benkasminbullock/cfunctions/issues/3
+
+sub test_spacing
+{
+    my $file = "$Bin/spacing.c";
+    my ($hfile, $htext) = run_ok ($file);
+    like ($htext, qr/kanji_codes_status_t\s+jis2euc/, "preserved space in function declaration");
+    TODO: {
+	local $TODO = 'Do not add spaces before commas or end bracket of function.';
+	unlike ($htext, qr/\s[,\)]/, "did not add extra space to function arguments");
+    };
+}
+
+sub test_attribute
+{
+    my $file = "$Bin/attribute.c";
+    run3 ("$cfunctions $file", undef, \my $output, \my $errors);
+    my $hfile = c_to_h_name ($file);
+    ok (-f $hfile, "made hfile");
+    TODO: {
+	local $TODO = 'fix errors due to __attribute__';
+	ok (! $errors, "no errors with __attribute__(()) stuff");
+    };
+};
 
 # Run on a file expecting no output or errors
 
