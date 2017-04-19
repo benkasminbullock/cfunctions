@@ -317,9 +317,12 @@ type_fprint (FILE * f, struct type * t, int do_extern)
 		fprintf (f, "extern ");
 		did_extern = 1;
 	    }
-	    fprintf (f, "%s ", t->name);
+	    fprintf (f, "%s", t->name);
 	}
 	t = t->next;
+	if (t) {
+	    fprintf (f, " ");
+	}
     }
 }
 
@@ -339,7 +342,7 @@ arg_fprint (FILE * f, struct arg * a)
     }
     type_fprint (f, a->pointers, 0);
     if (a->name) {
-        fprintf (f, "%s", a->name->name); 
+        fprintf (f, " %s", a->name->name); 
         suffix_fprint (f, a);
     }
 }
@@ -364,6 +367,7 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 	while (a->prev) {
 	    a = a->prev;
 	}
+	fprintf (f, " ");
 	for (; a; a = a->next) {
 	    type_fprint (f, a->pointers, 0);
 	    if (a->name) {

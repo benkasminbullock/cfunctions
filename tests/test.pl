@@ -306,7 +306,7 @@ sub try_ok
 
     ok (! $cc_error_msg, "no errors compiling $c_file and $link_file");
     if ($cc_error_msg) {
-	note ("Compiler error is '$cc_error_msg'");
+	diag ("Compiler error is '$cc_error_msg'");
     }
     return;
 }
@@ -353,10 +353,10 @@ sub test_spacing
     my $file = "$Bin/spacing.c";
     my ($hfile, $htext) = run_ok ($file);
     like ($htext, qr/kanji_codes_status_t\s+jis2euc/, "preserved space in function declaration");
-    TODO: {
-	local $TODO = 'Do not add spaces before commas or end bracket of function.';
+#    TODO: {
+#	local $TODO = 'Do not add spaces before commas or end bracket of function.';
 	unlike ($htext, qr/\s[,\)]/, "did not add extra space to function arguments");
-    };
+#    };
 }
 
 sub test_attribute
