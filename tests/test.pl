@@ -7,6 +7,9 @@ use strict;
 use FindBin '$Bin';
 use Test::More;
 use File::Compare;
+use IPC::Run3;
+use File::Slurper qw/read_lines read_text/;
+use C::Utility 'c_to_h_name';
 
 chdir $Bin or die $!;
 my $cfunctions = "$Bin/../cfunctions";
@@ -17,6 +20,7 @@ my $cc         = "cc";
 my $GNU_c      = 1;
 main ();
 done_testing ();
+rm_h_files ();
 exit;
 
 sub main
@@ -67,6 +71,10 @@ sub main
 	unlink ( "a.out" ) || die;
     }
     test_backup ();
+    rm_h_files ();
+    test_verbatim ();
+    rm_h_files ();
+    test_line_numbers ();
     rm_h_files ();
 }
 
@@ -299,3 +307,56 @@ sub try_ok
     return;
 }
 
+# There are several errors involving the verbatim copying function
+# which are shown up with the test file "ok-verbatim.c".
+
+sub test_verbatim
+{
+    my $file = "$Bin/ok-verbatim.c";
+    my $text = read_text ($file);
+    like ($text, qr/=\s*99/, "initializer OK");
+    my $hfile = c_to_h_name ($file);
+    run3 ("$cfunctions $file", undef, \my $output, \my $errors);
+    ok (! $output, "no output with $file");
+    ok (-f $hfile, "made $hfile ok");
+    my $htext = read_text ($hfile);
+    TODO: {
+	local $TODO = 'Fix multiple errors with verbatim copying';
+	unlike ($htext, qr/99/, "Did not copy 99 into $hfile");
+	unlike ($htext, qr/#if\s+0.*#if\s+0/s,
+		"No doubled preprocessor conditionals");
+	ok ($errors, "get errors with initializer in verbatim region");
+    };
+}
+
+sub test_line_numbers
+{
+    my $file = "$Bin/link-arg.c";
+    my @lines = read_lines ($file);
+    like ($lines[2], qr/int funkyfunc/);
+    my ($hfile, $htext) = run_ok ($file);
+    TODO: {
+	local $TODO = 'fix line number errors';
+	like ($htext, qr/#line 3/);
+	unlike ($htext, qr/#line 4/);
+    };
+}
+
+# Run on a file expecting no output or errors
+
+sub run_ok
+{
+    my ($file) = @_;
+    ok (-f $file, "$file exists");
+    my $hfile = c_to_h_name ($file);
+    if (-f $hfile) {
+	unlink $hfile or die $!;
+    }
+    my %o;
+    run3 ("$cfunctions $file", undef, \my $output, \my $errors);
+    ok (-f $hfile, "$hfile made");
+    ok (! $output, "no output from $file");
+    ok (! $errors, "no errors from $file");
+    my $htext = read_text ($hfile);
+    return ($hfile, $htext);
+}
