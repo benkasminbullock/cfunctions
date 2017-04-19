@@ -19,6 +19,8 @@
 
 #include "flex.h"
 
+static int wt_n_mallocs;
+
 #undef BOOL
 #define BOOL int
 enum bool { FALSE, TRUE };
@@ -372,8 +374,11 @@ do_function_pointer_argument (cfparse_t * cfp, const char * text)
         new_length = strlen (current_arg->function_pointer_arguments) +
             strlen (text) + 1;
         new = malloc_or_exit (new_length);
+	wt_n_mallocs++;
         sprintf (new, "%s%s", current_arg->function_pointer_arguments, text);
         CALLX (free_or_exit (current_arg->function_pointer_arguments));
+	wt_n_mallocs--;
+	current_arg->function_pointer_arguments = 0;
         current_arg->function_pointer_arguments = new;
     }
     else {
@@ -512,19 +517,12 @@ copy_c_extensions (cfparse_t * cfp)
 
     if (c_ex_file_name) {
 	fprintf (cfp->outfile, "#line 1 \"%s\"\n", c_ex_file_name);
-	if (fcopy (cfp->outfile, c_ex_file_name)) {
-	    warning ("could not copy '%s': %s", c_ex_file_name,
-		     strerror (errno));
-	}
+	fcopy (cfp->outfile, c_ex_file_name);
     }
 }
 
-/* Check whether the user has asked for the C extensions, which are
-   turned off by default.  If the user needs them, then write a
-   statement #include "c-extensions.h".  The user needs the extensions
-   file also if he uses traditional C declarations, because the
-   definition of a macro 'PROTO' for the traditional C declarations is
-   in there.  */
+/* Copy the file "c-extensions.h" into the output header file if
+   necessary.  */
 
 void
 check_extensions (cfparse_t * cfp)
@@ -627,7 +625,8 @@ cpp_fill_holes (cfparse_t * cfp)
 	}
 	else {
 	    if (cpp_if_stack [i].text) {
-		CALLX (free_or_exit (cpp_if_stack [i].text));
+		CALLX (free_or_exit (cpp_if_stack[i].text));
+		wt_n_mallocs--;
 		cpp_if_stack [i].text = 0;
 	    }
 	}
@@ -638,7 +637,8 @@ cpp_fill_holes (cfparse_t * cfp)
     for (i = j; i < cfp->cpp_if_now; i++) {
 	cpp_if_stack[i] = empty_cpp_if;
 	if (cpp_if_stack [i].text) {
-	    CALLX (free_or_exit (cpp_if_stack [i].text));
+	    CALLX (free_or_exit (cpp_if_stack[i].text));
+	    wt_n_mallocs--;
 	    cpp_if_stack [i].text = 0;
 	}
     }
@@ -761,6 +761,7 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
     }
     if (leng) {
 	cpp_stack_top.text = malloc_or_exit (leng + 1);
+	wt_n_mallocs++;
 	strcpy (cpp_stack_top.text, x);
     }
     cpp_stack_top.type = type;
@@ -1037,6 +1038,7 @@ cpp_stack_free (unsigned p)
 {
     if (cpp_if_stack[p].text) {
 	CALLX (free_or_exit (cpp_if_stack[p].text));
+	wt_n_mallocs--;
 	cpp_if_stack[p].text = 0;
     }
     cpp_if_stack[p] = empty_cpp_if;
@@ -1162,6 +1164,7 @@ argument_next (cfparse_t * cfp)
 	    cfp->max_fargs = 4;
 	    new_size = cfp->max_fargs * sizeof (struct arg *);
 	    cfp->fargs = malloc_or_exit (new_size);
+	    wt_n_mallocs++;
 	}
     }
     cfp->fargs[cfp->n_fargs - 1] = arg_start ();
@@ -1385,7 +1388,7 @@ wrapper_top (cfparse_t * cfp, const char * h_file_name, char ** h_file_guard)
     maxlen = l + 50;
 
     * h_file_guard = malloc_or_exit (maxlen);
-
+    wt_n_mallocs++;
     j = 0;
 
     /* 'CFH_' abbreviates CFUNCTIONS HEADER FILE.  This should prevent
@@ -1430,7 +1433,8 @@ wrapper_bottom (cfparse_t * cfp, char * h_file_guard)
 {
     fprintf (cfp->outfile, "\n#endif /* %s */\n", h_file_guard);
     CALLX (free_or_exit (h_file_guard));
-    h_file_guard = NULL;
+    wt_n_mallocs--;
+    h_file_guard = 0;
 }
 
 /* Check the two files for differences.  If they are the same, then
@@ -1457,11 +1461,10 @@ unbackup (char * backup_name, char * file_name)
 	}
     }
     else if (i < 0) {
-	/* Deficiency: My function fdiff just returns an obscure negative
-	   number on failure. */
 	error ("failure number %d in fdiff", i);
     }
-    CALLX (free_or_exit (backup_name));
+    free_backup_name (backup_name);
+    backup_name = 0;
 }
 
 /* Read an input C file. */
@@ -1540,6 +1543,7 @@ extract (cfparse_t * cfp, char * c_file_name)
     c_file_name_len = strlen (c_file_name);
     yyin = fopen_or_exit (c_file_name, "r");
     h_file_name = malloc_or_exit (c_file_name_len + 1);
+    wt_n_mallocs++;
     strcpy (h_file_name, c_file_name);
     h_file_name[c_file_name_len - 1] = 'h';
     backup_name = do_backup (h_file_name);
@@ -1550,8 +1554,11 @@ extract (cfparse_t * cfp, char * c_file_name)
     fclose_or_exit (cfp->outfile);
     if (backup_name) {
 	unbackup (backup_name, h_file_name);
+	backup_name = 0;
     }
     CALLX (free_or_exit (h_file_name));
+    wt_n_mallocs--;
+    h_file_name = 0;
 }
 
 /* This takes the command line in "argc" and "argv" and puts it into
@@ -1572,6 +1579,7 @@ fill_command_line (cfparse_t * cfp, int argc, char ** argv)
 	cllen += strlen (argv[i]) + 1;
     }
     command_line = calloc_or_exit (sizeof (*(command_line)), cllen);
+    wt_n_mallocs++;
     clnext = command_line;
     clused = 0;
     for (i = 0; i < argc; i++) {
@@ -1596,13 +1604,22 @@ release_memory (cfparse_t * cfp)
     }
     if (cfp->fargs) {
 	CALLX (free_or_exit (cfp->fargs));
+	wt_n_mallocs--;
+	cfp->fargs = 0;
     }
-    cfp->fargs = 0;
     CALLX (free_or_exit (cfp->command_line));
+    wt_n_mallocs--;
     cfp->command_line = 0;
     clean_up_flex ();
-//    arg_memory_check ();
+    /* Check for memory leaks in other files. */
+    arg_memory_check ();
     memory_check ();
+    backup_memory_check ();
+    file_memory_check ();
+    /* Check for memory leaks within this file. */
+    if (wt_n_mallocs != 0) {
+	fprintf (stderr, "%s:%d: wt_n_mallocs = %d\n", HERE, wt_n_mallocs);
+    }
 }
 
 int

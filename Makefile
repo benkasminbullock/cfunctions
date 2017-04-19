@@ -4,7 +4,8 @@ bindir = ${exec_prefix}/bin
 sharedir = ${prefix}/share/cfunctions
 
 FLEX = flex
-CFLAGS = -g -Wall -O
+CFLAGS = -g -Wall
+#CFLAGS = -g -Wall -O
 INSTALL = /usr/bin/install -c
 SOURCES =  \
 argument.c \

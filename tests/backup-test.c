@@ -1,0 +1,4 @@
+int monkey ()
+{
+    return j;
+}

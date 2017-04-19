@@ -10,47 +10,39 @@
 #include "error-msg.h"
 #include "sys-or-exit.h"
 
+static int file_n_mallocs;
+
 #define USUAL_BLOCKS 0x1000
 
 /* 
    Given a FILE * to write output to and an input file name, copy the
-   contents of the input file into the output file. 
-
-   Return value: 0 if successful, -1 if failed.
-
-   Side effects: writes to `out', opens and closes `in_file_name'.
+   contents of the input file into the output file. If the copy is
+   unsuccessful, this exits with an error message.
 */
 
-int fcopy (FILE * out, const char * in_file_name)
+void
+fcopy (FILE * out, const char * in_file_name)
 {
     FILE * in_file;
     unsigned char copy[USUAL_BLOCKS];
     size_t a;
     size_t b;
 
-    in_file = fopen (in_file_name, "r");
-    if (! in_file) {
-	fprintf (stderr, "Open '%s' failed: %s\n",
-		 in_file_name, strerror (errno));
-	return -1;
-    }
+    in_file = fopen_or_exit (in_file_name, "r");
     do {
 	a = fread (copy, 1, USUAL_BLOCKS, in_file);
 	b = fwrite (copy, 1, a, out);
 	if (b != a) {
-	    fprintf (stderr, "Write error writing from '%s': %s.\n",
-		     in_file_name, strerror (errno));
-	    return -1;
+	    error ("Write error writing from '%s': %s",
+		   in_file_name, strerror (errno));
 	}
     }
     while (a == USUAL_BLOCKS);
     if (ferror (in_file)) {
-	fprintf (stderr, "Read error reading from '%s': %s.\n",
-		 in_file_name, strerror (errno));
-	return -1;
+	error ("Read error reading from '%s': %s",
+	       in_file_name, strerror (errno));
     }
     fclose (in_file);
-    return 0;
 }
 
 /*
@@ -117,25 +109,23 @@ int fdiff (const char * a_name, const char * b_name)
     for (i = 0; i < 2; i++) {
 	int bytes_read;
 	block[i] = malloc_or_exit (size);
+	file_n_mallocs++;
 	files[i] = fopen (names[i], "r");
 	if (! files[i]) {
-	    fprintf (stderr, "%s:%d: error from fopen ('%s'): %s.\n",
-		     __FILE__, __LINE__, names[i], strerror (errno));
-	    // exit ok
-	    exit (EXIT_FAILURE);
+	    error ("error from fopen ('%s'): %s.\n",
+		   names[i], strerror (errno));
 	}
 	bytes_read = fread (block[i], 1, size, files[i]);
 	if (bytes_read != size) {
-	    fprintf (stderr, "%s:%d: fread (%s): short read %d bytes (expected %d)",
-		     __FILE__, __LINE__, names[i], bytes_read, size);
-	    // exit ok
-	    exit (EXIT_FAILURE);
+	    error ("fread (%s): short read %d bytes (expected %d)",
+		   names[i], bytes_read, size);
 	}
 	fclose (files[i]);
     }
     comp = memcmp (block[0], block[1], size);
     for (i = 0; i < 2; i++) {
 	CALLX (free_or_exit (block[i]));
+	file_n_mallocs--;
     }
     return comp;
 }
@@ -161,3 +151,11 @@ fexists (const char * file_name)
     return 1;
 }
 
+void
+file_memory_check ()
+{
+    if (file_n_mallocs != 0) {
+	fprintf (stderr, "%s:%d: file_n_mallocs = %d.\n",
+		 HERE, file_n_mallocs);
+    }
+}

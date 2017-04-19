@@ -6,16 +6,138 @@ use warnings;
 use strict;
 use FindBin '$Bin';
 use Test::More;
+use File::Compare;
 
 chdir $Bin or die $!;
 my $cfunctions = "$Bin/../cfunctions";
 if (! -x $cfunctions) {
-    die "No $cfunctions";
+    die "No $cfunctions; need to rebuild?";
 }
 my $cc         = "cc";
 my $GNU_c      = 1;
 main ();
+done_testing ();
 exit;
+
+sub main
+{
+
+    # Make sure that the executable Cfunctions does exist.
+
+    if ( ! -e $cfunctions || ! -x $cfunctions ) {
+	print STDERR 
+        "$0: '$cfunctions' cannot be found or is not executable.\n";
+	exit ( 1 );
+    }
+
+    rm_h_files();
+
+    opendir(THISDIR, ".");
+
+    my @bad_files = grep ( /^bad-.*\.c$/, readdir THISDIR);
+
+    closedir THISDIR;
+
+    foreach my $bad_file (@bad_files) {
+	err_test ( $bad_file, "error" );
+    }
+
+    # Try running Cfunctions on each `warn-' file and see if it generates
+    # a warning message.
+
+    opendir(THISDIR, ".");
+
+    my @warn_files = grep ( /^warn-.*\.c$/, readdir THISDIR);
+
+    foreach my $warn_file (@warn_files) {
+	err_test ( $warn_file, "warning" );
+    }
+
+    opendir(THISDIR, ".");
+
+    my @ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
+
+    foreach my $ok_file (@ok_files) {
+	try_ok ( $ok_file );
+    }
+
+    rm_h_files();
+
+    if (-f 'a.out') {
+	unlink ( "a.out" ) || die;
+    }
+    test_backup ();
+    rm_h_files ();
+}
+
+# Remove the backups
+
+sub test_backup
+{
+    rm_h_files ();
+    my $input = "$Bin/backup-test.c";
+    my $output = $input;
+    $output =~ s/\.c$/.h/;
+    system ("$cfunctions $input");
+    ok (-f $output, "Generated $output");
+    my $backup1 = "$output.~1~";
+    if (-f $backup1) {
+	die "Backup file $backup1 exists";
+    }
+    rename $output, $backup1 or die $!;
+    system ("$cfunctions $input");
+    ok (-f $output, "Generated $output");
+    ok (-f $backup1, "Did not clobber first backup");
+    unlink $backup1 or die $!;
+    unlink $output or die $!;
+    write_garbage ($backup1);
+    if (! -f $backup1) {
+	die "Failed to create garbage $backup1 file";
+    }
+    system ("$cfunctions $input");
+    ok (-f $output, "Generated $output");
+    ok (-f $backup1, "Did not clobber first backup");
+    system ("$cfunctions $input");
+    my $backup2 = "$output.~2~";
+    ok (! -f $backup2, "Did not make a new backup file");
+    write_garbage ($output);
+    system ("$cfunctions $input");
+    ok ($backup2, "Made a new backup file after trashing old correct one");
+    system ("$cfunctions $input");
+    my $backup3 = "$output.~3~";
+    ok (! -f $backup3, "Did not make an unnecessary backup file $backup3");
+    for my $file ($output, $backup1, $backup2, $backup3) {
+	if (-f $file) {
+	    unlink $file or die $!;
+	}
+    }
+}
+
+sub write_garbage
+{
+    my ($file_name) = @_;
+    if (-f $file_name) {
+	unlink $file_name or die $!;
+    }
+    open my $out, ">", $file_name or die $!;
+    print $out "Garbage for tests " . rand () . "\n";
+    close $out or die $!;
+}
+
+# Remove header files, backup header files and other generated files
+# from the current directory.
+
+sub rm_h_files
+{
+    opendir(THISDIR, ".") or die $!;
+    my @h_files = grep ( /\.h(?:\.~[0-9]+~)?$/, readdir THISDIR);
+
+    closedir THISDIR or die $!;
+
+    for my $h_file (@h_files) {
+        unlink $h_file or die $!;
+    }
+}
 
 sub err_test
 {
@@ -80,21 +202,6 @@ sub err_test
     unlike ( $test, qr/FAILED/, "cfunctions made message $message_type processing $c_file" );
 
     return;
-}
-
-# Remove header files, backup header files and other generated files
-# from the current directory.
-
-sub rm_h_files()
-{
-    opendir(THISDIR, ".") or die $!;
-    my @h_files = grep ( /^.*\.h~*$/, readdir THISDIR);
-    closedir THISDIR or die $!;
-
-    foreach my $h_file (@h_files)
-    {
-        unlink ( $h_file );
-    }
 }
 
 # Run Cfunctions on the PASSED files.  If Cfunctions gives an error
@@ -190,57 +297,5 @@ sub try_ok
 	note ("Compiler error is '$cc_error_msg'");
     }
     return;
-}
-
-
-sub main
-{
-
-    # Make sure that the executable Cfunctions does exist.
-
-    if ( ! -e $cfunctions || ! -x $cfunctions ) {
-	print STDERR 
-        "$0: '$cfunctions' cannot be found or is not executable.\n";
-	exit ( 1 );
-    }
-
-    rm_h_files();
-
-    opendir(THISDIR, ".");
-
-    my @bad_files = grep ( /^bad-.*\.c$/, readdir THISDIR);
-
-    closedir THISDIR;
-
-    foreach my $bad_file (@bad_files) {
-	err_test ( $bad_file, "error" );
-    }
-
-    # Try running Cfunctions on each `warn-' file and see if it generates
-    # a warning message.
-
-    opendir(THISDIR, ".");
-
-    my @warn_files = grep ( /^warn-.*\.c$/, readdir THISDIR);
-
-    foreach my $warn_file (@warn_files) {
-	err_test ( $warn_file, "warning" );
-    }
-
-    opendir(THISDIR, ".");
-
-    my @ok_files = grep ( /^ok-.*\.c$/, readdir THISDIR);
-
-    foreach my $ok_file (@ok_files) {
-	try_ok ( $ok_file );
-    }
-
-    rm_h_files();
-
-    if (-f 'a.out') {
-	unlink ( "a.out" ) || die;
-    }
-
-    done_testing ();
 }
 

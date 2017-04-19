@@ -14,7 +14,9 @@
 #include "backup.h"
 #include "sys-or-exit.h"
 
-char *
+static int backup_n_mallocs;
+
+static char *
 basename (const char *name)
 {
     const char *base = name;
@@ -28,7 +30,7 @@ basename (const char *name)
     return (char *) base;
 }
 
-char *
+static char *
 dirname (const char * path)
 {
     char *newpath;
@@ -48,13 +50,8 @@ dirname (const char * path)
 	}
 	length = slash - path + 1;
     }
-    newpath = malloc (length + 1);
-    if (newpath == 0) {
-	fprintf (stderr, "%s:%d: malloc (%d) failed: %s\n",
-		 __FILE__, __LINE__, length + 1, strerror (errno));
-	// exit ok
-	exit (EXIT_FAILURE);
-    }
+    newpath = malloc_or_exit (length + 1);
+    backup_n_mallocs++;
     strncpy (newpath, path, length);
     newpath[length] = 0;
     return newpath;
@@ -67,31 +64,32 @@ concat (const char *str1, const char *str2)
 {
     char *newstr;
     int str1_length = strlen (str1);
-    
+
     newstr = malloc_or_exit (str1_length + strlen (str2) + 1);
+    backup_n_mallocs++;
     strcpy (newstr, str1);
     strcpy (newstr + str1_length, str2);
     return newstr;
 }
 
-/* Return a string, allocated with malloc, containing
-   "FILE.~VERSION~". */
+/* Return an allocated string containing "file.~version~". */
 
 static char *
 make_version_name (const char * file, int version)
 {
-    char *backup_name;
+    char * backup_name;
     int maxlen;
 
     maxlen = strlen (file) + 16;
     backup_name = malloc_or_exit (maxlen);
+    backup_n_mallocs++;
     snprintf (backup_name, maxlen, "%s.~%d~", file, version);
     return backup_name;
 }
 
-/* If BACKUP is a numbered backup of BASE, return its version number;
-   otherwise return 0.  BASE_LENGTH is the length of BASE.
-   BASE should already have ".~" appended to it. */
+/* If "backup" is a numbered backup of "base", return its version
+   number; otherwise return 0.  "base_length" is the length of "base".
+   "base" should have ".~" appended to it. */
 
 static int
 version_number (const char * base, const char * backup, int base_length)
@@ -112,9 +110,10 @@ version_number (const char * base, const char * backup, int base_length)
 }
 
 /* Return the number of the highest-numbered backup file for file
-   FILE in directory DIR.  If there are no numbered backups
-   of FILE in DIR, or an error occurs reading DIR, return 0.
-   FILE should already have ".~" appended to it. */
+   "file_name" in directory "dir_name".  If there are no numbered
+   backups of "file_name" in "dir_name", or if an error occurs reading
+   "dir_name", return 0.  "file_name" should already have ".~"
+   appended to it. */
 
 static int
 max_backup_version (const char * file_name, const char * dir_name)
@@ -148,10 +147,8 @@ max_backup_version (const char * file_name, const char * dir_name)
     return highest_version;
 }
 
-/* Return the name of the new backup file for file FILE,
-   allocated with malloc.  Return 0 if out of memory.
-   FILE must not end with a '/' unless it is the root directory.
-   Do not call this function if backup_type == none. */
+/* Return the name of the new backup file for "file". The name should
+   be freed with "free_backup_name".  */
 
 char *
 find_backup_file_name (char *file)
@@ -159,15 +156,8 @@ find_backup_file_name (char *file)
     char *dir;
     char *base_versions;
     int highest_backup;
-    char * name;
 
     base_versions = concat (basename (file), ".~");
-    if (base_versions == 0) {
-	fprintf (stderr, "%s:%d: failed to make file name.\n",
-		 __FILE__, __LINE__);
-	// exit ok
-	exit (EXIT_FAILURE);
-    }
     dir = dirname (file);
     if (dir == 0) {
 	fprintf (stderr, "%s:%d: failed to make dirname.\n",
@@ -176,15 +166,29 @@ find_backup_file_name (char *file)
 	exit (EXIT_FAILURE);
     }
     highest_backup = max_backup_version (base_versions, dir);
-    free_or_exit (base_versions);
-    free_or_exit (dir);
-    name = make_version_name (file, highest_backup + 1);
-    if (! name) {
-	fprintf (stderr, "%s:%d: make_version_name (%s, %d) failed.\n",
-		 __FILE__, __LINE__, file, highest_backup + 1);
-	// exit ok
-	exit (EXIT_FAILURE);
-    }
-    return name;
+    CALLX (free_or_exit (base_versions));
+    backup_n_mallocs--;
+    CALLX (free_or_exit (dir));
+    backup_n_mallocs--;
+    return make_version_name (file, highest_backup + 1);
 }
 
+/* Free the memory used to store the backup name. */
+
+void
+free_backup_name (char * backup_name)
+{
+    CALLX (free_or_exit (backup_name));
+    backup_n_mallocs--;
+}
+
+/* Check this file is not leaking memory. */
+
+void
+backup_memory_check ()
+{
+    if (backup_n_mallocs != 0) {
+	fprintf (stderr, "%s:%d: backup_n_mallocs = %d.\n",
+		 HERE, backup_n_mallocs);
+    }
+}

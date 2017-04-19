@@ -105,6 +105,8 @@ state_message (void)
 void
 clean_up_flex ()
 {
-    fclose (yyin);
+    if (yyin) {
+	fclose (yyin);
+    }
     yylex_destroy ();
 }

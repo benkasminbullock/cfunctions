@@ -14,8 +14,11 @@ static int arg_n_mallocs;
 static struct arg *
 new_arg ()
 {
-    return calloc_or_exit (1, sizeof (struct arg));
+    struct arg * value;
+//fprintf (stderr, "%s:%d: allocating struct arg.\n", HERE);
+    value = calloc_or_exit (1, sizeof (struct arg));
     arg_n_mallocs++;
+    return value;
 }
 
 /* Create a new "arg" structure. */
@@ -213,6 +216,7 @@ type_free (struct type * t)
 	prev->name = 0;
 	arg_n_mallocs--;
 	free_or_exit (prev);
+	prev = 0;
 	arg_n_mallocs--;
     }
 }
@@ -245,12 +249,15 @@ arg_free (struct arg * a)
     if (a->is_function_pointer) {
 	if (a->function_pointer) {
 	    free_or_exit (a->function_pointer);
+	    a->function_pointer = 0;
 	}
     }
     if (a->function_pointer_arguments) {
 	free_or_exit (a->function_pointer_arguments);
+	a->function_pointer_arguments = 0;
     }
     free_or_exit (a);
+    a = 0;
     arg_n_mallocs--;
 }
 
