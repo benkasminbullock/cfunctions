@@ -1,0 +1,152 @@
+This is the source code for cfunctions. Cfunctions makes C header
+files from C source code files. For example
+
+    cfunctions example.c
+
+creates a file called "example.h" which contains function declarations
+from example.c.
+
+DESCRIPTION
+
+Cfunctions is a C program which reads C files and makes header files
+containing the function declarations of the programs in them. For
+example, if you have a C file called "example.c" containing a function
+
+     int myfunction (int i, char * s)
+     {
+          printf ("%s: %d.\n", s, i);
+     }
+
+then when you run cfunctions on it, it generates a file called
+"example.h" containing
+
+     int myfunction (int i, char * s);
+
+If "example.c" also contains global variables, it makes declarations
+for those. For example,
+
+     int myglobal = 999;
+
+becomes
+
+     extern int myglobal;
+
+in "example.h".
+
+Cfunctions adds a C preprocessor wrapper around the output, a sequence
+of instructions of the following form:
+
+    #ifndef CFH_EXAMPLE_H
+    #define CFH_EXAMPLE_H
+    /* content */
+    #endif /* CFH_EXAMPLE_H */
+
+Parts of the C file can be copied verbatim into the C header file
+using the format "#ifdef HEADER":
+
+    #ifdef HEADER
+
+    struct xyz { int a; int b; };
+
+    #endif
+
+These will not be compiled in your original code because of the #ifdef
+block around them.
+
+INSTALLATION
+
+To install cfunctions, clone the git repository and compile the
+software. You need to have "make" and "flex" to build this
+software. "flex" is the software found here:
+
+https://github.com/westes/flex
+
+It is not the Adobe software.
+
+The Makefile supplied with the git repository works with BSD make and
+Gnu make.
+
+Before compiling cfunctions, edit the files "config.h" and "Makefile"
+so that the macros point to appropriate locations in your system.
+
+The command "make" will build a working version of cfunctions in the
+current directory. The command "make install" will install it into the
+directories you chose when you edited "config.h" and "Makefile".
+
+TESTING
+
+To test cfunctions, run the command "make test" in the top
+directory. 
+
+The test script is written in the Perl programming language. Perl can
+be obtained from www.perl.org. For installation instructions for a
+Unix-like operating system, see
+
+    https://www.lemoda.net/perl/unix-install/index.html
+
+In addition to Perl, the test script also uses some Perl libraries
+which you may need to install. The easiest way to install these is to
+do as follows:
+
+    curl -L https://cpanmin.us | perl - App::cpanminus
+    cpanm IPC::Run3 File::Slurper C::Utility
+
+HISTORY
+
+Cfunctions started as a project to make a very general purpose header
+file utility for C programmers, back in the 1990s. It did not prove
+successful or gain much traction. However, as of 2017, I program in C,
+and I use cfunctions very extensively, so the current version of
+cfunctions is a stripped-down version of the original general-purpose
+program which just does the single job which I need it for.
+
+If you need something much more general purpose than the current
+cfunctions, you can find a more full-featured version of the code in
+the git repository's history. 
+
+https://github.com/benkasminbullock/cfunctions/commits/master
+
+However, please don't ask me to help you with problems with the old
+versions. The old version was buggy, fixing the bugs in it was more
+work than I wanted to do, and I have deliberately minimalised this
+program to reduce the amount of maintenance required.
+
+If you are a user of previous versions of cfunctions, the current
+cfunctions is equivalent to the following options, switched on
+permanently:
+
+    cfunctions -i -n -c
+
+The other options, including the debugging options, have all been
+removed from the current version of the cfunctions code.
+
+SUPPORT
+
+Bug reports go here:
+
+   https://github.com/benkasminbullock/cfunctions/issues
+
+If you don't want to make a github account, then email me at
+benkasminbullock@gmail.com.
+
+SEE ALSO
+
+* Makeheaders
+
+Makeheaders, by D. Richard Hipp, who is also author of the well-known
+SQLite library, is another C and C++ header file generator. More
+information may be found at the following URL:
+
+    http://www.hwaci.com/sw/mkhdr/
+
+ACKNOWLEDGEMENTS
+
+Egal Kvaleberg from Norway did some work on this project in the 1990s.
+
+AUTHOR, COPYRIGHT AND LICENCE
+
+Cfunctions is copyright Ben Bullock 1998-2017.
+
+Cfunctions is licensed under the GNU General Public Licence, version 2.
+
+See https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
