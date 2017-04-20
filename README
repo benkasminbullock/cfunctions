@@ -76,13 +76,19 @@ If cfunctions did not do this, supposing your project's Makefile had
 rules like
 
     example.o: example.c example.h
+    	    cc -o example.o example.c
 
-    other.o: other.c other.h example.h
+    other.o: other.c example.h
+    	    cc -o other.o other.c
+
+    example.h: example.c
+    	    cfunctions example.c
 
 then each time "example.c" was altered, even if the function
 prototypes in it had not been altered at all, example.h's timestamp
 would be altered, and make would do an unnecessary recompilation of
-"other.c".
+"other.c". This can turn into a big waste of time for projects with a
+lot of files.
 
 INSTALLATION
 
@@ -92,7 +98,7 @@ software. "flex" is the software found here:
 
 https://github.com/westes/flex
 
-It is not the Adobe software.
+It is not the software from Adobe Systems with the same name.
 
 The Makefile supplied with the git repository works with BSD make and
 Gnu make.
@@ -123,38 +129,6 @@ do as follows:
     curl -L https://cpanmin.us | perl - App::cpanminus
     cpanm IPC::Run3 File::Slurper C::Utility
 
-HISTORY
-
-Cfunctions started as a project to make a very general purpose header
-file utility for C programmers, back in the 1990s. It did not prove
-successful or gain much traction. However, as of 2017, I program in C,
-and I use cfunctions very extensively, so the current version of
-cfunctions is a stripped-down version of the original general-purpose
-program which just does the single job which I need it for.
-
-If you need something much more general purpose than the current
-cfunctions, you can find a more full-featured version of the code in
-the git repository's history. 
-
-https://github.com/benkasminbullock/cfunctions/commits/master
-
-It also includes a manual page and Gnu info formatted documentation.
-
-Please don't ask me to help you with problems with the old
-versions. The old version was buggy, fixing the bugs in it was more
-work than I wanted to do, and I have deliberately minimalised this
-program to reduce the amount of maintenance required, and focus on
-fixing the bugs which affect the parts of the program which I use.
-
-If you are a user of previous versions of cfunctions, the current
-cfunctions is equivalent to the following options, switched on
-permanently:
-
-    cfunctions -i -n -c
-
-The other options, including the debugging options, have all been
-removed from the current version of the cfunctions code.
-
 SUPPORT
 
 Bug reports go here:
@@ -172,15 +146,46 @@ SEE ALSO
 
 * Makeheaders
 
-Makeheaders, by D. Richard Hipp, who is also author of the well-known
-SQLite library, is another C and C++ header file generator. More
-information may be found at the following URL:
+Makeheaders is a C and C++ header file generator. More information may
+be found at the following URL:
 
     http://www.hwaci.com/sw/mkhdr/
 
+HISTORY
+
+I started Cfunctions as a general purpose header file making utility
+for C programmers back in the 1990s. It did not prove successful or
+gain much traction. However, as of 2017, I use cfunctions very
+extensively. The current version of cfunctions is a stripped-down
+version of the original general-purpose program which just does the
+single job which I need it for.
+
+If you need something much more general purpose than the current
+cfunctions, you can find a more full-featured version of the code in
+the git repository's history. 
+
+https://github.com/benkasminbullock/cfunctions/commits/master
+
+It also includes a manual page and Gnu info formatted documentation.
+
+Regrettably I cannot offer support with the old versions. The old
+versions had many different options, supported a lot of different
+formats, were very complicated, and consequently had many bugs. I have
+deliberately removed the complex features to reduce the amount of
+maintenance required.
+
+If you are a user of previous versions of cfunctions, the current
+cfunctions is equivalent to the following options, switched on
+permanently:
+
+    cfunctions -i -n -c
+
+The other options, including the debugging options, have all been
+removed from the current version of the cfunctions code.
+
 ACKNOWLEDGEMENTS
 
-Egal Kvaleberg from Norway did some work on this project in the 1990s.
+Egil Kvaleberg from Norway did some work on this project in the 1990s.
 
 AUTHOR, COPYRIGHT AND LICENCE
 
