@@ -22,6 +22,8 @@ then when you run cfunctions on it, it generates a file called
 
      int myfunction (int i, char * s);
 
+* Global variables
+
 If "example.c" also contains global variables, it makes declarations
 for those. For example,
 
@@ -33,6 +35,8 @@ becomes
 
 in "example.h".
 
+* Wrapper
+
 Cfunctions adds a C preprocessor wrapper around the output, a sequence
 of instructions of the following form:
 
@@ -40,6 +44,8 @@ of instructions of the following form:
     #define CFH_EXAMPLE_H
     /* content */
     #endif /* CFH_EXAMPLE_H */
+
+* Verbatim copying
 
 Parts of the C file can be copied verbatim into the C header file
 using the format "#ifdef HEADER":
@@ -52,6 +58,31 @@ using the format "#ifdef HEADER":
 
 These will not be compiled in your original code because of the #ifdef
 block around them.
+
+* Backups
+
+If there is an existing file called "example.h", then Cfunctions
+renames it to "example.h.~1~". If there are existing files called
+names like "example.h.~n~" then cfunctions renames "example.h" to
+"example.h.~n+1~", where n is the highest number.
+
+If there is an existing file called "example.h", and after running
+cfunctions, the output of cfunctions is identical to the previous
+"example.h", cfunctions deletes the new file, and renames
+"example.h.~1~" back to "example.h". This prevents the unnecessary
+recompliation of files which depend on "example.h".
+
+If cfunctions did not do this, supposing your project's Makefile had
+rules like
+
+    example.o: example.c example.h
+
+    other.o: other.c other.h example.h
+
+then each time "example.c" was altered, even if the function
+prototypes in it had not been altered at all, example.h's timestamp
+would be altered, and make would do an unnecessary recompilation of
+"other.c".
 
 INSTALLATION
 

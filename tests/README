@@ -1,2 +1,5 @@
 This directory contains tests for Cfunctions.  To run the tests, use
-`make check' in the top level directory.
+"make test" in the top level directory, or run the Perl script
+"test.pl" here. See the file README in the above directory for
+instructions on Perl libraries which the test requires.
+
