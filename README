@@ -70,7 +70,7 @@ If there is an existing file called "example.h", and after running
 cfunctions, the output of cfunctions is identical to the previous
 "example.h", cfunctions deletes the new file, and renames
 "example.h.~1~" back to "example.h". This prevents the unnecessary
-recompliation of files which depend on "example.h".
+recompilation of files which depend on "example.h".
 
 If cfunctions did not do this, supposing your project's Makefile had
 rules like
@@ -107,7 +107,8 @@ directories you chose when you edited "config.h" and "Makefile".
 TESTING
 
 To test cfunctions, run the command "make test" in the top
-directory. 
+directory. You probably do not need to run these tests unless you have
+extensively altered the source code.
 
 The test script is written in the Perl programming language. Perl can
 be obtained from www.perl.org. For installation instructions for a
@@ -137,10 +138,13 @@ the git repository's history.
 
 https://github.com/benkasminbullock/cfunctions/commits/master
 
-However, please don't ask me to help you with problems with the old
+It also includes a manual page and Gnu info formatted documentation.
+
+Please don't ask me to help you with problems with the old
 versions. The old version was buggy, fixing the bugs in it was more
 work than I wanted to do, and I have deliberately minimalised this
-program to reduce the amount of maintenance required.
+program to reduce the amount of maintenance required, and focus on
+fixing the bugs which affect the parts of the program which I use.
 
 If you are a user of previous versions of cfunctions, the current
 cfunctions is equivalent to the following options, switched on
@@ -159,6 +163,10 @@ Bug reports go here:
 
 If you don't want to make a github account, then email me at
 benkasminbullock@gmail.com.
+
+There is currently no documentation beyond this README document. If
+you have a question which is not covered in this README, you can
+either send email or ask at the bug report page.
 
 SEE ALSO
 
