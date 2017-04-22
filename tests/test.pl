@@ -57,6 +57,8 @@ sub main
     rm_h_files ();
     test_attribute ();
     rm_h_files ();
+    test_valgrind ();
+    rm_h_files ();
 }
 
 sub test_not_c_warning
@@ -306,6 +308,14 @@ sub test_attribute
 	ok (! $errors, "no errors with __attribute__(()) stuff");
     };
 };
+
+sub test_valgrind
+{
+    run3 ("valgrind $cfunctions ok-*.c", undef, \my $output, \my $errors);
+    like ($errors, qr/no leaks are possible/, "all memory is freed");
+    unlike ($errors, qr/depends on uninitialised value/, "no bad reads of data");
+    rm_h_files ();
+}
 
 # Run on a file expecting no output or errors
 

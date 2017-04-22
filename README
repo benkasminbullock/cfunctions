@@ -129,6 +129,13 @@ do as follows:
     curl -L https://cpanmin.us | perl - App::cpanminus
     cpanm IPC::Run3 File::Slurper C::Utility
 
+You also need the "valgrind" command to run some tests. See
+
+    http://valgrind.org/
+
+It is extremely tricky to install valgrind from source code, so it's
+better to use your operating system's installer.
+
 SUPPORT
 
 Bug reports go here:

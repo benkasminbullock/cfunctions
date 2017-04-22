@@ -1534,7 +1534,7 @@ make_h_file_name (const char * c_file_name)
     c_file_name_len = strlen (c_file_name);
     h_file_name = malloc_or_exit (c_file_name_len + 1);
     wt_n_mallocs++;
-    strncpy (h_file_name, c_file_name, c_file_name_len);
+    memcpy (h_file_name, c_file_name, c_file_name_len + 1);
     h_file_name[c_file_name_len - 1] = 'h';
     return h_file_name;
 }
@@ -1566,6 +1566,11 @@ extract (cfparse_t * cfp, char * c_file_name)
     read_file (cfp);
     wrapper_bottom (cfp, h_file_guard);
     fclose_or_exit (cfp->outfile);
+    cfp->outfile = 0;
+    if (yyin) {
+	fclose_or_exit (yyin);
+	yyin = 0;
+    }
     chmod_or_exit (h_file_name, 0444);
     if (backup_name) {
 	unbackup (backup_name, h_file_name);
