@@ -147,6 +147,16 @@ strdup_or_exit (const char * todup)
     return dupped;
 }
 
+void
+chmod_or_exit (const char * path, mode_t mode)
+{
+    int status;
+    status = chmod (path, mode);
+    if (status) {
+	error ("Could not chmod (%s, %o): %s", path, mode, strerror (errno));
+    }
+}
+
 /* Check for memory leaks. */
 
 void
@@ -158,12 +168,3 @@ memory_check ()
     }
 }
 
-void
-chmod_or_exit (const char * path, mode_t mode)
-{
-int status;
-status = chmod (path, mode);
-if (status) {
-error ("Could not chmod (%s, %o): %s", path, mode, strerror (errno));
-}
-}

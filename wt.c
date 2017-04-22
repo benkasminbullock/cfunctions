@@ -1461,7 +1461,17 @@ unbackup (char * backup_name, char * file_name)
 	}
     }
     else if (i < 0) {
-	error ("failure number %d in fdiff", i);
+	if (i == NO_B_FILE) {
+	    warning ("Output file '%s' was deleted by another process",
+		     file_name);
+	}
+	else if (i == NO_A_FILE) {
+	    warning ("Backup file '%s' was deleted by another process",
+		     backup_name);
+	}
+	else {
+	    error ("failure number %d in fdiff", i);
+	}
     }
     free_backup_name (backup_name);
     backup_name = 0;

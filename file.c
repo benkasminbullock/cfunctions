@@ -61,11 +61,6 @@ fcopy (FILE * out, const char * in_file_name)
     Side effects: opens & closes files with names a_name and b_name.
 */
 
-#define A_B_SAME_FILE -5
-#define NO_A_FILE -2
-#define NO_B_FILE -1
-#define A_B_DIFFERENT 1
-
 int fdiff (const char * a_name, const char * b_name)
 {
     struct stat stats[2];
