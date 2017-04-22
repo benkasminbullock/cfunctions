@@ -1520,6 +1520,26 @@ do_backup (char * file_name)
     }
 }
 
+/* Given "c_file_name", the name of a C file, make an appropriate
+   header name for it. This works by copying the string and then
+   replacing the final character with "h". */
+
+static char *
+make_h_file_name (const char * c_file_name)
+{
+    /* The length of "c_file_name". */
+    unsigned c_file_name_len;
+    /* Return value. */
+    char * h_file_name;
+    c_file_name_len = strlen (c_file_name);
+    h_file_name = malloc_or_exit (c_file_name_len + 1);
+    wt_n_mallocs++;
+    strncpy (h_file_name, c_file_name, c_file_name_len);
+    h_file_name[c_file_name_len - 1] = 'h';
+    return h_file_name;
+}
+
+
 /* Extract the function and global variable names from a C file
    specified by "c_file_name" and write them to an equivalent header
    file. */
@@ -1531,8 +1551,6 @@ extract (cfparse_t * cfp, char * c_file_name)
     char * h_file_name;
     /* The ifdef protective wrapper macro name. */
     char * h_file_guard;
-    /* The length of "c_file_name". */
-    unsigned c_file_name_len;
     /* The name of a backup file, if it exists. */
     char * backup_name;
 
@@ -1540,18 +1558,15 @@ extract (cfparse_t * cfp, char * c_file_name)
 	bug (HERE, "no file name");
     }
     set_source_name (c_file_name);
-    c_file_name_len = strlen (c_file_name);
     yyin = fopen_or_exit (c_file_name, "r");
-    h_file_name = malloc_or_exit (c_file_name_len + 1);
-    wt_n_mallocs++;
-    strcpy (h_file_name, c_file_name);
-    h_file_name[c_file_name_len - 1] = 'h';
+    h_file_name = make_h_file_name (c_file_name);
     backup_name = do_backup (h_file_name);
     cfp->outfile = fopen_or_exit (h_file_name, "w");
     wrapper_top (cfp, h_file_name, & h_file_guard);
     read_file (cfp);
     wrapper_bottom (cfp, h_file_guard);
     fclose_or_exit (cfp->outfile);
+    chmod_or_exit (h_file_name, 0444);
     if (backup_name) {
 	unbackup (backup_name, h_file_name);
 	backup_name = 0;

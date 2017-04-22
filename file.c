@@ -80,6 +80,9 @@ int fdiff (const char * a_name, const char * b_name)
     names[1] = b_name;
 
     if (strcmp (a_name, b_name) == 0) {
+	fprintf (stderr,
+		 "File names '%s' and '%s' refer to the same file.\n",
+		 a_name, b_name);
 	return A_B_SAME_FILE;
     }
     for (i = 0; i < 2; i++) {

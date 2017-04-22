@@ -21,15 +21,16 @@ void fclose_or_exit (FILE * f);
 or_exit_t free_or_exit (void * memory);
 void memory_check ();
 char * strdup_or_exit (const char * todup);
+void chmod_or_exit (const char * path, mode_t mode);
 
-#define CALLX(x) {\
-or_exit_t status = x;\
-if (status != or_exit_ok) {\
-fprintf (stderr,\
-"%s:%d: %s failed with status %d\n", \
-__FILE__, __LINE__, #x, status);\
-exit (EXIT_FAILURE);\
-}\
-}
+#define CALLX(x) {						\
+	or_exit_t status = x;					\
+	if (status != or_exit_ok) {				\
+	    fprintf (stderr,					\
+		     "%s:%d: %s failed with status %d\n",	\
+		     __FILE__, __LINE__, #x, status);		\
+	    exit (EXIT_FAILURE);				\
+	}							\
+    }
 
 #endif /* CFH_SYS_OR_EXIT_H */
