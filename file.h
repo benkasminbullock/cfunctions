@@ -8,6 +8,7 @@ void fcopy (FILE * out, const char * in_file_name);
 #define NO_A_FILE -2
 #define NO_B_FILE -1
 #define A_B_DIFFERENT 1
+#define A_B_SAME 0
 
 int fdiff (const char * a_name, const char * b_name);
 int fexists (const char * file_name);

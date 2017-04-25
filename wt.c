@@ -1452,7 +1452,7 @@ unbackup (char * backup_name, char * file_name)
 	bug (HERE, "backup name and file name the same");
     }
     i = fdiff (backup_name, file_name);
-    if (i == 0) {
+    if (i == A_B_SAME) {
 	/* Restore "backup_name" to "file_name", overwriting the newly
 	   created file. */
 	if (rename (backup_name, file_name)) {

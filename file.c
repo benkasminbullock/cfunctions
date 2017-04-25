@@ -49,16 +49,14 @@ fcopy (FILE * out, const char * in_file_name)
     Compares files a and b with names a_name, b_name.
 
     Return value:
-                negative         failure
-                -5               both filenames are the same
-                -4               if cannot read a
-                -3               if cannot read b
-                -2               if cannot open a
-                -1               if cannot open b
-                0                if a is identical to b
-                positive integer if a and b are different
-                
-    Side effects: opens & closes files with names a_name and b_name.
+
+    Macro          Value            Meaning
+    -----------------------------------------------------------------
+    A_B_SAME_FILE  -5               Both filenames are the same
+    NO_A_FILE      -2               File a does not exist
+    NO_B_FILE      -1               File b does not exist
+    A_B_SAME        0               Contents of a are identical to b
+    A_B_DIFFERENT   1               Contents of a and b are different
 */
 
 int fdiff (const char * a_name, const char * b_name)
@@ -125,7 +123,12 @@ int fdiff (const char * a_name, const char * b_name)
 	CALLX (free_or_exit (block[i]));
 	file_n_mallocs--;
     }
-    return comp;
+    if (comp != 0) {
+	return A_B_DIFFERENT;
+    }
+    else {
+	return A_B_SAME;
+    }
 }
 
 /* Does a file exist or not? 
