@@ -46,17 +46,17 @@ fcopy (FILE * out, const char * in_file_name)
 }
 
 /*
-    Compares files a and b with names a_name, b_name.
+  Compares files a and b with names a_name, b_name.
 
-    Return value:
+  Return value:
 
-    Macro          Value            Meaning
-    -----------------------------------------------------------------
-    A_B_SAME_FILE  -5               Both filenames are the same
-    NO_A_FILE      -2               File a does not exist
-    NO_B_FILE      -1               File b does not exist
-    A_B_SAME        0               Contents of a are identical to b
-    A_B_DIFFERENT   1               Contents of a and b are different
+  Macro          Value            Meaning
+  -----------------------------------------------------------------
+  A_B_SAME_FILE  -5               Both filenames are the same
+  NO_A_FILE      -2               File a does not exist
+  NO_B_FILE      -1               File b does not exist
+  A_B_SAME        0               Contents of a are identical to b
+  A_B_DIFFERENT   1               Contents of a and b are different
 */
 
 int fdiff (const char * a_name, const char * b_name)
@@ -73,9 +73,6 @@ int fdiff (const char * a_name, const char * b_name)
     names[1] = b_name;
 
     if (strcmp (a_name, b_name) == 0) {
-	fprintf (stderr,
-		 "File names '%s' and '%s' refer to the same file.\n",
-		 a_name, b_name);
 	return A_B_SAME_FILE;
     }
     for (i = 0; i < 2; i++) {
@@ -95,6 +92,10 @@ int fdiff (const char * a_name, const char * b_name)
 		exit (EXIT_FAILURE);
 	    }
 	}
+    }
+    if (stats[0].st_dev == stats[1].st_dev &&
+	stats[0].st_ino == stats[1].st_ino) {
+	return A_B_SAME_FILE;
     }
     /* If the two files have different sizes, then they cannot
        possibly be identical. */
@@ -195,11 +196,26 @@ test_fdiff ()
     TAP_TEST_EQUAL (diff, NO_A_FILE);
     diff = fdiff (filename, "nonexistingfile");
     TAP_TEST_EQUAL (diff, NO_B_FILE);
+    diff = fdiff (filename, filename);
+    TAP_TEST_EQUAL (diff, A_B_SAME_FILE);
+    diff = fdiff ("./file.c", filename);
+    TAP_TEST_EQUAL (diff, A_B_SAME_FILE);
+}
+
+static void
+test_fexists ()
+{
+    int exists;
+    exists = fexists ("file.c");
+    TAP_TEST_EQUAL (exists, 1);
+    exists = fexists ("supercalifragilistic");
+    TAP_TEST_EQUAL (exists, 0);
 }
 
 int main ()
 {
     test_fdiff ();
+    test_fexists ();
     TAP_PLAN;
     return 0;
 }

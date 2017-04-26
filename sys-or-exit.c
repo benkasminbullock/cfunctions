@@ -101,7 +101,7 @@ fopen_or_exit (const char * path, const char * mode)
 
     if (! file) {
 	error ("could not open file \"%s\": %s",
-		path, strerror (errno));
+	       path, strerror (errno));
     }
     return file;
 }
@@ -163,10 +163,10 @@ void
 unlink_or_exit (const char * path)
 {
     int status;
-status = unlink (path);
-if (status) {
-    error ("Could not unlink (%s): %s", path, strerror (errno));
-}
+    status = unlink (path);
+    if (status) {
+	error ("Could not unlink (%s): %s", path, strerror (errno));
+    }
 }
 
 /* Check for memory leaks. */
