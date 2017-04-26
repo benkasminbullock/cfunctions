@@ -22,6 +22,7 @@ or_exit_t free_or_exit (void * memory);
 void memory_check ();
 char * strdup_or_exit (const char * todup);
 void chmod_or_exit (const char * path, mode_t mode);
+void unlink_or_exit (const char * path);
 
 #define CALLX(x) {						\
 	or_exit_t status = x;					\

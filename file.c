@@ -160,3 +160,48 @@ file_memory_check ()
 		 HERE, file_n_mallocs);
     }
 }
+
+#ifdef TEST
+
+/* The following file can be obtained from
+   "https://www.lemoda.net/c/simple-tap-test/index.html". */
+
+#include "c-tap-test.h"
+
+/* Apply various tests to fdiff. */
+
+static void
+test_fdiff ()
+{
+    const char * filename = "file.c";
+    const char * copyfile = "file.c.copy";
+    FILE * copy;
+    int diff;
+    copy = fopen_or_exit (copyfile, "w");
+    fcopy (copy, filename);
+    fclose_or_exit (copy);
+    diff = fdiff (copyfile, filename);
+    TAP_TEST_EQUAL (diff, A_B_SAME);
+    copy = fopen_or_exit (copyfile, "w");
+    fprintf (copy, "this makes it different");
+    fcopy (copy, filename);
+    fclose_or_exit (copy);
+    diff = fdiff (copyfile, filename);
+    TAP_TEST_EQUAL (diff, A_B_DIFFERENT);
+    /* Also check that the statuses are different. */
+    TAP_TEST (A_B_SAME != A_B_DIFFERENT);
+    unlink_or_exit (copyfile);
+    diff = fdiff ("nonexistingfile", filename);
+    TAP_TEST_EQUAL (diff, NO_A_FILE);
+    diff = fdiff (filename, "nonexistingfile");
+    TAP_TEST_EQUAL (diff, NO_B_FILE);
+}
+
+int main ()
+{
+    test_fdiff ();
+    TAP_PLAN;
+    return 0;
+}
+
+#endif /* def TEST */

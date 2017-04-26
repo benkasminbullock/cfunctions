@@ -64,7 +64,8 @@ cfunctions.c:	cfunctions.fl
 	chmod 0444 $@
 
 clean:	
-	rm -f cfunctions $(OBJS) cfunctions.[ch]
+	rm -f cfunctions $(OBJS) cfunctions.[ch] \
+	test-file test-file.o c-tap-test.h
 
 install:	all
 	$(INSTALL) cfunctions $(bindir)
@@ -75,5 +76,24 @@ uninstall:
 	rm -rf ${sharedir}
 	rm -f ${bindir}/cfunctions
 
-test:   cfunctions
+test:   cfunctions unittest
 	cd tests;prove --nocolor test.pl
+
+unittest: test-file
+	prove --nocolor ./test-file
+
+test-file: test-file.o sys-or-exit.o error-msg.o
+	$(CC) $(CFLAGS) -o test-file test-file.o sys-or-exit.o error-msg.o
+
+test-file.o: file.c file.h c-tap-test.h sys-or-exit.h error-msg.h
+	$(CC) -c $(CFLAGS) -o test-file.o -DTEST file.c
+
+# The following file can be obtained from
+# https://www.lemoda.net/c/simple-tap-test/index.html
+
+CTT=/home/ben/projects/c-tap-test/c-tap-test.h
+
+c-tap-test.h: $(CTT)
+	if [ -f $@ ]; then chmod 0644 $@; fi
+	cp -f $(CTT) $@
+	chmod 0444 $@

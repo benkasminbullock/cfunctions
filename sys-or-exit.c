@@ -10,6 +10,8 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
+/* For "unlink". */
+#include <unistd.h>
 
 #include "error-msg.h"
 #include "sys-or-exit.h"
@@ -155,6 +157,16 @@ chmod_or_exit (const char * path, mode_t mode)
     if (status) {
 	error ("Could not chmod (%s, %o): %s", path, mode, strerror (errno));
     }
+}
+
+void
+unlink_or_exit (const char * path)
+{
+    int status;
+status = unlink (path);
+if (status) {
+    error ("Could not unlink (%s): %s", path, strerror (errno));
+}
 }
 
 /* Check for memory leaks. */
