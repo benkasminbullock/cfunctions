@@ -263,10 +263,14 @@ is_c_file (const char * file_name)
     }
 }
 
+/* Print the line declaration for the current line relative to the
+   source file. */
+
 static void
 print_line_number (cfparse_t * cfp)
 {
-    fprintf (cfp->outfile, "\n#line %u \"%s\"\n", yylineno, get_source_name ());
+    fprintf (cfp->outfile, "\n#line %u \"%s\"\n", yylineno,
+	     get_source_name ());
 }
 
 /* Check whether a particular quantity has overflowed a maximum, and if

@@ -14,7 +14,8 @@
 
 static int arg_n_mallocs;
 
-/* Create and return a new "struct arg" structure with zero values. */
+/* This function creates and returns a new "struct arg" structure with
+   zero values. */
 
 static struct arg *
 new_arg ()
@@ -25,7 +26,8 @@ new_arg ()
     return value;
 }
 
-/* Create a new "arg" structure. */
+/* This function creates a new "arg" structure with an allocated
+   "types" field. */
 
 struct arg * 
 arg_start ()
@@ -358,8 +360,9 @@ arg_fprint (FILE * f, struct arg * a)
 }
 
 /* Print all the arguments in "a" to "f". "do_extern" controls whether
-   to print the "extern" keyword, and it is set to a true value only
-   if copying verbatim into the header file. */
+   to print the "extern" keyword, and it is set to a false value only
+   if copying a variable declaration verbatim into the header file,
+   which is generally a bad idea. */
 
 void
 arg_fprint_all (FILE * f, struct arg * a, int do_extern)
@@ -390,6 +393,9 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
 	}
     }
 }
+
+/* Check that all the memory allocated within this file has been
+   freed. */
 
 void
 arg_memory_check ()
