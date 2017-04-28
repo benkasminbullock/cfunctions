@@ -73,4 +73,5 @@ void function_reset (cfparse_t *);
 void function_save (cfparse_t * cfp, const char * text, unsigned yylength);
 void write_gnu_c_x (cfparse_t *);
 void function_print (cfparse_t *);
+void do_discard_initialiser (cfparse_t * cfp);
 #endif /* CFH_WT_H */

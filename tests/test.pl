@@ -254,7 +254,7 @@ sub try_ok
 
 sub test_verbatim
 {
-    my $file = "$Bin/ok-verbatim.c";
+    my $file = "$Bin/warn-verbatim.c";
     my $text = read_text ($file);
     like ($text, qr/=\s*99/, "initializer OK");
     my $hfile = c_to_h_name ($file);
@@ -263,11 +263,11 @@ sub test_verbatim
     ok (-f $hfile, "made $hfile ok");
     my $htext = read_text ($hfile);
     unlike ($htext, qr/99/, "Did not copy 99 into $hfile");
+    ok ($errors, "get errors with initializer in verbatim region");
     TODO: {
 	local $TODO = 'Fix multiple errors with verbatim copying';
 	unlike ($htext, qr/#if\s+0.*#if\s+0/s,
 		"No doubled preprocessor conditionals");
-	ok ($errors, "get errors with initializer in verbatim region");
     };
 }
 

@@ -1,4 +1,4 @@
-// tags: jub fuga func
+// warning: discarding initialiser value in verbatim section
 
 #include "ok-verbatim.h"
 
@@ -18,7 +18,7 @@
 typedef int fuga;
 
 #if 0
-int jub;
+int jub = 99;
 #endif /* 0 */
 
 #endif /* HEADER */

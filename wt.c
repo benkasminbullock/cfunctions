@@ -1669,3 +1669,11 @@ main (int argc, char ** argv)
     release_memory (cfp);
     return 0;
 }
+
+void
+do_discard_initialiser (cfparse_t * cfp)
+{
+    if (cfp->verbatiming) {
+	line_warning ("discarding initialiser value in verbatim section");
+    }
+}

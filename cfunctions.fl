@@ -296,8 +296,9 @@ enum              {
      encounter them.  */
                   }
 
-<initialiser>([^\"]|\n)   {
-			  }
+<initialiser>([^\"]|\n)  {
+                           /* Discard contents of initialiser. */
+			 }
 
 \({c_opt_space}{c_opt_space}\)        do_arguments (cfp);
 \({c_opt_space}void{c_opt_space}\)    do_void_arguments (cfp);
@@ -466,6 +467,7 @@ extern            { do_extern (cfp, yytext, yyleng); }
                       arg_put_name (current_arg);
                     }
                     parser_push_state (initialiser);
+		    do_discard_initialiser (cfp);
                   }
 
 \,                { 
