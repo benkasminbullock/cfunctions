@@ -1,7 +1,13 @@
-# compiler output
+# Programs output by the compiler
 
 cfunctions
+test-file
 
 # Made by flex
 
 cfunctions.[ch]
+
+# Copied from another directory
+
+c-tap-test.h
+

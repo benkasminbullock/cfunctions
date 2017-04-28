@@ -9,7 +9,8 @@
 struct type
 {
     unsigned char * name;
-    struct type * next, * prev;
+    struct type * next;
+    struct type * prev;
     /* Line number of original file it was seen on. */
     unsigned line;
 };
@@ -21,6 +22,8 @@ struct type
 struct shared_type
 {
     struct type * t;
+    /* Counter of the number of times this is linked from other
+       places. */
     int ref_count;
 };
 
@@ -35,7 +38,9 @@ struct arg
     struct type * pointers;     /* Pointer prefixes. */
     struct type * suffixes;     /* Array suffixes. */
     unsigned line;              /* Line number of the name. */
-    struct arg * prev, * next;  /* For shared arguments. */
+    /* Linked list for shared arguments. */
+    struct arg * prev;
+    struct arg * next;
     
     /* Stopgaps. */
     char * function_pointer;
@@ -44,8 +49,6 @@ struct arg
     unsigned is_typedef : 1;
     /* This is true if the current argument is a function pointer. */
     unsigned is_function_pointer : 1;
-    /* Print debugging messages. */
-    unsigned debug : 1;
 };
 
 struct arg * arg_start ();
@@ -57,4 +60,5 @@ void arg_fprint (FILE * f, struct arg * a);
 void arg_fprint_all (FILE * f, struct arg * a, int do_extern);
 void arg_tagable (struct arg * a);
 void arg_memory_check ();
-#endif 
+
+#endif /* not defined CFH_ARGUMENT_H */

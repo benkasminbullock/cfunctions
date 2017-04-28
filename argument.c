@@ -9,14 +9,18 @@
 #include "error-msg.h"
 #include "argument.h"
 
+/* This variable tracks the number of times that functions which
+   allocate and free memory are called. */
+
 static int arg_n_mallocs;
+
+/* Create and return a new "struct arg" structure with zero values. */
 
 static struct arg *
 new_arg ()
 {
     struct arg * value;
-//fprintf (stderr, "%s:%d: allocating struct arg.\n", HERE);
-    value = calloc_or_exit (1, sizeof (struct arg));
+    value = calloc_or_exit (1, sizeof (* value));
     arg_n_mallocs++;
     return value;
 }
@@ -29,7 +33,7 @@ arg_start ()
     struct arg * a;
 
     a = new_arg ();
-    a->types = calloc_or_exit (1, sizeof (struct shared_type));
+    a->types = calloc_or_exit (1, sizeof (* a->types));
     arg_n_mallocs++;
     a->types->ref_count = 1;
     return a;
@@ -84,7 +88,9 @@ check_cpp_muddle (struct arg * a, const char * t, unsigned line)
     }
 }
 
-/* Add another string "t" to an argument "a" at line "line". */
+/* Add another string "t" to an argument "a" at line "line". This is
+   called from cfunctions.fl upon seeing [] at the end of a C
+   declaration. */
 
 void
 arg_add (struct arg * a, const char * t, unsigned line)
@@ -92,11 +98,14 @@ arg_add (struct arg * a, const char * t, unsigned line)
     unsigned t_len;
     struct type * x;
     t_len = strlen (t);
+    if (t_len == 0) {
+	bug (HERE, "Length of string is zero in arg_add");
+    }
     x = calloc_or_exit (1, sizeof (struct type));
     arg_n_mallocs++;
     x->name = malloc_or_exit (t_len + 1);
     arg_n_mallocs++;
-    strcpy ((char *) x->name, t);
+    memcpy (x->name, t, t_len + 1);
     x->line = line;
     if (t[0] == '*') {
         a->parse_state = POINTER;
@@ -131,7 +140,7 @@ arg_add (struct arg * a, const char * t, unsigned line)
         break;
 
     default:
-        bug (HERE, "bad value in switch");
+        bug (HERE, "a->parse_state had bad value %d", a->parse_state);
     }
 }
 
@@ -184,6 +193,9 @@ arg_put_name (struct arg * a)
 
     case SUFFIX:
 	bug (HERE, "attempt to move a suffix to arg name");
+
+    default:
+        bug (HERE, "a->parse_state had bad value %d", a->parse_state);
     }
 
     if (! a->name) {
@@ -335,9 +347,7 @@ arg_fprint (FILE * f, struct arg * a)
         type_fprint (f, a->types->t, 0);
     }
     else {
-        if (warns.implicit_int) {
-            line_warning ("function `%s' is implicit int", a->name->name);
-        }
+	line_warning ("function `%s' is implicit int", a->name->name);
         fprintf (f, "int /* default */");
     }
     type_fprint (f, a->pointers, 0);
@@ -347,9 +357,9 @@ arg_fprint (FILE * f, struct arg * a)
     }
 }
 
-/* Print all the arguments in a list of them.  This is used for
-   printing a list of globals, so the `extern' prefix is always used
-   here. */
+/* Print all the arguments in "a" to "f". "do_extern" controls whether
+   to print the "extern" keyword, and it is set to a true value only
+   if copying verbatim into the header file. */
 
 void
 arg_fprint_all (FILE * f, struct arg * a, int do_extern)
@@ -362,46 +372,22 @@ arg_fprint_all (FILE * f, struct arg * a, int do_extern)
         fprintf (f, "(* %s) (%s",
                  a->function_pointer,
                  a->function_pointer_arguments);
+	return;
     }
-    else {
-	while (a->prev) {
-	    a = a->prev;
-	}
-	fprintf (f, " ");
-	for (; a; a = a->next) {
-	    type_fprint (f, a->pointers, 0);
-	    if (a->name) {
-		fprintf (f, "%s", a->name->name);
-	    }
-	    suffix_fprint (f, a);
-	    if (a->next) {
-		fprintf (f, ", ");
-	    }
-	}
-    }
-}
 
-/* If there is anything tagable in the type field of `a' then make it
-   a tag.  This is for struct, union and enum name tagging only. */
-
-void
-arg_tagable (struct arg * a)
-{
-    struct type * t = a->types->t;
-    if (! t) {
-	return;
+    while (a->prev) {
+	a = a->prev;
     }
-    if (strcmp ((char *) t->name, "union") == 0) {
-	return;
-    }
-    if (strcmp ((char *) t->name, "struct") == 0) {
-	return;
-    }
-    if (strcmp ((char *) t->name, "enum") == 0) {
-	return;
-    }
-    if (strcmp ((char *) t->name, "typedef") == 0) {
-	return;
+    fprintf (f, " ");
+    for (; a; a = a->next) {
+	type_fprint (f, a->pointers, 0);
+	if (a->name) {
+	    fprintf (f, "%s", a->name->name);
+	}
+	suffix_fprint (f, a);
+	if (a->next) {
+	    fprintf (f, ", ");
+	}
     }
 }
 

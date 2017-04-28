@@ -11,10 +11,6 @@ typedef enum {
 Cpp_If_Type;
 
 extern struct arg * current_arg;
-struct warning {
-    unsigned implicit_int      : 1;
-};
-extern struct warning warns;
 
 /* The store of information about print format.  This is for the GNU C
    extension '__attribute__((format(printf,,)))' which tells the

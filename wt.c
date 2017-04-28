@@ -146,10 +146,6 @@ typedef struct cfunctions_parse_state
 }
 parse_state_t;
 
-/* Shared with "argument.c". */
-
-struct warning warns;
-
 /* The top-level thing which is being parsed. */
 
 struct arg * current_arg;
@@ -1208,9 +1204,6 @@ external_clear (cfparse_t * cfp)
     }
     else if (! (cfp->s.seen_static || cfp->s.seen_typedef)) {
 	cfp->s.unnamed_struct = TRUE;
-    }
-    if (cfp->verbatiming || ! cfp->s.seen_static) {
-	arg_tagable (current_arg);
     }
     arg_free (current_arg);
     current_arg = arg_start ();
