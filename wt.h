@@ -67,7 +67,7 @@ void cpp_external_print (cfparse_t *);
 void argument_save (cfparse_t * cfp, const char * text, unsigned text_length);
 void argument_next (cfparse_t *);
 void external_clear (cfparse_t *);
-void external_print (cfparse_t * cfp, const char * semicolon, const char * why);
+void external_print (cfparse_t * cfp, const char * semicolon);
 void forward_print (cfparse_t * cfp, const char * end);
 void function_reset (cfparse_t *);
 void function_save (cfparse_t * cfp, const char * text, unsigned yylength);

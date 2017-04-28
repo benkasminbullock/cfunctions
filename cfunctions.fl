@@ -272,7 +272,7 @@ enum              {
      initialisers, because they don't need to be copied into header files. */
 
 <initialiser>;    {
-                    external_print (cfp, ";\n", "end initializer");
+                    external_print (cfp, ";\n");
                     parser_pop_state (cfp);
                   }
 
@@ -282,8 +282,8 @@ enum              {
                   }
 
 <initialiser>\{   {
-                  brace_open (cfp);
-                  parser_push_state (function);
+                    brace_open (cfp);
+                    parser_push_state (function);
                   }
 
 <initialiser>\([^\)]*\) {
@@ -296,7 +296,8 @@ enum              {
      encounter them.  */
                   }
 
-<initialiser>([^\"]|\n)   inline_print (cfp, yytext);
+<initialiser>([^\"]|\n)   {
+			  }
 
 \({c_opt_space}{c_opt_space}\)        do_arguments (cfp);
 \({c_opt_space}void{c_opt_space}\)    do_void_arguments (cfp);
@@ -305,7 +306,6 @@ enum              {
      of them but not for several other cases. */
 
 \({c_opt_space}\*{c_opt_space}     {
-                  //external_print ("", "start of function pointer");
                   inline_print (cfp, yytext);
                   parser_push_state (func_ptr);
                   }
@@ -454,7 +454,7 @@ extern            { do_extern (cfp, yytext, yyleng); }
 \;                { 
                     if (current_arg) {                   
                         arg_put_name (current_arg);
-                        external_print (cfp, ";\n", "semicolon (initial state)");
+                        external_print (cfp, ";\n");
                     }
                     else {
                       /* Function pointer trips here. */;
@@ -464,9 +464,7 @@ extern            { do_extern (cfp, yytext, yyleng); }
 =                 { 
                     if (current_arg) {
                       arg_put_name (current_arg);
-}
-                    else
-                      /* Function pointer trips here. */;
+                    }
                     parser_push_state (initialiser);
                   }
 

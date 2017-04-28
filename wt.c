@@ -1221,7 +1221,7 @@ external_clear (cfparse_t * cfp)
    well as 'y' and 'z'. */
 
 void
-external_print (cfparse_t * cfp, const char * semicolon, const char * why)
+external_print (cfparse_t * cfp, const char * semicolon)
 {
     int printable;
 
@@ -1254,7 +1254,8 @@ void
 forward_print (cfparse_t * cfp, const char * end)
 {
     if (cfp->verbatiming) {
-	external_print (cfp, end, "incomplete forward declaration of struct");
+	/* Incomplete forward declaration of struct. */
+	external_print (cfp, end);
     }
     else {
 	function_reset (cfp);
