@@ -262,9 +262,9 @@ sub test_verbatim
     ok (! $output, "no output with $file");
     ok (-f $hfile, "made $hfile ok");
     my $htext = read_text ($hfile);
+    unlike ($htext, qr/99/, "Did not copy 99 into $hfile");
     TODO: {
 	local $TODO = 'Fix multiple errors with verbatim copying';
-	unlike ($htext, qr/99/, "Did not copy 99 into $hfile");
 	unlike ($htext, qr/#if\s+0.*#if\s+0/s,
 		"No doubled preprocessor conditionals");
 	ok ($errors, "get errors with initializer in verbatim region");
