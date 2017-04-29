@@ -5,11 +5,12 @@
 #include "error-msg.h"
 #include "argument.h"
 #include "wt.h"
+
+struct pf pf;
+
 #define FLEX
 #include "flex.h"
 #undef FLEX
-
-struct pf pf;
 
 const char * state_message (void);
 
@@ -390,7 +391,7 @@ void                    do_void (ARGS);
 
 NO_RETURN               do_NO_RETURN (ARGS);
 
-  /* Over-complicated method for parsing GNU C extension related thing. */
+  /* Parse our print format declaration. */
 
 PRINT_FORMAT      {
                   check_extensions (cfp);
@@ -405,12 +406,7 @@ PRINT_FORMAT      {
 
 <print_format>\)  do_PRINT_FORMAT (cfp);
 
-<print_format>[1-9][0-9]* {
-                  if (pf.index > 1) {
-                    line_error ("bad print format number %d", pf.index);
-                  }
-                  pf.value[pf.index] = atoi ( yytext );
-                  }
+<print_format>[1-9][0-9]*  do_print_format_argument (ARGS, & pf);
 
 void{c_opt_space}\*+   do_void_pointer (ARGS);
 

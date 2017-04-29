@@ -143,7 +143,8 @@ do_main (cfparse_t * cfp, const char * yytext, int yyleng)
     parser_push_state (function);
 }
 
-static void do_equals (cfparse_t * cfp)
+static void
+do_equals (cfparse_t * cfp)
 {
     if (current_arg) {
 	arg_put_name (current_arg);
@@ -152,7 +153,8 @@ static void do_equals (cfparse_t * cfp)
     do_discard_initialiser (cfp);
 }
 
-static void do_semicolon (cfparse_t * cfp)
+static void
+do_semicolon (cfparse_t * cfp)
 {
     if (current_arg) {                   
 	arg_put_name (current_arg);
@@ -160,10 +162,26 @@ static void do_semicolon (cfparse_t * cfp)
     }
 }
 
-static void do_comma (cfparse_t * cfp)
+static void
+do_comma (cfparse_t * cfp)
 {
     if (current_arg) {                   
 	arg_put_name (current_arg);
 	current_arg = arg_share (current_arg);
     }			
+}
+
+static void
+do_print_format_argument (cfparse_t * cfp, const char * yytext,
+			  int yyleng, struct pf * pf)
+{
+    char * end;
+    if (pf->index > 1) {
+	line_error ("bad print format number %d", pf->index);
+    }
+    pf->value[pf->index] = strtol (yytext, & end, 10);
+    if (end == yytext) {
+	line_warning ("number '%s' in PRINT_FORMAT could not be parsed",
+		      yytext);
+    }
 }
