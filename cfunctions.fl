@@ -332,12 +332,6 @@ enum              {
 
 \(                {
                   do_start_arguments (cfp);
-                  /* Deficiency: switching into argument mode immediately
-                     on seeing a bracket can miss things like macros with
-                     arguments which come immediately in front of a 
-                     function definition.  Fortunately macros with arguments
-                     in front of a function definition are quite rare. */
-
                   BEGIN(arguments);
                   }
 
