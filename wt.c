@@ -322,12 +322,13 @@ do_PRINT_FORMAT (cfparse_t * cfp)
 /* This is triggered by void * in the initial state. */
 
 void
-do_void_pointer (cfparse_t * cfp, const char * text, int yyleng)
+do_void_pointer (cfparse_t * cfp, const char * yytext, int yyleng)
 {
     char * c;
+    count_lines (cfp, yytext, yyleng);
     /* 'void *' functions have a return value */
     function_save (cfp, "void", 4);
-    c = strchr (text, '*');
+    c = strchr (yytext, '*');
     function_save (cfp, c, strlen (c));
 }
 
@@ -362,56 +363,56 @@ do_arguments (cfparse_t * cfp, const char * yytext, int yyleng)
 /* Add function pointers in the argument list. */
 
 void
-do_function_pointer (cfparse_t * cfp, const char * text, int yyleng)
+do_function_pointer (cfparse_t * cfp, const char * yytext, int yyleng)
 {
     if (! current_arg) {
         bug (HERE, "null pointer for current arg");
     }
     current_arg->is_function_pointer = TRUE;
 
-    inline_print (cfp, text, yyleng);
-    current_arg->function_pointer = strdup_or_exit (text);
+    inline_print (cfp, yytext, yyleng);
+    current_arg->function_pointer = strdup_or_exit (yytext);
 }
 
 /* Add function pointer arguments. */
 
 void
-do_function_pointer_argument (cfparse_t * cfp, const char * text, int yyleng)
+do_function_pointer_argument (cfparse_t * cfp, const char * yytext, int yyleng)
 {
-    inline_print (cfp, text, yyleng);
+    inline_print (cfp, yytext, yyleng);
 
     if (current_arg->function_pointer_arguments) {
 
-        /* Append "text" to the end of
+        /* Append "yytext" to the end of
            current_arg->function_pointer_arguments. */
 
         int new_length;
         char * new;
 
         new_length = strlen (current_arg->function_pointer_arguments) +
-            strlen (text) + 1;
+            strlen (yytext) + 1;
         new = malloc_or_exit (new_length);
 	wt_n_mallocs++;
-        sprintf (new, "%s%s", current_arg->function_pointer_arguments, text);
+        sprintf (new, "%s%s", current_arg->function_pointer_arguments, yytext);
         CALLX (free_or_exit (current_arg->function_pointer_arguments));
 	wt_n_mallocs--;
 	current_arg->function_pointer_arguments = 0;
         current_arg->function_pointer_arguments = new;
     }
     else {
-        current_arg->function_pointer_arguments = strdup_or_exit (text);
+        current_arg->function_pointer_arguments = strdup_or_exit (yytext);
     }
 }
 
 /* Add a word. */
 
 void
-do_word (cfparse_t * cfp, const char * text, int leng)
+do_word (cfparse_t * cfp, const char * yytext, int leng)
 {
     if (cfp->s.saw_word) {
 	pop_state ();
     }
-    function_save (cfp, text, leng);
+    function_save (cfp, yytext, leng);
     cfp->s.saw_word = TRUE;
 }
 
@@ -422,10 +423,10 @@ do_word (cfparse_t * cfp, const char * text, int leng)
    into the header file. */
 
 void
-do_typedef (cfparse_t * cfp, const char * text, int leng)
+do_typedef (cfparse_t * cfp, const char * yytext, int leng)
 {
     if (cfp->verbatiming) {
-	function_save (cfp, text, leng);
+	function_save (cfp, yytext, leng);
     }
     else {
 	cfp->s.seen_typedef = TRUE;
@@ -436,10 +437,10 @@ do_typedef (cfparse_t * cfp, const char * text, int leng)
    mode. */
 
 void
-do_copy_typedef (cfparse_t * cfp, const char * text, int leng)
+do_copy_typedef (cfparse_t * cfp, const char * yytext, int leng)
 {
     if (cfp->verbatiming) {
-        fprintf (cfp->outfile, "%s\n", text);
+        fprintf (cfp->outfile, "%s\n", yytext);
     }
 }
 
@@ -460,17 +461,17 @@ inline_print (cfparse_t * cfp, const char * yytext, int yyleng)
 /* Deal with preprocessor '#line' directives. */
 
 void
-line_change (cfparse_t * cfp, const char * text, int yyleng)
+line_change (cfparse_t * cfp, const char * yytext, int yyleng)
 {
     char * first_quote;
     unsigned name_length;
     char * line_at;
     int line;
     char * end;
-    first_quote = strchr (text, '\"');
+    first_quote = strchr (yytext, '\"');
     if (! first_quote) {
 	line_warning ("could not find the file name in line directive %s",
-		      text);
+		      yytext);
 	push_in_cpp ();
 	return;
     }
@@ -487,12 +488,12 @@ line_change (cfparse_t * cfp, const char * text, int yyleng)
 	strcpy (cfp->line_source_name, first_quote + 1);
 	cfp->line_source_name[name_length - 2] = '\0';
     }
-    line_at = strstr (text, "line");
+    line_at = strstr (yytext, "line");
     if (! line_at) {
-	line_at = strstr (text, "#");
+	line_at = strstr (yytext, "#");
 	if (! line_at) {
 	    bug (HERE, "peculiar mismatch in strstr: "
-		 "no 'line' or '#' in '%s'", text);
+		 "no 'line' or '#' in '%s'", yytext);
 	}
 	line_at += 1;
     }
@@ -506,7 +507,7 @@ line_change (cfparse_t * cfp, const char * text, int yyleng)
     }
     if (end == line_at || line == 0) {
 	line_warning ("line number in %s could not be parsed",
-		      text);
+		      yytext);
     }
     else {
 	cfp->ln = line - 1;
@@ -752,7 +753,7 @@ cpp_stack_tidy (cfparse_t * cfp)
 /* Push a new thing onto the preprocessor conditional stack. */
 
 void
-cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
+cpp_add (cfparse_t * cfp, char * yytext, Cpp_If_Type type)
 {
     char * x;
     unsigned leng;
@@ -770,10 +771,10 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
     cfp->ln--;
     yylineno--;
 
-    x = strstr (text, cpp_if_names[type]);
+    x = strstr (yytext, cpp_if_names[type]);
 
     if (! x) {
-	bug (HERE, "bad string '%s' in cpp_add: should contain '%s'", text,
+	bug (HERE, "bad string '%s' in cpp_add: should contain '%s'", yytext,
 	     cpp_if_names[type]);
     }
 
@@ -924,31 +925,31 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 /* This is triggered by # at the start of a line. */
 
 void
-do_start_cpp (cfparse_t * cfp, const char * text, int yyleng)
+do_start_cpp (cfparse_t * cfp, const char * yytext, int yyleng)
 {
     if (initial_state ()) {
         function_reset (cfp);
     }
     push_in_cpp ();
-    inline_print (cfp, text, yyleng);
+    inline_print (cfp, yytext, yyleng);
 }
 
 /* This deals with the unusual case of '{' and '}' in the C program
    text. */
 
 void
-do_escaped_brace (cfparse_t * cfp, const char * text, int yyleng)
+do_escaped_brace (cfparse_t * cfp, const char * yytext, int yyleng)
 {
-    inline_print (cfp, text, yyleng);
+    inline_print (cfp, yytext, yyleng);
 }
 
 /* This is triggered by the word "extern" in the C program text. */
 
 void
-do_extern (cfparse_t * cfp, const char * text, int leng)
+do_extern (cfparse_t * cfp, const char * yytext, int leng)
 {
     if (cfp->verbatiming) {
-	function_save (cfp, text, leng);
+	function_save (cfp, yytext, leng);
     }
     else {
 	cfp->s.seen_extern = TRUE;
@@ -958,7 +959,7 @@ do_extern (cfparse_t * cfp, const char * text, int leng)
 /* This is triggered by cfunctions' special macro "NO_RETURN". */
 
 void
-do_NO_RETURN (cfparse_t * cfp, const char * text, int yyleng)
+do_NO_RETURN (cfparse_t * cfp, const char * yytext, int yyleng)
 {
     check_extensions (cfp);
     cfp->s.c_return_value = VOID;
@@ -969,7 +970,7 @@ do_NO_RETURN (cfparse_t * cfp, const char * text, int yyleng)
 /* This is triggered by ")" in function arguments. */
 
 void
-do_arguments_close_bracket (cfparse_t * cfp, const char * text, int leng)
+do_arguments_close_bracket (cfparse_t * cfp, const char * yytext, int leng)
 {
     cfp->arg_br_depth--;
     if (cfp->arg_br_depth == 0) {
@@ -983,36 +984,36 @@ do_arguments_close_bracket (cfparse_t * cfp, const char * text, int leng)
     else {
 	/* This was not the last ) in the argument list, so we need to
 	   save it as part of the arguments. */
-	argument_save (cfp, text, leng);
+	argument_save (cfp, yytext, leng);
     }
 }
 
 /* Triggered by the string "static". */
 
 void
-do_static (cfparse_t * cfp, const char * text, int leng)
+do_static (cfparse_t * cfp, const char * yytext, int leng)
 {
     cfp->s.seen_static = TRUE;
-    function_save (cfp, text, leng);
+    function_save (cfp, yytext, leng);
 }
 
 /* Triggered by the string "void". */
 
 void
-do_void (cfparse_t * cfp, const char * text, int leng)
+do_void (cfparse_t * cfp, const char * yytext, int leng)
 {
     cfp->s.c_return_value = VOID;
-    function_save (cfp, text, leng);
+    function_save (cfp, yytext, leng);
 }
 
 /* Respond to a '(' in arguments. */
 
 void
-do_arguments_open_bracket (cfparse_t * cfp, const char * text, int leng)
+do_arguments_open_bracket (cfparse_t * cfp, const char * yytext, int leng)
 {
     cfp->arg_br_depth++;
     check_overflow (cfp->arg_br_depth, MAX_ARG_BR_DEPTH, "brackets");
-    argument_save (cfp, text, leng);
+    argument_save (cfp, yytext, leng);
 }
 
 void
@@ -1046,13 +1047,13 @@ do_void_arguments (cfparse_t * cfp, const char * yytext, int yyleng)
 /* Respond to seeing a #define macro. */
 
 void
-do_define (cfparse_t * cfp, const char * text, int yyleng)
+do_define (cfparse_t * cfp, const char * yytext, int yyleng)
 {
     if (initial_state ()) {
 	function_reset (cfp);
     }
     push_in_cpp ();
-    inline_print (cfp, text, yyleng);
+    inline_print (cfp, yytext, yyleng);
 }
 
 /* Nullify elements of the stack and release their memory. */
@@ -1148,9 +1149,9 @@ argument_reset (cfparse_t * cfp)
    to it in the types array */
 
 void
-argument_save (cfparse_t * cfp, const char * text, unsigned text_length)
+argument_save (cfparse_t * cfp, const char * yytext, unsigned yyleng)
 {
-    arg_add (cfp->fargs[cfp->n_fargs - 1], text);
+    arg_add (cfp->fargs[cfp->n_fargs - 1], yytext);
 }
 
 /* Test if the function is an ANSI C style one with the arguments'
@@ -1268,7 +1269,6 @@ external_print (cfparse_t * cfp, const char * semicolon)
             fprintf (cfp->outfile, "%s", semicolon);
         }
     }
-
     function_reset (cfp);
 }
 
@@ -1305,16 +1305,16 @@ function_reset (cfparse_t * cfp)
 /* Save a function type or name in the current list. */
 
 void
-function_save (cfparse_t * cfp, const char * text, unsigned yylength)
+function_save (cfparse_t * cfp, const char * yytext, unsigned yyleng)
 {
     if (! current_arg) {
         current_arg = arg_start ();
-        if (strcmp (text, "typedef") == 0) {
+        if (strcmp (yytext, "typedef") == 0) {
             current_arg->is_typedef = 1;
             cfp->in_typedef = 1;
         }
     }
-    arg_add (current_arg, text);
+    arg_add (current_arg, yytext);
     cfp->s.function_type_n++;
 }
 
