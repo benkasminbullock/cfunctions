@@ -14,5 +14,8 @@ void clean_up_flex ();
 static void start_quote (cfparse_t * cfp, const char * yytext, int yyleng, int state);
 static void start_function (cfparse_t * cfp);
 static void do_main (cfparse_t * cfp, const char * yytext, int yyleng);
+static void do_equals (cfparse_t * cfp);
+static void do_semicolon (cfparse_t * cfp);
+static void do_comma (cfparse_t * cfp);
 
 #endif /* def FLEX */

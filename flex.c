@@ -142,3 +142,28 @@ do_main (cfparse_t * cfp, const char * yytext, int yyleng)
     brace_open (cfp);
     parser_push_state (function);
 }
+
+static void do_equals (cfparse_t * cfp)
+{
+    if (current_arg) {
+	arg_put_name (current_arg);
+    }
+    parser_push_state (initialiser);
+    do_discard_initialiser (cfp);
+}
+
+static void do_semicolon (cfparse_t * cfp)
+{
+    if (current_arg) {                   
+	arg_put_name (current_arg);
+	external_print (cfp, ";\n");
+    }
+}
+
+static void do_comma (cfparse_t * cfp)
+{
+    if (current_arg) {                   
+	arg_put_name (current_arg);
+	current_arg = arg_share (current_arg);
+    }			
+}

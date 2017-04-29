@@ -382,30 +382,11 @@ extern            { do_extern (ARGS); }
                     arg_add (current_arg, yytext);
                   }
 
-\;                { 
-                    if (current_arg) {                   
-                        arg_put_name (current_arg);
-                        external_print (cfp, ";\n");
-                    }
-                    else {
-                      /* Function pointer trips here. */;
-                    }                     
-                  }
+\;                	do_semicolon (cfp);
 
-=                 { 
-                    if (current_arg) {
-                      arg_put_name (current_arg);
-                    }
-                    parser_push_state (initialiser);
-		    do_discard_initialiser (cfp);
-                  }
+=			do_equals (cfp);
 
-\,                { 
-                    if (current_arg) {                   
- 		        arg_put_name (current_arg);
-         		current_arg = arg_share (current_arg);
-	            }			
-                  }
+\,                	do_comma (cfp); 
 
 main{c_opt_space}\([^\{]+\{  do_main (ARGS);
 
@@ -413,7 +394,7 @@ static            { do_static (ARGS); }
 
 void              { do_void (ARGS); }
 
-NO_RETURN         { do_NO_RETURN (cfp, yytext); }
+NO_RETURN         { do_NO_RETURN (ARGS); }
 
   /* Over-complicated method for parsing GNU C extension related thing. */
 
@@ -437,7 +418,7 @@ PRINT_FORMAT      {
                   pf.value[pf.index] = atoi ( yytext );
                   }
 
-void{c_opt_space}\*+ { do_void_pointer (cfp, yytext); }
+void{c_opt_space}\*+ { do_void_pointer (ARGS); }
 
 {c_word}          function_save (ARGS);
 

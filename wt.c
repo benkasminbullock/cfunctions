@@ -322,7 +322,7 @@ do_PRINT_FORMAT (cfparse_t * cfp)
 /* This is triggered by void * in the initial state. */
 
 void
-do_void_pointer (cfparse_t * cfp, const char * text)
+do_void_pointer (cfparse_t * cfp, const char * text, int yyleng)
 {
     char * c;
     /* 'void *' functions have a return value */
@@ -958,7 +958,7 @@ do_extern (cfparse_t * cfp, const char * text, int leng)
 /* This is triggered by cfunctions' special macro "NO_RETURN". */
 
 void
-do_NO_RETURN (cfparse_t * cfp, const char * text)
+do_NO_RETURN (cfparse_t * cfp, const char * text, int yyleng)
 {
     check_extensions (cfp);
     cfp->s.c_return_value = VOID;
