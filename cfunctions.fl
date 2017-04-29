@@ -38,11 +38,13 @@ void parser_pop_state ();
 
 %option stack
 
-/* Can switch these sillinesses off according to
-"https://en.wikipedia.org/wiki/Flex_lexical_analyser#Usage_under_non-Unix_environments". */
+/*  ____  _        _            
+   / ___|| |_ __ _| |_ ___  ___ 
+   \___ \| __/ _` | __/ _ \/ __|
+    ___) | || (_| | ||  __/\__ \
+   |____/ \__\__,_|\__\___||___/ */
+                             
 
-%option nounistd
-%option never-interactive
 
 /* state "in a C comment" */
 
@@ -121,7 +123,12 @@ cpp_opt_space ([ \t\f\r]|\\{endline})*
 cpp_any       (.|\\{endline})
 cpp           ^{cpp_opt_space}#{cpp_opt_space}
 
-/* C macros */
+/*   ____                                      
+    / ___|  _ __ ___   __ _  ___ _ __ ___  ___ 
+   | |     | '_ ` _ \ / _` |/ __| '__/ _ \/ __|
+   | |___  | | | | | | (_| | (__| | | (_) \__ \
+    \____| |_| |_| |_|\__,_|\___|_|  \___/|___/ */
+                                            
 
 /* The macro c_space has been set to match only a single `\n' in order
    to prevent collisions with {cpp}.  I don't know if there is

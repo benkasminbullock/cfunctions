@@ -111,6 +111,8 @@ clean_up_flex ()
     yylex_destroy ();
 }
 
+/* Simplifying functions. */
+
 static void
 start_quote (cfparse_t * cfp, const char * yytext, int yyleng, int state)
 {
