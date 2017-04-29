@@ -44,7 +44,7 @@ argument.o: argument.c argument.h wt.h sys-or-exit.h error-msg.h
 
 backup.o: backup.c backup.h sys-or-exit.h error-msg.h
 
-cfunctions.o: cfunctions.c argument.h wt.h error-msg.h flex.c
+cfunctions.o: cfunctions.c argument.h wt.h error-msg.h flex.c flex.h
 
 error-msg.o: error-msg.c error-msg.h
 

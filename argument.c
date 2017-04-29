@@ -78,7 +78,7 @@ type_list_add (struct type ** a, struct type * b)
 /* Check for a muddled situation */
 
 static void
-check_cpp_muddle (struct arg * a, const char * t, unsigned line)
+check_cpp_muddle (struct arg * a, const char * t)
 {
     char * at;
 
@@ -95,7 +95,7 @@ check_cpp_muddle (struct arg * a, const char * t, unsigned line)
    declaration. */
 
 void
-arg_add (struct arg * a, const char * t, unsigned line)
+arg_add (struct arg * a, const char * t)
 {
     unsigned t_len;
     struct type * x;
@@ -108,12 +108,11 @@ arg_add (struct arg * a, const char * t, unsigned line)
     x->name = malloc_or_exit (t_len + 1);
     arg_n_mallocs++;
     memcpy (x->name, t, t_len + 1);
-    x->line = line;
     if (t[0] == '*') {
         a->parse_state = POINTER;
     }
     if (a->parse_state == SUFFIX) {
-        check_cpp_muddle (a, t, line);
+        check_cpp_muddle (a, t);
     }
     switch (a->parse_state) {
     case SUFFIX:

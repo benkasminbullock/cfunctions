@@ -60,6 +60,7 @@ struct cpp_if
 
     unsigned print_line;
 }
+
 /* The stack of CPP '#if', '#else', '#elif' and '#endif'
    statements. */
 
@@ -88,11 +89,11 @@ typedef struct cfunctions_parse_state
     /* set to VOID only if the function does not have a return value */
 
     enum { RETURN, VOID } c_return_value;
-
+    
     /* Have we seen 'extern'?  This is needed to extract global variables
        correctly ('extern' global variables are ignored by Cfunctions). */
 
-    unsigned seen_extern;
+    unsigned seen_extern : 1;
 
     /* Have we seen 'static'? */
 
@@ -207,6 +208,10 @@ struct cfparse
 
     char * command_line;
 
+    /* The current line number. This replaces yylineno. */
+
+    unsigned ln;
+
     /* Parse state information. */
 
     parse_state_t s;
@@ -269,7 +274,7 @@ is_c_file (const char * file_name)
 static void
 print_line_number (cfparse_t * cfp)
 {
-    fprintf (cfp->outfile, "\n#line %u \"%s\"\n", yylineno,
+    fprintf (cfp->outfile, "\n#line %u \"%s\"\n", cfp->ln,
 	     get_source_name ());
 }
 
@@ -336,8 +341,20 @@ do_start_arguments (cfparse_t * cfp)
 }
 
 void
-do_arguments (cfparse_t * cfp)
+count_lines (cfparse_t * cfp, const char * yytext, int yyleng)
 {
+    int i;
+    for (i = 0; i < yyleng; i++) {
+	if (yytext[i] == '\n') {
+	    cfp->ln++;
+	}
+    }
+}
+
+void
+do_arguments (cfparse_t * cfp, const char * yytext, int yyleng)
+{
+    count_lines (cfp, yytext, yyleng);
     arg_put_name (current_arg);
     cfp->s.seen_arguments = TRUE;
 }
@@ -345,23 +362,23 @@ do_arguments (cfparse_t * cfp)
 /* Add function pointers in the argument list. */
 
 void
-do_function_pointer (cfparse_t * cfp, const char * text)
+do_function_pointer (cfparse_t * cfp, const char * text, int yyleng)
 {
     if (! current_arg) {
         bug (HERE, "null pointer for current arg");
     }
     current_arg->is_function_pointer = TRUE;
 
-    inline_print (cfp, text);
+    inline_print (cfp, text, yyleng);
     current_arg->function_pointer = strdup_or_exit (text);
 }
 
 /* Add function pointer arguments. */
 
 void
-do_function_pointer_argument (cfparse_t * cfp, const char * text)
+do_function_pointer_argument (cfparse_t * cfp, const char * text, int yyleng)
 {
-    inline_print (cfp, text);
+    inline_print (cfp, text, yyleng);
 
     if (current_arg->function_pointer_arguments) {
 
@@ -430,11 +447,12 @@ do_copy_typedef (cfparse_t * cfp, const char * text, int leng)
    output file, otherwise discard it. */
 
 void
-inline_print (cfparse_t * cfp, const char * x)
+inline_print (cfparse_t * cfp, const char * yytext, int yyleng)
 {
+    count_lines (cfp, yytext, yyleng);
     if (cfp->verbatiming) {
         if (! cfp->in_typedef) {
-            fprintf (cfp->outfile, "%s", x);
+            fprintf (cfp->outfile, "%s", yytext);
         }
     }
 }
@@ -442,7 +460,7 @@ inline_print (cfparse_t * cfp, const char * x)
 /* Deal with preprocessor '#line' directives. */
 
 void
-line_change (cfparse_t * cfp, const char * text)
+line_change (cfparse_t * cfp, const char * text, int yyleng)
 {
     char * first_quote;
     unsigned name_length;
@@ -482,11 +500,16 @@ line_change (cfparse_t * cfp, const char * text)
 	line_at += 4;
     }
     line = strtol (line_at, & end, 10);
+    if (line < 1) {
+	line_warning ("Invalid line number %d in directive",
+		      line);
+    }
     if (end == line_at || line == 0) {
 	line_warning ("line number in %s could not be parsed",
 		      text);
     }
     else {
+	cfp->ln = line - 1;
 	yylineno = line - 1;
 	set_source_name (cfp->line_source_name);
     }
@@ -744,6 +767,7 @@ cpp_add (cfparse_t * cfp, char * text, Cpp_If_Type type)
        description of the bug to Vern Paxson, the author of Flex, who said
        it is on the 'to do' list. */
 
+    cfp->ln--;
     yylineno--;
 
     x = strstr (text, cpp_if_names[type]);
@@ -900,22 +924,22 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 /* This is triggered by # at the start of a line. */
 
 void
-do_start_cpp (cfparse_t * cfp, const char * text)
+do_start_cpp (cfparse_t * cfp, const char * text, int yyleng)
 {
     if (initial_state ()) {
         function_reset (cfp);
     }
     push_in_cpp ();
-    inline_print (cfp, text);
+    inline_print (cfp, text, yyleng);
 }
 
 /* This deals with the unusual case of '{' and '}' in the C program
    text. */
 
 void
-do_escaped_brace (cfparse_t * cfp, const char * text)
+do_escaped_brace (cfparse_t * cfp, const char * text, int yyleng)
 {
-    inline_print (cfp, text);
+    inline_print (cfp, text, yyleng);
 }
 
 /* This is triggered by the word "extern" in the C program text. */
@@ -1005,7 +1029,7 @@ do_brace_close (cfparse_t * cfp)
 	}
     }
     else {
-	inline_print (cfp, "}");
+	inline_print (cfp, "}", strlen ("}"));
     }
 }
 
@@ -1013,22 +1037,22 @@ do_brace_close (cfparse_t * cfp)
    argument string '(cfparse_t * cfp)'. */
 
 void
-do_void_arguments (cfparse_t * cfp)
+do_void_arguments (cfparse_t * cfp, const char * yytext, int yyleng)
 {
     cfp->s.void_arguments = TRUE;
-    do_arguments (cfp);
+    do_arguments (cfp, yytext, yyleng);
 }
 
 /* Respond to seeing a #define macro. */
 
 void
-do_define (cfparse_t * cfp, const char * text)
+do_define (cfparse_t * cfp, const char * text, int yyleng)
 {
     if (initial_state ()) {
 	function_reset (cfp);
     }
     push_in_cpp ();
-    inline_print (cfp, text);
+    inline_print (cfp, text, yyleng);
 }
 
 /* Nullify elements of the stack and release their memory. */
@@ -1126,7 +1150,7 @@ argument_reset (cfparse_t * cfp)
 void
 argument_save (cfparse_t * cfp, const char * text, unsigned text_length)
 {
-    arg_add (cfp->fargs[cfp->n_fargs - 1], text, 0);
+    arg_add (cfp->fargs[cfp->n_fargs - 1], text);
 }
 
 /* Test if the function is an ANSI C style one with the arguments'
@@ -1290,7 +1314,7 @@ function_save (cfparse_t * cfp, const char * text, unsigned yylength)
             cfp->in_typedef = 1;
         }
     }
-    arg_add (current_arg, text, yylineno);
+    arg_add (current_arg, text);
     cfp->s.function_type_n++;
 }
 

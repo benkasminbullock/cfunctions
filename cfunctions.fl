@@ -5,6 +5,9 @@
 #include "error-msg.h"
 #include "argument.h"
 #include "wt.h"
+#define FLEX
+#include "flex.h"
+#undef FLEX
 
 struct pf pf;
 
@@ -23,11 +26,6 @@ void parser_pop_state ();
 /* See the Flex manual */
 
 %option noyywrap 
-
-/* Cfunctions needs to know the line number of the file it is
-   reading. */
-
-%option yylineno
 
 /* The following options save us from getting some warning messages
    from compiling with `gcc -Wall'. */
@@ -137,6 +135,7 @@ c_var         (\*{c_opt_space})*{c_word}({c_opt_space}{c_array})*
 c_var_no_pointer         {c_word}({c_opt_space}{c_array})*
 c_func_ptr    \({c_opt_space}\**{c_opt_space}{c_word}{c_opt_space}\)
 braces \{[^{}]*\}
+line_directive line{cpp_opt_space}[0-9]+{cpp_opt_space}\"([^\"]|\\\")+\"
 
 %%
 
@@ -152,17 +151,15 @@ braces \{[^{}]*\}
 
   /* Other C preprocessor statements. */
 
-<*>{cpp}define{cpp_space}{c_word} { do_define (cfp, yytext); }
+<*>{cpp}define{cpp_space}{c_word} { do_define (ARGS); }
 
-<*>{cpp}(line)?{cpp_opt_space}[0-9]+{cpp_opt_space}\"([^\"]|\\\")+\" {
-                  line_change (cfp, yytext);
-                  }
+<*>{cpp}{line_directive}   line_change (ARGS);
 
-{cpp}             do_start_cpp (cfp, yytext);
+{cpp}             do_start_cpp (ARGS);
 
-<in_cpp>{cpp_any} inline_print (cfp, yytext);
+<in_cpp>{cpp_any} inline_print (ARGS);
 
-<in_cpp>{endline} { inline_print (cfp, yytext); parser_pop_state (); }
+<in_cpp>{endline} { inline_print (ARGS); parser_pop_state (); }
 
   /* Comments. */
 
@@ -172,25 +169,16 @@ braces \{[^{}]*\}
                      occurs for the case that the string is exactly
                      "/ *". */
 
-                  if (YY_START != c_string)
-                    {
+                    if (YY_START != c_string) {
                       parser_push_state (comment);
                     }
-                  else {
-                    #ifdef CFUNCTIONS_DEBUG
-                    if (string_debug_on) {
-                       printf ("%s:%u: printing in a string\n",
-                               source_name, yylineno);
-                    }
-                    #endif /* CFUNCTIONS_DEBUG */
-                    /* Don't need a warning. */
-                    inline_print (cfp, yytext);
+                    else {
+                      /* Don't need a warning. */
+                      inline_print (ARGS);
                     }               
                   }
 
-<comment>\*+\/    { 
-                      parser_pop_state ();
-                  }
+<comment>\*+\/    parser_pop_state ();
 
 <comment>(([^\*]|\n)*|\*+([^/\*]|\n))  ;
 
@@ -202,37 +190,37 @@ braces \{[^{}]*\}
                   }
 
 typedef(\{(\{(\{({braces}|[^}{])*\}|{braces}|[^}{])*\}|{braces}|[^}{])*\}|{braces}|[^}{;])*;   {
-                      do_copy_typedef (cfp, yytext, yyleng);
+                      do_copy_typedef (ARGS);
                   }
 
   /* Type definitions. */
 
-typedef           { do_typedef (cfp, yytext, yyleng); }
+typedef           { do_typedef (ARGS); }
 
   /* Enumerations. */
 
 enum              { 
                   parser_push_state (in_enum);
-                  function_save (cfp, yytext, yyleng);
+                  function_save (ARGS);
                   }
 
-<in_enum>{c_word} { do_word (cfp, yytext, yyleng); }
+<in_enum>{c_word} { do_word (ARGS); }
 
 <in_enum>\{       {
                   external_clear (cfp);
                   BEGIN (is_enum);
                   }
 
-<in_enum>{c_space} ;
+<in_enum>{c_space} count_lines (ARGS);
 
 <is_enum>{c_word}[^\},;]* { 
-                  inline_print (cfp, yytext);
+                  inline_print (ARGS);
                   }
 
-<is_enum>(,|{c_space}) inline_print (cfp, yytext);
+<is_enum>(,|{c_space}) inline_print (ARGS);
 
 <is_enum>\}       {
-                  inline_print (cfp, yytext);
+                  inline_print (ARGS);
                   parser_pop_state ();
                   }
 
@@ -242,14 +230,14 @@ enum              {
 
 (struct|union)    { /* A `struct' is just the same 
                                   syntactically as a `union'. */
-                  function_save (cfp, yytext, yyleng);
+                  function_save (ARGS);
                   parser_push_state (in_struct);
                   }
 
-<in_struct>{c_word}  { do_word (cfp, yytext, yyleng); }
+<in_struct>{c_word}  { do_word (ARGS); }
 
 <in_struct>\*     {
-                  function_save (cfp, yytext, yyleng);
+                  function_save (ARGS);
                   parser_pop_state (cfp);
                   }
 
@@ -300,47 +288,43 @@ enum              {
                            /* Discard contents of initialiser. */
 			 }
 
-\({c_opt_space}{c_opt_space}\)        do_arguments (cfp);
-\({c_opt_space}void{c_opt_space}\)    do_void_arguments (cfp);
+\({c_opt_space}{c_opt_space}\)        do_arguments (ARGS);
+\({c_opt_space}void{c_opt_space}\)    do_void_arguments (ARGS);
 
   /* Function pointers.  At the moment this works for inline versions
      of them but not for several other cases. */
 
 \({c_opt_space}\*{c_opt_space}     {
-                  inline_print (cfp, yytext);
+                  inline_print (ARGS);
                   parser_push_state (func_ptr);
                   }
 
 <func_ptr>\){c_opt_space}\(        {
-                  inline_print (cfp, yytext);
+                  inline_print (ARGS);
                   BEGIN (func_ptr_arg);
                   }
 
 <func_ptr>\)      {
-                  inline_print (cfp, yytext);
+                  inline_print (ARGS);
                   parser_pop_state ();
                   }
 
-<func_ptr>{c_word} {
-                   do_function_pointer (cfp, yytext);
-                   }
+<func_ptr>{c_word}   do_function_pointer (ARGS);
 
-<func_ptr>[^\)]+   {
-                   do_function_pointer (cfp, yytext);
-                   }
+<func_ptr>[^\)]+     do_function_pointer (ARGS);
 
 <func_ptr_arg>\)   {
-                   do_function_pointer_argument (cfp, yytext);
+                   do_function_pointer_argument (ARGS);
                    parser_pop_state ();
                    }
 
 <func_ptr_arg>\(   {
-                   do_function_pointer_argument (cfp, yytext);
+                   do_function_pointer_argument (ARGS);
                    parser_push_state (func_ptr_arg);
                    }
 
 <func_ptr_arg>[^\(\)]+   {
-                   do_function_pointer_argument (cfp, yytext);
+                   do_function_pointer_argument (ARGS);
                    }
 
   /* Beginning of a C argument. */
@@ -356,100 +340,46 @@ enum              {
                   BEGIN(arguments);
                   }
 
-<arguments>\)     do_arguments_close_bracket (cfp, yytext, yyleng);
+<arguments>\)     do_arguments_close_bracket (ARGS);
 
-<arguments>\(     do_arguments_open_bracket (cfp, yytext, yyleng);
+<arguments>\(     do_arguments_open_bracket (ARGS);
 
-<arguments>({c_var}|\*+) {
-                  argument_save (cfp, yytext, yyleng);
-                  }
+<arguments>({c_var}|\*+)      argument_save (ARGS);
 
 <arguments>,      argument_next (cfp);
 
 <arguments>{c_space}      ;
 
-<arguments>"..."  argument_save (cfp, yytext, yyleng);
+<arguments>"..."  argument_save (ARGS);
 
-<arguments>([0-9]*|\"([^\"]|\\\")*\")  {
-                  line_error ("nasty macro: use -C option");
-                  }
+<arguments>([0-9]*|\"([^\"]|\\\")*\")   line_error ("unparseable macro");
 
-<INITIAL>\{  {
-                  /* All functions must start like this. */
-                  function_print (cfp);
-                  parser_push_state (function);
-                  brace_open (cfp);
-                  }
+<INITIAL>\{       start_function (cfp);
 
-\}                {
-                    /* A `}' outside function mode can only happen when 
-                       there was no matching `{'. */
-                    line_warning ("isolated }");
-                  }
+\}                line_warning ("isolated }");
 
 <function>\{      {
-                  inline_print(cfp, yytext);
+                  inline_print (ARGS);
                   brace_open (cfp);
                   }
 
 <function>\}      do_brace_close (cfp);
 
-<*>\"             {
-                  inline_print (cfp, yytext);
-                  if (YY_START != comment) {
-                    if ( YY_START != c_string ) {
-                      #ifdef CFUNCTIONS_DEBUG
-                      if (string_debug_on) {
-                          printf ("%s:%u: starting string state\n",
-                                  source_name, yylineno);
-                      }
-                      #endif /* CFUNCTIONS_DEBUG */
-                      parser_push_state (c_string);
-                    } else {
-                      #ifdef CFUNCTIONS_DEBUG
-                      if (string_debug_on) {
-                          printf ("%s:%u: ending string state\n",
-                                  source_name, yylineno);
-                      }
-                      #endif /* CFUNCTIONS_DEBUG */
-                      parser_pop_state ();
-                      }                     
-                    }
-                  }
+<*>\"             start_quote (ARGS, YY_START);
 
-                 /* Match escaped non-quote characters in a C string. */
+<c_string>(\\[^\"])*            inline_print (ARGS);
 
-<c_string>(\\[^\"])*             {
-                                  #ifdef CFUNCTIONS_DEBUG
-                                  if (string_debug_on) {
-                                      printf ("%s:%u: (1) printing '%s' in a string\n",
-                                              source_name, yylineno, yytext);
-                                  }
-                                  #endif /* CFUNCTIONS_DEBUG */
-                                  inline_print (cfp, yytext);
-                                  }
-                 /* Match escaped quotes or non-quote characters in a C string. */
+<c_string>(\\.|[^\\"])*         inline_print (ARGS);
 
-<c_string>(\\.|[^\\"])*           {
-                                  /* In the state "C string", match "backslash plus anything", or anything except double quotation marks or backslashes. */
-                                  #ifdef CFUNCTIONS_DEBUG
-                                  if (string_debug_on) {
-                                      printf ("%s:%u: (2) printing '%s' in a string\n",
-                                              source_name, yylineno, yytext);
-                                  }
-                                  #endif /* CFUNCTIONS_DEBUG */
-                                  inline_print (cfp, yytext);
-                                  }
+<function>([^\}\{\"]|\n|\'\\\"\'|\'\"\')    inline_print (ARGS);
 
-<function>([^\}\{\"]|\n|\'\\\"\'|\'\"\')    inline_print (cfp, yytext);
+<function>(\'\{\'|\'\}\')  do_escaped_brace (ARGS);
 
-<function>(\'\{\'|\'\}\')  do_escaped_brace (cfp, yytext);
-
-extern            { do_extern (cfp, yytext, yyleng); }
+extern            { do_extern (ARGS); }
 
 \[[^]]*\]         {
                     arg_put_name (current_arg);
-                    arg_add (current_arg, yytext, yylineno);
+                    arg_add (current_arg, yytext);
                   }
 
 \;                { 
@@ -477,16 +407,11 @@ extern            { do_extern (cfp, yytext, yyleng); }
 	            }			
                   }
 
-main{c_opt_space}\([^\{]+\{ {
-                  /* Never write a prototype for main. */
-                  function_reset (cfp);
-                  brace_open (cfp);
-                  parser_push_state (function);
-                  }
+main{c_opt_space}\([^\{]+\{  do_main (ARGS);
 
-static            { do_static (cfp, yytext, yyleng); }
+static            { do_static (ARGS); }
 
-void              { do_void (cfp, yytext, yyleng); }
+void              { do_void (ARGS); }
 
 NO_RETURN         { do_NO_RETURN (cfp, yytext); }
 
@@ -506,23 +431,19 @@ PRINT_FORMAT      {
 <print_format>\)  do_PRINT_FORMAT (cfp);
 
 <print_format>[1-9][0-9]* {
-                  if (pf.index > 1)
+                  if (pf.index > 1) {
                     line_error ("bad print format number %d", pf.index);
+                  }
                   pf.value[pf.index] = atoi ( yytext );
                   }
 
 void{c_opt_space}\*+ { do_void_pointer (cfp, yytext); }
 
-{c_word}          { function_save (cfp, yytext, yyleng); }
+{c_word}          function_save (ARGS);
 
-\*                { 
-                  /* This is for functions which return pointers 
-                     to something.  It should be eliminated by 
-                     making a better rule to match functions. */
-                  function_save (cfp, yytext, yyleng);
-                  }
+\*                function_save (ARGS);
 
-{c_space}         ;
+{c_space}         count_lines (cfp, yytext, yyleng);
 
 <*>.              {
                   line_warning ("unknown char `%c' while in %s state", 
@@ -532,3 +453,4 @@ void{c_opt_space}\*+ { do_void_pointer (cfp, yytext); }
 %%
 
 #include "flex.c"
+

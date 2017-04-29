@@ -11,3 +11,6 @@ cfunctions.[ch]
 
 c-tap-test.h
 
+# Test files which don't need to be version-controlled.
+
+research/*

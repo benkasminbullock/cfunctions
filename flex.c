@@ -110,3 +110,35 @@ clean_up_flex ()
     }
     yylex_destroy ();
 }
+
+static void
+start_quote (cfparse_t * cfp, const char * yytext, int yyleng, int state)
+{
+    inline_print (cfp, yytext, yyleng);
+    if (state != comment) {
+	if (state != c_string ) {
+	    parser_push_state (c_string);
+	}
+	else {
+	    parser_pop_state ();
+	}                     
+    }
+}
+
+static void
+start_function (cfparse_t * cfp)
+{
+    function_print (cfp);
+    parser_push_state (function);
+    brace_open (cfp);
+}
+
+static void
+do_main (cfparse_t * cfp, const char * yytext, int yyleng)
+{
+    count_lines (ARGS);
+    /* Never write a prototype for main. */
+    function_reset (cfp);
+    brace_open (cfp);
+    parser_push_state (function);
+}

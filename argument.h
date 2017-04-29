@@ -53,7 +53,7 @@ struct arg
 
 struct arg * arg_start ();
 struct arg * arg_share (struct arg * a);
-void arg_add (struct arg * a, const char * t, unsigned line);
+void arg_add (struct arg * a, const char * t);
 void arg_put_name (struct arg * a);
 void arg_free (struct arg * a);
 void arg_fprint (FILE * f, struct arg * a);

@@ -277,11 +277,11 @@ sub test_line_numbers
     my @lines = read_lines ($file);
     like ($lines[2], qr/int funkyfunc/);
     my ($hfile, $htext) = run_ok ($file);
-    TODO: {
-	local $TODO = 'fix line number errors';
-	like ($htext, qr/#line 3/);
-	unlike ($htext, qr/#line 4/);
-    };
+#    TODO: {
+#	local $TODO = 'fix line number errors';
+    like ($htext, qr/#line 3/);
+    unlike ($htext, qr/#line 4/);
+#    };
 }
 
 # https://github.com/benkasminbullock/cfunctions/issues/3
