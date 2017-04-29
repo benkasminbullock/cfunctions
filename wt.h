@@ -75,4 +75,5 @@ void write_gnu_c_x (cfparse_t *);
 void function_print (cfparse_t *);
 void do_discard_initialiser (cfparse_t * cfp);
 void count_lines (cfparse_t * cfp, const char * yytext, int yyleng);
+void do_array_arguments (cfparse_t * cfp, const char * yytext, unsigned yyleng);
 #endif /* CFH_WT_H */

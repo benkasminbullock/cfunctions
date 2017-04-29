@@ -358,10 +358,7 @@ enum              {
 
 \}                line_warning ("isolated }");
 
-<function>\{      {
-                  inline_print (ARGS);
-                  brace_open (cfp);
-                  }
+<function>\{      brace_open (cfp);
 
 <function>\}      do_brace_close (cfp);
 
@@ -375,12 +372,9 @@ enum              {
 
 <function>(\'\{\'|\'\}\')  do_escaped_brace (ARGS);
 
-extern            { do_extern (ARGS); }
+extern                  do_extern (ARGS);
 
-\[[^]]*\]         {
-                    arg_put_name (current_arg);
-                    arg_add (current_arg, yytext);
-                  }
+\[[^]]*\]               do_array_arguments (ARGS);
 
 \;                	do_semicolon (cfp);
 
@@ -390,11 +384,11 @@ extern            { do_extern (ARGS); }
 
 main{c_opt_space}\([^\{]+\{  do_main (ARGS);
 
-static            { do_static (ARGS); }
+static                  do_static (ARGS);
 
-void              { do_void (ARGS); }
+void                    do_void (ARGS);
 
-NO_RETURN         { do_NO_RETURN (ARGS); }
+NO_RETURN               do_NO_RETURN (ARGS);
 
   /* Over-complicated method for parsing GNU C extension related thing. */
 
@@ -418,7 +412,7 @@ PRINT_FORMAT      {
                   pf.value[pf.index] = atoi ( yytext );
                   }
 
-void{c_opt_space}\*+ { do_void_pointer (ARGS); }
+void{c_opt_space}\*+   do_void_pointer (ARGS);
 
 {c_word}          function_save (ARGS);
 

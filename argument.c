@@ -95,7 +95,7 @@ check_cpp_muddle (struct arg * a, const char * t)
    declaration. */
 
 void
-arg_add (struct arg * a, const char * t)
+arg_add (struct arg * a, const char * t, int yyleng)
 {
     unsigned t_len;
     struct type * x;

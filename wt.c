@@ -1151,7 +1151,7 @@ argument_reset (cfparse_t * cfp)
 void
 argument_save (cfparse_t * cfp, const char * yytext, unsigned yyleng)
 {
-    arg_add (cfp->fargs[cfp->n_fargs - 1], yytext);
+    arg_add (cfp->fargs[cfp->n_fargs - 1], yytext, yyleng);
 }
 
 /* Test if the function is an ANSI C style one with the arguments'
@@ -1302,6 +1302,14 @@ function_reset (cfparse_t * cfp)
     cfp->in_typedef = 0;
 }
 
+void
+do_array_arguments (cfparse_t * cfp, const char * yytext, unsigned yyleng)
+{
+    arg_put_name (current_arg);
+    arg_add (current_arg, yytext, yyleng);
+}
+
+
 /* Save a function type or name in the current list. */
 
 void
@@ -1314,7 +1322,7 @@ function_save (cfparse_t * cfp, const char * yytext, unsigned yyleng)
             cfp->in_typedef = 1;
         }
     }
-    arg_add (current_arg, yytext);
+    arg_add (current_arg, yytext, yyleng);
     cfp->s.function_type_n++;
 }
 
