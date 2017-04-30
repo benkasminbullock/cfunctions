@@ -11,8 +11,6 @@ struct type
     unsigned char * name;
     struct type * next;
     struct type * prev;
-    /* Line number of original file it was seen on. */
-    unsigned line;
 };
 
 /* Some argument types are shared between several arguments.  For

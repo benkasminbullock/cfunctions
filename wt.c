@@ -274,7 +274,7 @@ is_c_file (const char * file_name)
 static void
 print_line_number (cfparse_t * cfp)
 {
-    fprintf (cfp->outfile, "\n#line %u \"%s\"\n", cfp->ln,
+    fprintf (cfp->outfile, "\n#line %d \"%s\"\n", cfp->ln,
 	     get_source_name ());
 }
 
@@ -750,7 +750,9 @@ cpp_stack_tidy (cfparse_t * cfp)
     }
 }
 
-/* Push a new thing onto the preprocessor conditional stack. */
+/* Push a new thing onto the preprocessor conditional stack. This is
+   called by the lexer as it encounters things like #ifdef or
+   #endif. */
 
 void
 cpp_add (cfparse_t * cfp, char * yytext, Cpp_If_Type type)
@@ -759,22 +761,11 @@ cpp_add (cfparse_t * cfp, char * yytext, Cpp_If_Type type)
     unsigned leng;
     char cpp_word[9];
 
-    /* Fix for Flex bug which causes wrong line numbers.  The problem is
-       the '$' in the rule for matching C preprocessor stuff.  These rules
-       have a dollar to match end of line.  The problem arises because
-       Flex actually counts the '\n' which comes after the dollar when it
-       is calculating yylineno, and then it 'rejects' the '\n', then
-       because it was rejected it counts it again.  I have sent the full
-       description of the bug to Vern Paxson, the author of Flex, who said
-       it is on the 'to do' list. */
-
-    cfp->ln--;
-    yylineno--;
-
     x = strstr (yytext, cpp_if_names[type]);
 
     if (! x) {
-	bug (HERE, "bad string '%s' in cpp_add: should contain '%s'", yytext,
+	bug (HERE, "bad string '%s' in cpp_add at %s:%d: should contain '%s'",
+	     yytext, get_source_name (), cfp->ln,
 	     cpp_if_names[type]);
     }
 
@@ -782,7 +773,13 @@ cpp_add (cfparse_t * cfp, char * yytext, Cpp_If_Type type)
     leng = strlen (x);
 
     if (cpp_stack_top.text) {
-	bug (HERE, "Unfreed memory at the top of the CPP stack");
+	CALLX (free_or_exit (cpp_stack_top.text));
+	wt_n_mallocs--;
+	cpp_stack_top.text = 0;
+#if 0
+	bug (HERE, "Unfreed memory %s at the top of the CPP stack at %s:%d",
+	     cpp_stack_top.text, get_source_name (), cfp->ln);
+#endif
     }
     if (leng) {
 	cpp_stack_top.text = malloc_or_exit (leng + 1);
@@ -892,7 +889,8 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 	   there will be two consecutive '\n's */
 
 	if (cpp_if_stack[u].text) {
-	    fprintf (cfp->outfile, "#%s%s\n", cpp_if_names[cpp_if_stack[u].type],
+	    fprintf (cfp->outfile, "#%s%s\n",
+		     cpp_if_names[cpp_if_stack[u].type],
 		     cpp_if_stack[u].text);
 	}
 	else {
@@ -1443,8 +1441,7 @@ wrapper_top (cfparse_t * cfp, const char * h_file_name, char ** h_file_guard)
     }
     i = fprintf (cfp->outfile,
 		 "#ifndef %s\n"
-		 "#define %s\n"
-		 "\n",
+		 "#define %s\n",
 		 * h_file_guard, * h_file_guard);
 
     if (! i) {
@@ -1512,7 +1509,7 @@ unbackup (char * backup_name, char * file_name)
 static void
 read_file (cfparse_t * cfp)
 {
-    yylineno = 1;
+    cfp->ln = 0;
 
     while (yylex ()) {
 	;
