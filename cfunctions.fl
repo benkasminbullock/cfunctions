@@ -360,7 +360,10 @@ enum              {
 
 \}                line_warning ("isolated }");
 
-<function>\{      brace_open (cfp);
+<function>\{      {
+		  inline_print (ARGS);
+		  brace_open (cfp);
+		  }
 
 <function>\}      do_brace_close (cfp);
 

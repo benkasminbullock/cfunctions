@@ -78,6 +78,7 @@ uninstall:
 
 test:   cfunctions unittest
 	cd tests;prove --nocolor test.pl
+	prove --nocolor newtests/*.t
 
 unittest: test-file
 	prove --nocolor ./test-file
