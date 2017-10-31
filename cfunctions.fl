@@ -356,7 +356,9 @@ enum              {
 
 <arguments>([0-9]*|\"([^\"]|\\\")*\")   line_error ("unparseable macro");
 
-<INITIAL>\{       start_function (cfp);
+<INITIAL>\{       {
+		  start_function (cfp);
+		  }
 
 \}                line_warning ("isolated }");
 
