@@ -90,9 +90,7 @@ check_cpp_muddle (struct arg * a, const char * t)
     }
 }
 
-/* Add another string "t" to an argument "a" at line "line". This is
-   called from cfunctions.fl upon seeing [] at the end of a C
-   declaration. */
+/* Add another string "t" to an argument "a" at line "line".  */
 
 void
 arg_add (struct arg * a, const char * t, int yyleng)

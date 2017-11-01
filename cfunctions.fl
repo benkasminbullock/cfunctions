@@ -420,7 +420,9 @@ void{c_opt_space}\*+   do_void_pointer (ARGS);
 
 \*                function_save (ARGS);
 
-{c_space}         count_lines (cfp, yytext, yyleng);
+{c_space}         {
+		  count_lines (ARGS);
+		  }
 
 <*>.              {
                   line_warning ("unknown char `%c' while in %s state", 
