@@ -16,7 +16,7 @@ use NewTests ':all';
 my $cfile = 'line-numbers.c';
 my $content = <<EOF;
 #ifdef HEADER
-extern int jumbo;
+extern int mumbo;
 #endif
 #include "line-numbers.h"
 #include <stdio.h>
