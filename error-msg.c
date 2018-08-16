@@ -71,21 +71,6 @@ line_info (const char * format, ... )
     DO_PRINT (stdout);
 }
 
-/* Print an error message for a specified line and then exit */
-
-NO_RETURN PRINT_FORMAT (2, 3)
-lerror ( unsigned line_number, const char * format, ... )
-{
-    va_list a;
-
-    fprintf ( stderr, "%s:%u: error: ", source_name, line_number );
-
-    DO_PRINT (stderr);
-
-    // exit ok
-    exit (EXIT_FAILURE);
-}
-
 /* Print the specified error message and exit. */
 
 NO_RETURN PRINT_FORMAT (1, 2)
@@ -131,18 +116,6 @@ bug (const char * file, unsigned line, const char * format, ... )
 
     // exit ok
     exit (EXIT_FAILURE);
-}
-
-void
-set_source_name (const char * name)
-{
-    source_name = name;
-}
-
-const char *
-get_source_name ()
-{
-    return source_name;
 }
 
 void

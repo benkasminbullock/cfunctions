@@ -215,10 +215,27 @@ struct cfparse
     /* Parse state information. */
 
     parse_state_t s;
+
+    /* Name of the source file. */
+
+    const char * source_name;
+
 }
 cfparser;
 
 cfparse_t * cfp = & cfparser;
+
+static void
+set_source_name (cfparse_t * cfp, const char * name)
+{
+    cfp->source_name = name;
+}
+
+static const char *
+get_source_name (cfparse_t * cfp)
+{
+    return cfp->source_name;
+}
 
 /* 
    Given a file name, strip out all the directory information leaving
@@ -275,7 +292,7 @@ static void
 print_line_number (cfparse_t * cfp)
 {
     fprintf (cfp->outfile, "\n#line %d \"%s\"\n", cfp->ln,
-	     get_source_name ());
+	     get_source_name (cfp));
 }
 
 /* Check whether a particular quantity has overflowed a maximum, and if
@@ -512,7 +529,7 @@ line_change (cfparse_t * cfp, const char * yytext, int yyleng)
     else {
 	cfp->ln = line - 1;
 	yylineno = line - 1;
-	set_source_name (cfp->line_source_name);
+	set_source_name (cfp, cfp->line_source_name);
     }
     push_in_cpp ();
 }
@@ -765,7 +782,7 @@ cpp_add (cfparse_t * cfp, char * yytext, Cpp_If_Type type)
 
     if (! x) {
 	bug (HERE, "bad string '%s' in cpp_add at %s:%d: should contain '%s'",
-	     yytext, get_source_name (), cfp->ln,
+	     yytext, get_source_name (cfp), cfp->ln,
 	     cpp_if_names[type]);
     }
 
@@ -778,7 +795,7 @@ cpp_add (cfparse_t * cfp, char * yytext, Cpp_If_Type type)
 	cpp_stack_top.text = 0;
 #if 0
 	bug (HERE, "Unfreed memory %s at the top of the CPP stack at %s:%d",
-	     cpp_stack_top.text, get_source_name (), cfp->ln);
+	     cpp_stack_top.text, get_source_name (cfp), cfp->ln);
 #endif
     }
     if (leng) {
@@ -1519,13 +1536,13 @@ read_file (cfparse_t * cfp)
 
     if (! initial_state (cfp)) {
 	warning ("was parsing %s in %s when the file unexpectedly ended",
-		 state_message (cfp), get_source_name ());
+		 state_message (cfp), get_source_name (cfp));
 	start_initial (cfp);
     }
 
     if (cfp->curly_braces_depth > 0) {
 	warning ("%d too many open braces in '%s'", cfp->curly_braces_depth,
-		 get_source_name ());
+		 get_source_name (cfp));
 
 	/* Reset this variable for the next source file to prevent
 	   cascading error messages. */
@@ -1594,7 +1611,7 @@ extract (cfparse_t * cfp, char * c_file_name)
     if (! c_file_name) {
 	bug (HERE, "no file name");
     }
-    set_source_name (c_file_name);
+    set_source_name (cfp, c_file_name);
     yyin = fopen_or_exit (c_file_name, "r");
     h_file_name = make_h_file_name (c_file_name);
     backup_name = do_backup (h_file_name);

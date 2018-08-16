@@ -57,8 +57,8 @@ sub main
     rm_h_files ();
     test_attribute ();
     rm_h_files ();
-    test_valgrind ();
-    rm_h_files ();
+#    test_valgrind ();
+#    rm_h_files ();
 }
 
 sub test_not_c_warning
