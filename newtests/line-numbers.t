@@ -34,9 +34,9 @@ EOF
 my $h = cfwriterun ($content, $cfile);
 like ($h, qr/#line/);
 print "$h\n";
+unlike ($h, qr/#line 0/);
 TODO: {
     local $TODO = 'Implement outgoing line numbers (bugzilla 1916)';
-    unlike ($h, qr/#line 0/);
     like ($h, qr/#line \d+ "line-numbers.h"/);
 };
 done_testing ();

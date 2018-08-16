@@ -228,6 +228,7 @@ cfparse_t * cfp = & cfparser;
 static void
 set_source_name (cfparse_t * cfp, const char * name)
 {
+    cfp->ln = 1;
     cfp->source_name = name;
 }
 
@@ -485,6 +486,7 @@ line_change (cfparse_t * cfp, const char * yytext, int yyleng)
     char * line_at;
     int line;
     char * end;
+
     first_quote = strchr (yytext, '\"');
     if (! first_quote) {
 	line_warning ("could not find the file name in line directive %s",
@@ -1526,7 +1528,7 @@ unbackup (char * backup_name, char * file_name)
 static void
 read_file (cfparse_t * cfp)
 {
-    cfp->ln = 0;
+    cfp->ln = 1;
 
     while (yylex ()) {
 	;
