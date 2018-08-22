@@ -360,6 +360,9 @@ enum              {
 		  start_function (cfp);
 		  }
 
+<INITIAL>__attribute__\(\(.*\)\)   {
+                  }
+
 \}                line_warning ("isolated }");
 
 <function>\{      {
