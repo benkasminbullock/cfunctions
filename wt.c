@@ -334,7 +334,7 @@ void
 do_PRINT_FORMAT (cfparse_t * cfp)
 {
     cfp->s.seen_print_format = TRUE;
-    start_initial ();
+    start_initial();
 }
 
 /* This is triggered by void * in the initial state. */
@@ -852,7 +852,7 @@ cpp_add (cfparse_t * cfp, char * yytext, Cpp_If_Type type)
 
 	leng = sprintf (cpp_word, "@CPP%u", cfp->cpp_if_now);
 
-	if (initial_state ()) {
+	if (initial_state()) {
 	    function_save (cfp, cpp_word, leng);
 	}
 	else if (argument_state ()) {
@@ -944,7 +944,7 @@ cpp_eject (cfparse_t * cfp, unsigned u)
 void
 do_start_cpp (cfparse_t * cfp, const char * yytext, int yyleng)
 {
-    if (initial_state ()) {
+    if (initial_state()) {
         function_reset (cfp);
     }
     push_in_cpp ();
@@ -993,7 +993,7 @@ do_arguments_close_bracket (cfparse_t * cfp, const char * yytext, int leng)
     if (cfp->arg_br_depth == 0) {
 	/* This was the last ) in the argument list, so revert to the
 	   "initial" state. */
-	start_initial ();
+	start_initial();
     }
     else if (cfp->arg_br_depth < 0) {
 	bug (HERE, "underflow %d\n", cfp->arg_br_depth);
@@ -1042,7 +1042,7 @@ do_brace_close (cfparse_t * cfp)
 	    fprintf (cfp->outfile, "} ");
 	}
 	pop_state ();
-	if (cfp->verbatiming && initial_state ()) {
+	if (cfp->verbatiming && initial_state()) {
 	    fprintf (cfp->outfile, "\n");
 	}
     }
@@ -1066,7 +1066,7 @@ do_void_arguments (cfparse_t * cfp, const char * yytext, int yyleng)
 void
 do_define (cfparse_t * cfp, const char * yytext, int yyleng)
 {
-    if (initial_state ()) {
+    if (initial_state()) {
 	function_reset (cfp);
     }
     push_in_cpp ();
@@ -1536,10 +1536,10 @@ read_file (cfparse_t * cfp)
 
     function_reset (cfp);
 
-    if (! initial_state (cfp)) {
+    if (! initial_state()) {
 	warning ("was parsing %s in %s when the file unexpectedly ended",
-		 state_message (cfp), get_source_name (cfp));
-	start_initial (cfp);
+		 state_message(), get_source_name (cfp));
+	start_initial();
     }
 
     if (cfp->curly_braces_depth > 0) {
@@ -1643,20 +1643,18 @@ extract (cfparse_t * cfp, char * c_file_name)
    freed at the end of main, after the headers have been printed. */
 
 static void
-fill_command_line (cfparse_t * cfp, int argc, char ** argv)
+fill_command_line(cfparse_t * cfp, int argc, char ** argv)
 {
     int cllen;
-    char * clnext;
     int clused;
     int i;
     char * command_line;
     cllen = 0;
     for (i = 0; i < argc; i++) {
-	cllen += strlen (argv[i]) + 1;
+	cllen += strlen(argv[i]) + 1;
     }
-    command_line = calloc_or_exit (sizeof (*(command_line)), cllen);
+    command_line = calloc_or_exit(sizeof (*(command_line)), cllen);
     wt_n_mallocs++;
-    clnext = command_line;
     clused = 0;
     for (i = 0; i < argc; i++) {
 	char * space = "";
@@ -1664,15 +1662,15 @@ fill_command_line (cfparse_t * cfp, int argc, char ** argv)
 	if (i > 0) {
 	    space = " ";
 	}
-	bytes = snprintf (command_line + clused, cllen - clused, "%s%s",
-			  space, argv[i]);
+	bytes = snprintf(command_line + clused, cllen - clused, "%s%s",
+			 space, argv[i]);
 	clused += bytes;
     }
     cfp->command_line = command_line;
 }
 
 static void
-release_memory (cfparse_t * cfp)
+release_memory(cfparse_t * cfp)
 {
     int j;
     for (j = 0; j < MAX_CPP_IFS; j++) {

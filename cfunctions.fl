@@ -246,7 +246,7 @@ enum              {
 
 <in_struct>\*     {
                   function_save (ARGS);
-                  parser_pop_state (cfp);
+                  parser_pop_state();
                   }
 
 <in_struct>;      {
@@ -269,12 +269,12 @@ enum              {
 
 <initialiser>;    {
                     external_print (cfp, ";\n");
-                    parser_pop_state (cfp);
+                    parser_pop_state();
                   }
 
 <initialiser>,    {
                     current_arg = arg_share (current_arg);
-                    parser_pop_state (cfp);
+                    parser_pop_state();
                   }
 
 <initialiser>\{   {

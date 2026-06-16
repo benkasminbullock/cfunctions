@@ -10,8 +10,8 @@ binmode $builder->todo_output,    ":utf8";
 binmode STDOUT, ":encoding(utf8)";
 binmode STDERR, ":encoding(utf8)";
 BEGIN: {
-use lib "$Bin";
-use NewTests ':all';
+    use lib "$Bin";
+    use NewTests ':all';
 }
 my $cfile = 'line-numbers.c';
 my $content = <<EOF;

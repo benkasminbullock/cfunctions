@@ -1,0 +1,3 @@
+These are newer tests which use the Perl framework. The tests in
+../tests/ are old tests from the 1990s which use a self-constructed
+testing framework.

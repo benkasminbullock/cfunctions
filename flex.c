@@ -2,33 +2,33 @@
    access Flex's state (YY_START) outside this file. */
 
 void
-push_in_cpp (void)
+push_in_cpp(void)
 {
     parser_push_state (in_cpp);
 }
 
 int
-initial_state (void)
+initial_state(void)
 {
     return YY_START == INITIAL;
 }
 
 int
-argument_state (void)
+argument_state(void)
 {
     return YY_START == arguments;
 }
 
 void
-start_initial (void)
+start_initial(void)
 {
     BEGIN (INITIAL);
 }
 
 void
-pop_state (void)
+pop_state(void)
 {
-    parser_pop_state (); 
+    parser_pop_state(); 
 }
 
 typedef struct
@@ -56,9 +56,9 @@ void parser_push_state (int new_state)
     }
 }
 
-void parser_pop_state ()
+void parser_pop_state (void)
 {
-    yy_pop_state ();
+    yy_pop_state();
     state_depth--;
 }
 
